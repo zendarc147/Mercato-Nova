@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../middleware/csrf.php';
 
 setCorsHeaders();
 session_start();
@@ -11,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['message' => 'Méthode non autorisée']);
     exit;
 }
+
+verifyCsrfToken();
 
 $body = json_decode(file_get_contents('php://input'), true);
 $email    = trim($body['email'] ?? '');
