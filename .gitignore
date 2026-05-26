@@ -1,0 +1,13 @@
+# Env
+.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# PHP
+backend/vendor/
+
+# OS
+.DS_Store
+Thumbs.db
