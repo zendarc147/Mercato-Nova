@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /mercato-nova/backend/api/
+
+RewriteRule ^encheres/([0-9]+)/statut/?$ auctions/index.php?produit_id=$1&action=statut [L,QSA]
+RewriteRule ^encheres/([0-9]+)/offre/?$  auctions/index.php?produit_id=$1&action=offre  [L,QSA]
+RewriteRule ^encheres/([0-9]+)/?$        auctions/index.php?produit_id=$1               [L,QSA]
