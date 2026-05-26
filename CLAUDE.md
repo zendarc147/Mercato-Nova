@@ -109,7 +109,7 @@ Dès l'ouverture d'une nouvelle conversation, **attaque directement la prochaine
 - [x] #9 Système d'authentification complet (inscription / connexion / logout) → PR #79
 - [x] #10 Gestion des sessions PHP → PR #80
 - [x] #11 Gestion des rôles (acheteur / vendeur / admin) → PR #81
-- [ ] #12 Module Enchères — backend (états, historique, règles de concurrence) → branche `feature/12-encheres-backend`
+- [x] #12 Module Enchères — backend (états, historique, règles de concurrence) → PR #82
 - [ ] #13 Module Enchères — polling toutes les 3s → branche `feature/13-encheres-polling`
 - [ ] #14 Module Négociation — machine à états → branche `feature/14-negociation-etats`
 - [ ] #15 Module Négociation — historique des échanges en BDD → branche `feature/15-negociation-historique`
