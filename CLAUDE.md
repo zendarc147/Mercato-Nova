@@ -75,3 +75,43 @@ https://github.com/zendarc147/Mercato-Nova
 
 Issues et Kanban : onglet Projects du repo GitHub
 Suivi des tâches Notion : https://www.notion.so/36b12f0b77b381f38052c26136170863
+
+---
+
+## Instructions pour le nouveau chat
+
+Dès l'ouverture d'une nouvelle conversation, **attaque directement la prochaine tâche non cochée** dans la liste ci-dessous — sans demander confirmation.
+
+### Procédure à suivre pour chaque issue
+
+1. **Checkout depuis `dev`** : `git checkout dev && git pull && git checkout -b feature/<numéro>-<slug>`
+2. **Faire le travail** (code, fichiers, etc.)
+3. **Commit** avec un message clair : `feat: <description> (issue #<numéro>)`
+4. **Push** : `git push -u origin feature/<numéro>-<slug>`
+5. **Ouvrir une PR vers `dev`** avec `& "C:\Program Files\GitHub CLI\gh.exe" pr create ...`
+6. **Cocher la case** dans cette liste dans le CLAUDE.md et commiter le changement
+
+> `gh` se trouve à `C:\Program Files\GitHub CLI\gh.exe` — toujours utiliser le chemin complet.
+> Référence API : voir [API.md](API.md) pour tous les endpoints REST.
+
+---
+
+## TODO — Issues Max (zendarc147)
+
+### Livrable 1 — deadline jeudi 28 mai 2026 à 23h55
+
+- [x] #7 Définir les endpoints API → `API.md` créé, PR #76
+- [ ] #8 Produire le schéma d'architecture (frontend <> backend <> BDD) → branche `feature/8-schema-architecture`
+- [ ] #6 Schéma entité-association BDD → Agnes s'en occupe, skip si elle le fait
+
+### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
+
+- [ ] #9 Système d'authentification complet (inscription / connexion / logout) → branche `feature/9-auth`
+- [ ] #10 Gestion des sessions PHP → branche `feature/10-sessions`
+- [ ] #11 Gestion des rôles (acheteur / vendeur / admin) → branche `feature/11-roles`
+- [ ] #12 Module Enchères — backend (états, historique, règles de concurrence) → branche `feature/12-encheres-backend`
+- [ ] #13 Module Enchères — polling toutes les 3s → branche `feature/13-encheres-polling`
+- [ ] #14 Module Négociation — machine à états → branche `feature/14-negociation-etats`
+- [ ] #15 Module Négociation — historique des échanges en BDD → branche `feature/15-negociation-historique`
+- [ ] #16 Review du code des autres membres + corrections
+- [ ] #17 Intégration finale et tests end-to-end
