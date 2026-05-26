@@ -15,9 +15,9 @@ function requireAuth(): array {
     ];
 }
 
-function requireRole(string $role): array {
+function requireRole(string ...$roles): array {
     $user = requireAuth();
-    if ($user['role'] !== $role) {
+    if (!in_array($user['role'], $roles, true)) {
         http_response_code(403);
         echo json_encode(['message' => 'Accès interdit']);
         exit;
