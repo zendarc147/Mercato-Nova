@@ -101,7 +101,7 @@ Dès l'ouverture d'une nouvelle conversation, **attaque directement la prochaine
 ### Livrable 1 — deadline jeudi 28 mai 2026 à 23h55
 
 - [x] #7 Définir les endpoints API → `API.md` créé, PR #76
-- [ ] #8 Produire le schéma d'architecture (frontend <> backend <> BDD) → branche `feature/8-schema-architecture`
+- [x] #8 Produire le schéma d'architecture (frontend <> backend <> BDD) → mergé
 - [ ] #6 Schéma entité-association BDD → Agnes s'en occupe, skip si elle le fait
 
 ### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
