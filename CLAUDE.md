@@ -106,7 +106,7 @@ Dès l'ouverture d'une nouvelle conversation, **attaque directement la prochaine
 
 ### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
 
-- [ ] #9 Système d'authentification complet (inscription / connexion / logout) → branche `feature/9-auth`
+- [x] #9 Système d'authentification complet (inscription / connexion / logout) → PR #79
 - [ ] #10 Gestion des sessions PHP → branche `feature/10-sessions`
 - [ ] #11 Gestion des rôles (acheteur / vendeur / admin) → branche `feature/11-roles`
 - [ ] #12 Module Enchères — backend (états, historique, règles de concurrence) → branche `feature/12-encheres-backend`
