@@ -1,11 +1,18 @@
 const BASE_URL = '/api'
 
+let csrfToken = null
+
+export function setCsrfToken(token) {
+  csrfToken = token
+}
+
 async function request(method, endpoint, body = null) {
-  const options = {
-    method,
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+  const headers = { 'Content-Type': 'application/json' }
+  if (csrfToken && method !== 'GET') {
+    headers['X-CSRF-Token'] = csrfToken
   }
+
+  const options = { method, credentials: 'include', headers }
   if (body) options.body = JSON.stringify(body)
 
   const res = await fetch(`${BASE_URL}${endpoint}`, options)
