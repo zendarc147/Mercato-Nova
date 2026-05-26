@@ -75,3 +75,34 @@ https://github.com/zendarc147/Mercato-Nova
 
 Issues et Kanban : onglet Projects du repo GitHub
 Suivi des tâches Notion : https://www.notion.so/36b12f0b77b381f38052c26136170863
+
+---
+
+## Instructions pour le nouveau chat
+
+**Dès l'ouverture d'une nouvelle conversation, attaque directement la prochaine tâche non cochée ci-dessous — sans demander confirmation. Crée une branche `feature/<numéro>-<slug>` depuis `dev`, fais le travail, puis ouvre une PR vers `dev`.**
+
+Référence API : voir [API.md](API.md) pour tous les endpoints REST.
+Utiliser `& "C:\Program Files\GitHub CLI\gh.exe"` pour toutes les commandes `gh`.
+
+---
+
+## TODO — Issues Max (zendarc147)
+
+### Livrable 1 — deadline jeudi 28 mai 2026 à 23h55
+
+- [x] #7 Définir les endpoints API (contrat frontend/backend) → PR #76 mergée
+- [ ] #8 Produire le schéma d'architecture (frontend <> backend <> BDD) → branche `feature/8-schema-architecture`
+- [ ] #6 Schéma entité-association (BDD) → normalement Agnes, skip si elle le fait
+
+### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
+
+- [ ] #9 Système d'authentification complet (inscription / connexion / logout) → branche `feature/9-auth`
+- [ ] #10 Gestion des sessions PHP → branche `feature/10-sessions`
+- [ ] #11 Gestion des rôles (acheteur / vendeur / admin) → branche `feature/11-roles`
+- [ ] #12 Module Enchères — backend (états, historique, règles de concurrence) → branche `feature/12-encheres-backend`
+- [ ] #13 Module Enchères — polling toutes les 3s → branche `feature/13-encheres-polling`
+- [ ] #14 Module Négociation — machine à états → branche `feature/14-negociation-etats`
+- [ ] #15 Module Négociation — historique des échanges en BDD → branche `feature/15-negociation-historique`
+- [ ] #16 Review du code des autres membres + corrections
+- [ ] #17 Intégration finale et tests end-to-end
