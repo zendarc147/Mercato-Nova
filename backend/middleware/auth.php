@@ -1,7 +1,7 @@
 <?php
 
 function requireAuth(): array {
-    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (session_status() === PHP_SESSION_NONE) { require_once __DIR__ . '/../config/session.php'; configureSession(); }
 
     if (empty($_SESSION['user_id'])) {
         http_response_code(401);

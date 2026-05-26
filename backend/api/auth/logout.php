@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../middleware/csrf.php';
 
 setCorsHeaders();
-session_start();
+configureSession();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
