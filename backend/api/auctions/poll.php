@@ -55,7 +55,8 @@ header('Cache-Control: no-store, must-revalidate');
 header('X-Poll-Interval: 3');
 header('ETag: ' . $etag);
 
-if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) {
+$inm = trim($_SERVER['HTTP_IF_NONE_MATCH'] ?? '', '"');
+if ($inm && $inm === trim($etag, '"')) {
     http_response_code(304);
     exit;
 }
