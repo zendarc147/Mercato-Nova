@@ -144,19 +144,19 @@ Si un endpoint n'est pas encore prêt, utiliser des données mockées dans un fi
 ### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
 
 - [ ] Page d'accueil : hero, catégories, produits en vedette
+- [ ] Pages auth frontend : inscription, connexion, profil/session
 - [ ] Page catalogue avec filtres : catégorie, prix min/max, état
 - [ ] Barre de recherche fonctionnelle
 - [ ] Fiche produit : description, photos, boutons d'action
 - [ ] Interface enchère : timer compte à rebours, liste des offres, formulaire enchérir
 - [ ] Interface négociation : thread d'échanges, état courant, boutons accepter/refuser/contre-offre
+- [ ] Panier frontend : ajout, résumé, validation de transaction simulée
+- [ ] Notifications frontend
 - [ ] Responsive design : mobile + desktop en CSS classique
 - [ ] Gestion des états de chargement / erreurs dans les composants
 
 ### Tâches possibles en plus si le temps le permet
 
-- [ ] Pages auth frontend : inscription, connexion, profil/session
-- [ ] Panier frontend : ajout, résumé, validation de transaction simulée
-- [ ] Notifications frontend
 - [ ] Espace vendeur : création/modification de produit
 - [ ] Espace admin minimal : visualisation utilisateurs/produits si endpoint disponible
 - [ ] Nettoyage UI final : cohérence visuelle, textes, accessibilité, navigation
