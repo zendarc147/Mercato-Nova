@@ -178,7 +178,7 @@ VALUES (1, 100.00, NOW(), DATE_ADD(NOW(), INTERVAL 1 HOUR), 'en_cours');
 - [x] #11 Gestion des rôles (acheteur / vendeur / admin) → PR #81
 - [x] #12 Module Enchères — backend (états, historique, règles de concurrence) → PR #82
 - [x] #13 Module Enchères — polling toutes les 3s → PR #83
-- [ ] #14 Module Négociation — machine à états → branche `feature/14-negociation-etats`
+- [x] #14 Module Négociation — machine à états → PR #86
 - [ ] #15 Module Négociation — historique des échanges en BDD → branche `feature/15-negociation-historique`
 - [ ] #16 Review du code des autres membres + corrections
 - [ ] #17 Intégration finale et tests end-to-end
