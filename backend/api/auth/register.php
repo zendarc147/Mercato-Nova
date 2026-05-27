@@ -10,33 +10,32 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['message' => 'Méthode non autorisée']);
+    echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
     exit;
 }
 
-verifyCsrfToken();
+$body         = json_decode(file_get_contents('php://input'), true);
+$nom          = trim($body['nom'] ?? '');
+$prenom       = trim($body['prenom'] ?? '');
+$email        = trim($body['email'] ?? '');
+$mot_de_passe = $body['mot_de_passe'] ?? '';
+$role         = in_array($body['role'] ?? '', ['acheteur', 'vendeur']) ? $body['role'] : 'acheteur';
 
-$body     = json_decode(file_get_contents('php://input'), true);
-$name     = trim($body['name'] ?? '');
-$email    = trim($body['email'] ?? '');
-$password = $body['password'] ?? '';
-$role     = in_array($body['role'] ?? '', ['acheteur', 'vendeur']) ? $body['role'] : 'acheteur';
-
-if (!$name || !$email || !$password) {
+if (!$nom || !$prenom || !$email || !$mot_de_passe) {
     http_response_code(422);
-    echo json_encode(['message' => 'Tous les champs sont requis']);
+    echo json_encode(['success' => false, 'error' => 'Tous les champs sont requis']);
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
-    echo json_encode(['message' => 'Email invalide']);
+    echo json_encode(['success' => false, 'error' => 'Email invalide']);
     exit;
 }
 
-if (strlen($password) < 8) {
+if (strlen($mot_de_passe) < 8) {
     http_response_code(422);
-    echo json_encode(['message' => 'Mot de passe trop court (8 caractères min)']);
+    echo json_encode(['success' => false, 'error' => 'Mot de passe trop court (8 caractères min)']);
     exit;
 }
 
@@ -45,18 +44,29 @@ $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
 $stmt->execute([$email]);
 if ($stmt->fetch()) {
     http_response_code(409);
-    echo json_encode(['message' => 'Email déjà utilisé']);
+    echo json_encode(['success' => false, 'error' => 'Email déjà utilisé']);
     exit;
 }
 
-$hash = password_hash($password, PASSWORD_BCRYPT);
+$name = $prenom . ' ' . $nom;
+$hash = password_hash($mot_de_passe, PASSWORD_BCRYPT);
 $stmt = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
 $stmt->execute([$name, $email, $hash, $role]);
-$id = $pdo->lastInsertId();
+$id = (int) $pdo->lastInsertId();
 
 session_regenerate_id(true);
 $_SESSION['user_id']   = $id;
 $_SESSION['user_role'] = $role;
 
 http_response_code(201);
-echo json_encode(['id' => $id, 'name' => $name, 'email' => $email, 'role' => $role]);
+echo json_encode([
+    'success' => true,
+    'message' => 'Compte créé avec succès',
+    'user'    => [
+        'id'     => $id,
+        'nom'    => $nom,
+        'prenom' => $prenom,
+        'email'  => $email,
+        'role'   => $role,
+    ],
+]);
