@@ -161,6 +161,70 @@ VALUES (1, 100.00, NOW(), DATE_ADD(NOW(), INTERVAL 1 HOUR), 'en_cours');
 | `POST /auctions/index.php?produit_id=1&action=offre` | `{ "montant": 50 }` | 400 "montant trop bas" |
 | `GET /auctions/index.php?produit_id=1` | après `UPDATE encheres SET date_fin='2020-01-01' WHERE id=1` | 200 + `etat: terminee` (auto) |
 
+### Tests #14 — Négociation (machine à états)
+
+Données à insérer dans phpMyAdmin avant de tester :
+```sql
+-- Acheteur
+INSERT INTO users (name, email, password, role)
+VALUES ('Acheteur Test', 'acheteur@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'acheteur');
+-- Vendeur
+INSERT INTO users (name, email, password, role)
+VALUES ('Vendeur Test', 'vendeur@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'vendeur');
+-- (le hash ci-dessus correspond au mot de passe : password)
+
+-- Produit négociable (adapter vendeur_id selon l'ID réel du vendeur)
+INSERT INTO produits (vendeur_id, titre, prix, type_vente)
+VALUES (2, 'MacBook Pro M3', 1800.00, 'negociation');
+```
+
+**Étape 1 — Initier une négociation** (connecté en acheteur)
+
+| Requête | Body | Résultat attendu |
+|---------|------|-----------------|
+| `POST /negotiations/index.php` | `{ "produit_id": 1, "prix_propose": 1500, "message": "Je propose 1500€" }` (CSRF requis) | 201 + `{ success: true, negociation_id: 1 }` |
+| `POST /negotiations/index.php` (même produit) | idem | 409 "négociation active existe déjà" |
+| `POST /negotiations/index.php` | connecté en **vendeur** sur son propre produit | 403 |
+| `POST /negotiations/index.php` | `produit_id` d'un produit `type_vente: achat_immediat` | 400 "n'accepte pas la négociation" |
+
+**Étape 2 — Lister et consulter**
+
+| Requête | Condition | Résultat attendu |
+|---------|-----------|-----------------|
+| `GET /negotiations/index.php` | connecté en acheteur | 200 + liste avec la négociation créée |
+| `GET /negotiations/index.php?id=1` | connecté en acheteur | 200 + `etat: en_attente`, `echanges` avec 1 entrée |
+| `GET /negotiations/index.php?id=1` | connecté en **tiers** (autre user) | 403 |
+
+**Étape 3 — Machine à états** (tester les transitions dans l'ordre)
+
+> Se reconnecter avec le bon compte avant chaque requête POST, le CSRF est par session.
+
+| Requête | Connecté en | Body | Résultat attendu |
+|---------|-------------|------|-----------------|
+| `POST /negotiations/index.php?id=1&action=repondre` | **acheteur** | `{ "action": "contre_offre", "prix_propose": 1600 }` | 400 "ce n'est pas votre tour" — c'est au vendeur de répondre |
+| `POST /negotiations/index.php?id=1&action=repondre` | **vendeur** | `{ "action": "contre_offre", "prix_propose": 1700, "message": "Je peux faire 1700€" }` | 200 + `{ etat: "contre_offre" }` |
+| `POST /negotiations/index.php?id=1&action=repondre` | **vendeur** | `{ "action": "contre_offre", "prix_propose": 1650 }` | 400 "ce n'est pas votre tour" — c'est à l'acheteur |
+| `POST /negotiations/index.php?id=1&action=repondre` | **acheteur** | `{ "action": "accepter" }` | 200 + `{ etat: "accepte" }` |
+| `POST /negotiations/index.php?id=1&action=repondre` | **vendeur** | `{ "action": "refuser" }` | 400 "action impossible depuis l'état accepte" |
+
+**Étape 4 — Expiry automatique**
+
+```sql
+-- Simuler une expiration
+UPDATE negociations SET expires_at = '2020-01-01 00:00:00' WHERE id = 1;
+```
+
+| Requête | Résultat attendu |
+|---------|-----------------|
+| `GET /negotiations/index.php?id=1` | 200 + `etat: expire` (transition auto à la lecture) |
+
+**Étape 5 — Vérifier les notifications**
+
+```sql
+SELECT * FROM notifications ORDER BY created_at DESC LIMIT 5;
+```
+Doit contenir : `negociation_nouvelle` (au vendeur à la création) et `negociation_reponse` (à l'autre partie à chaque réponse).
+
 ---
 
 ## TODO — Issues Max (zendarc147)
