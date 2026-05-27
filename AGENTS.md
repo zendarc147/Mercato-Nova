@@ -38,6 +38,19 @@ Architecture client-serveur stricte : React appelle l'API PHP via `fetch`, PHP i
 6. Notifications
 7. Panier et validation des transactions (paiement simulé)
 
+## Palette graphique Astrid
+
+| Usage | Couleur | Hex |
+|-------|---------|-----|
+| Navbar / texte principal | Forêt Profonde | `#2D4A3E` |
+| Fonds secondaires / barre de recherche / connexion | Sable Chaud | `#F4E9D0` |
+| CTA / prix / accents importants | Ocre Brûlé | `#E07B39` |
+| Enchères / accents artistiques | Mauve Artiste | `#9B6B9B` |
+| Accents premium | Miel | `#D4A853` |
+| Fond principal des pages | Fond page | `#FFFCEF` |
+
+Le fond général du site doit utiliser `#FFFCEF`. `#F4E9D0` ne doit pas être utilisé comme fond principal : il sert plutôt aux zones secondaires comme la barre de recherche, les cartes de connexion ou certains blocs doux.
+
 ## Structure du projet
 
 ```text
