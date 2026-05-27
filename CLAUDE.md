@@ -96,6 +96,73 @@ Dès l'ouverture d'une nouvelle conversation, **attaque directement la prochaine
 
 ---
 
+## Guide de test des fonctionnalités
+
+### Environnement requis
+
+- **MAMP** lancé (Apache + MySQL), Document Root → `C:\Users\tanur\OneDrive\Documents\GitHub`
+- **Postman** ouvert avec un environnement `Mercato Nova` et la variable `csrf_token`
+- Base URL : `http://localhost/Mercato-Nova/backend/api`
+
+Sur la requête `POST /auth/login.php`, onglet **Tests** de Postman :
+```javascript
+var data = pm.response.json();
+pm.environment.set("csrf_token", data.csrf_token);
+```
+Toutes les requêtes POST protégées incluent le header : `X-CSRF-Token: {{csrf_token}}`
+
+### Setup BDD (une seule fois)
+
+`http://localhost/phpmyadmin` → Importer → `database/schema.sql` → Exécuter
+
+### Tests #9 #10 — Auth + Sessions
+
+| Requête | Body | Résultat attendu |
+|---------|------|-----------------|
+| `POST /auth/register.php` | `{ "nom", "prenom", "email", "mot_de_passe", "role": "acheteur" }` | 201 + `{ success: true, message, user }` |
+| `POST /auth/register.php` (même email) | idem | 409 "Email déjà utilisé" |
+| `POST /auth/login.php` | `{ "email", "mot_de_passe" }` | 200 + `{ success: true, user, csrf_token }` |
+| `POST /auth/login.php` | mauvais mot de passe | 401 |
+| `GET /auth/me.php` | — | 200 + infos user (session active) |
+| `POST /auth/logout.php` | — (CSRF requis) | 200 |
+| `GET /auth/me.php` après logout | — | 401 (session détruite) |
+
+> Register et Login ne demandent **pas** de CSRF token — l'utilisateur n'a pas encore de session.
+> Après login, le `csrf_token` retourné dans la réponse est à utiliser pour toutes les requêtes suivantes.
+
+### Tests #11 — Rôles
+
+| Requête | Condition | Résultat attendu |
+|---------|-----------|-----------------|
+| `GET /admin/users.php` | connecté en acheteur | 403 |
+| `GET /admin/users.php` | après `UPDATE users SET role='admin' WHERE email='...'` + reconnexion | 200 + liste users |
+
+> Après un changement de rôle en BDD : toujours logout + login pour recharger la session.
+
+### Tests #12 — Enchères
+
+Données à insérer dans phpMyAdmin avant de tester :
+```sql
+INSERT INTO users (name, email, password, role)
+VALUES ('Vendeur Test', 'vendeur@test.com', 'hash', 'vendeur');
+
+INSERT INTO produits (vendeur_id, titre, prix, type_vente)
+VALUES (2, 'iPhone 14', 500.00, 'enchere');
+
+INSERT INTO encheres (produit_id, prix_depart, date_debut, date_fin, etat)
+VALUES (1, 100.00, NOW(), DATE_ADD(NOW(), INTERVAL 1 HOUR), 'en_cours');
+```
+
+| Requête | Body | Résultat attendu |
+|---------|------|-----------------|
+| `GET /auctions/index.php?produit_id=1` | — | 200 + `etat: en_cours`, `historique: []` |
+| `GET /auctions/index.php?produit_id=1&action=statut` | — | 200 + `secondes_restantes` ~3600 |
+| `POST /auctions/index.php?produit_id=1&action=offre` | `{ "montant": 150 }` (CSRF requis) | 201 + `nouvelle_meilleure_offre: 150` |
+| `POST /auctions/index.php?produit_id=1&action=offre` | `{ "montant": 50 }` | 400 "montant trop bas" |
+| `GET /auctions/index.php?produit_id=1` | après `UPDATE encheres SET date_fin='2020-01-01' WHERE id=1` | 200 + `etat: terminee` (auto) |
+
+---
+
 ## TODO — Issues Max (zendarc147)
 
 ### Livrable 1 — deadline jeudi 28 mai 2026 à 23h55
