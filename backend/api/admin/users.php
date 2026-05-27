@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/../../../config/cors.php';
-require_once __DIR__ . '/../../../config/session.php';
-require_once __DIR__ . '/../../../config/database.php';
-require_once __DIR__ . '/../../../middleware/csrf.php';
-require_once __DIR__ . '/../../../middleware/auth.php';
+require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/session.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../middleware/csrf.php';
+require_once __DIR__ . '/../../middleware/auth.php';
 
 setCorsHeaders();
 configureSession();
