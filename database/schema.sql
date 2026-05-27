@@ -64,3 +64,29 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (utilisateur_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS negociations (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  produit_id      INT UNSIGNED                                                    NOT NULL,
+  acheteur_id     INT UNSIGNED                                                    NOT NULL,
+  vendeur_id      INT UNSIGNED                                                    NOT NULL,
+  etat            ENUM('en_attente','contre_offre','accepte','refuse','expire')   NOT NULL DEFAULT 'en_attente',
+  derniere_offre  DECIMAL(10,2)                                                   NOT NULL,
+  dernier_acteur  ENUM('acheteur','vendeur')                                      NOT NULL DEFAULT 'acheteur',
+  expires_at      TIMESTAMP                                                        NULL DEFAULT NULL,
+  created_at      TIMESTAMP                                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP                                                        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (produit_id)  REFERENCES produits(id) ON DELETE CASCADE,
+  FOREIGN KEY (acheteur_id) REFERENCES users(id)    ON DELETE CASCADE,
+  FOREIGN KEY (vendeur_id)  REFERENCES users(id)    ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS echanges_negociation (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  negociation_id  INT UNSIGNED              NOT NULL,
+  auteur          ENUM('acheteur','vendeur') NOT NULL,
+  montant         DECIMAL(10,2)             NOT NULL,
+  message         TEXT,
+  created_at      TIMESTAMP                 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (negociation_id) REFERENCES negociations(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
