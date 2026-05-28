@@ -1,66 +1,33 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { getProduit } from '../api/produits'
 import { addToRecentlyViewed } from '../api/recentlyViewed'
 import { useAuth } from '../context/AuthContext'
-import ProfileMenu from '../components/ProfileMenu'
-import logoFondVert from '../assets/logo-fond-vert.png'
+import SiteHeader from '../components/SiteHeader'
 
-function SiteHeader({ user }) {
+function IconCart() {
   return (
-    <header className="site-header">
-      <Link className="brand" to="/" aria-label="Mercato Nova accueil">
-        <img className="brand-logo" src={logoFondVert} alt="" />
-        <span className="brand-name">Mercato Nova</span>
-      </Link>
-      <nav className="main-nav" aria-label="Navigation principale">
-        <Link to="/encheres">Enchères</Link>
-        <Link to="/catalogue">Catalogue</Link>
-        {!user && <Link to="/login">Connexion</Link>}
-      </nav>
-      {user ? (
-        <div className="header-icons">
-          <Link to="/panier" className="header-icon-link" aria-label="Panier">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-          </Link>
-          <Link to="/notifications" className="header-icon-link" aria-label="Notifications">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </Link>
-          <ProfileMenu />
-        </div>
-      ) : (
-        <Link className="profile-link" to="/login" aria-label="Se connecter">
-          <span className="profile-head" />
-          <span className="profile-body" />
-        </Link>
-      )}
-    </header>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
   )
 }
 
-const TYPE_LABELS = {
-  achat_immediat: 'Achat immédiat',
-  enchere: 'Enchère',
-  negociation: 'Négociation',
-}
-
-const ETAT_LABELS = {
-  neuf: 'Neuf',
-  bon_etat: 'Bon état',
-  correct: 'Correct',
-  mauvais_etat: 'Mauvais état',
+function IconHandshake() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 12l-8.5 8.5a2.12 2.12 0 0 1-3-3L12 9" />
+      <path d="M17.64 15L22 10.64" />
+      <path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25v-.86L16.01 4.6a5.56 5.56 0 0 0-3.94-1.64H9l.92.82A6.18 6.18 0 0 1 12 8.4v1.56l2 2h2.47l2.26 1.91" />
+      <path d="M3.09 8.75l1.25 1.25c.6.6.93 1.4.93 2.25v.86l2.72 2.72c1.03 1.03 2.4 1.61 3.84 1.61" />
+    </svg>
+  )
 }
 
 export default function Produit() {
   const { id } = useParams()
   const { user } = useAuth()
-  const navigate = useNavigate()
   const [produit, setProduit] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -88,74 +55,52 @@ export default function Produit() {
     <main className="produit-page">
       <SiteHeader user={user} />
 
-      <div className="produit-container">
-        <button className="produit-back" onClick={() => navigate(-1)}>
-          ← Retour
-        </button>
+      {loading && <p className="produit-state">Chargement…</p>}
+      {error && <p className="produit-state produit-state--error">{error}</p>}
 
-        {loading && <p className="produit-state">Chargement…</p>}
-        {error && <p className="produit-state produit-state--error">{error}</p>}
-
-        {produit && (
-          <div className="produit-detail">
-            <div className="produit-image">
-              {produit.image_url
-                ? <img src={`/uploads/produits/${produit.image_url}`} alt={produit.titre} />
-                : <span className="produit-img-placeholder">Œuvre</span>}
+      {produit && (
+        <div className="produit-layout">
+          <div className="produit-top">
+            <div className="produit-image-wrapper">
+              <button className="produit-arrow" aria-label="Image précédente">&#9664;</button>
+              <div className="produit-image">
+                {produit.image_url
+                  ? <img src={`/uploads/produits/${produit.image_url}`} alt={produit.titre} />
+                  : <span className="produit-img-placeholder">photo produit</span>}
+              </div>
+              <button className="produit-arrow" aria-label="Image suivante">&#9654;</button>
             </div>
 
             <div className="produit-info">
               <h1 className="produit-titre">{produit.titre}</h1>
-
-              {produit.vendeur && (
-                <p className="produit-vendeur">
-                  Par <strong>{produit.vendeur.prenom ?? ''} {produit.vendeur.nom}</strong>
-                </p>
-              )}
-
-              <div className="produit-badges">
-                {produit.categorie && (
-                  <span className="produit-badge">{produit.categorie}</span>
-                )}
-                {produit.etat && (
-                  <span className="produit-badge">{ETAT_LABELS[produit.etat] ?? produit.etat}</span>
-                )}
-                {produit.type_vente && (
-                  <span className="produit-badge produit-badge--type">
-                    {TYPE_LABELS[produit.type_vente] ?? produit.type_vente}
-                  </span>
-                )}
-              </div>
-
-              <p className="produit-prix">{Number(produit.prix).toFixed(2)} €</p>
-
-              {produit.description && (
-                <p className="produit-description">{produit.description}</p>
-              )}
-
-              {user ? (
-                <div className="produit-actions">
-                  {produit.type_vente === 'achat_immediat' && (
-                    <Link to="/panier" className="btn-primary">Ajouter au panier</Link>
-                  )}
-                  {produit.type_vente === 'enchere' && (
-                    <Link to={`/enchere/${produit.id}`} className="btn-primary btn-enchere">
-                      Voir l'enchère
-                    </Link>
-                  )}
-                  {produit.type_vente === 'negociation' && (
-                    <Link to={`/negociation/${produit.id}`} className="btn-primary btn-negociation">
-                      Négocier
-                    </Link>
-                  )}
-                </div>
-              ) : (
-                <Link to="/login" className="btn-primary">Se connecter pour acheter</Link>
-              )}
+              <p className="produit-vendeur">
+                {produit.vendeur?.prenom ? `${produit.vendeur.prenom} ` : ''}{produit.vendeur?.nom ?? 'Vendeur'}
+              </p>
+              <p className="produit-categorie">{produit.categorie}</p>
+              <p className="produit-prix">Prix : {Number(produit.prix).toFixed(2)} €</p>
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="produit-bottom">
+            <div className="produit-description">
+              <strong>Description :</strong>
+              <p>{produit.description ?? '—'}</p>
+            </div>
+
+            <div className="produit-actions">
+              <button className="produit-action-icon" aria-label="Ajouter au panier">
+                <IconCart />
+              </button>
+              {produit.type_vente === 'negociation' && (
+                <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
+                  <IconHandshake />
+                </Link>
+              )}
+              <button className="produit-cta">Achat immédiat</button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
