@@ -6,6 +6,8 @@ export default function ProfileMenu() {
   const { logout } = useAuth()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [logoutLoading, setLogoutLoading] = useState(false)
+  const [logoutError, setLogoutError] = useState(null)
   const ref = useRef(null)
 
   useEffect(() => {
@@ -19,9 +21,15 @@ export default function ProfileMenu() {
   }, [])
 
   async function handleLogout() {
-    setOpen(false)
-    await logout()
-    navigate('/login')
+    setLogoutLoading(true)
+    setLogoutError(null)
+    try {
+      await logout()
+      navigate('/')
+    } catch (err) {
+      setLogoutError(err.message || 'Erreur lors de la déconnexion')
+      setLogoutLoading(false)
+    }
   }
 
   return (
@@ -53,9 +61,14 @@ export default function ProfileMenu() {
           <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mes Enchères
           </Link>
-          <button className="profile-dropdown-item profile-dropdown-logout" onClick={handleLogout}>
-            Déconnexion
+          <button
+            className="profile-dropdown-item profile-dropdown-logout"
+            onClick={handleLogout}
+            disabled={logoutLoading}
+          >
+            {logoutLoading ? 'Déconnexion…' : 'Déconnexion'}
           </button>
+          {logoutError && <p className="profile-dropdown-error">{logoutError}</p>}
         </nav>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
@@ -20,9 +20,24 @@ const ROLE_LABEL = {
 }
 
 export default function Profil() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [prefs, setPrefs] = useState([])
   const [prefsSaved, setPrefsSaved] = useState(false)
+  const [logoutLoading, setLogoutLoading] = useState(false)
+  const [logoutError, setLogoutError] = useState(null)
+
+  async function handleLogout() {
+    setLogoutLoading(true)
+    setLogoutError(null)
+    try {
+      await logout()
+      navigate('/')
+    } catch (err) {
+      setLogoutError(err.message || 'Erreur lors de la déconnexion')
+      setLogoutLoading(false)
+    }
+  }
 
   const displayName = user?.prenom
     ? `${user.prenom} ${user.nom}`
@@ -99,6 +114,17 @@ export default function Profil() {
             </button>
           </form>
         </section>
+
+        <div className="profil-logout-section">
+          {logoutError && <p className="profil-logout-error">{logoutError}</p>}
+          <button
+            className="danger-button profil-logout-btn"
+            onClick={handleLogout}
+            disabled={logoutLoading}
+          >
+            {logoutLoading ? 'Déconnexion…' : 'Se déconnecter'}
+          </button>
+        </div>
 
       </div>
     </main>
