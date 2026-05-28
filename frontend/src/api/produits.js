@@ -45,3 +45,11 @@ export async function getProduits(params = {}) {
     }
   }
 }
+
+export async function getProduit(id) {
+  try {
+    return await api.get(`/produits/${id}`)
+  } catch {
+    return MOCK_PRODUITS.find((p) => p.id === Number(id)) ?? null
+  }
+}

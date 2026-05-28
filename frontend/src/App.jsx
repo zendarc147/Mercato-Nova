@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profil from './pages/Profil'
+import Produit from './pages/Produit'
 import Notifications from './pages/Notifications'
 import Catalogue from './pages/Catalogue'
 
@@ -21,6 +22,7 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/catalogue" element={<Catalogue />} />
       <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
+      <Route path="/produit/:id" element={<Produit />} />
       <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} /> 
       {/* Pages Astrid a brancher ici */}
       <Route
