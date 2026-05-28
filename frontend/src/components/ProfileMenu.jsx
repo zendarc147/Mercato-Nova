@@ -1,0 +1,63 @@
+import { useState, useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+
+export default function ProfileMenu() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  async function handleLogout() {
+    setOpen(false)
+    await logout()
+    navigate('/login')
+  }
+
+  return (
+    <div className="profile-menu-wrapper" ref={ref}>
+      <button
+        className="profile-link profile-menu-btn"
+        aria-label="Menu profil"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="profile-head" />
+        <span className="profile-body" />
+      </button>
+
+      {open && (
+        <nav className="profile-dropdown" aria-label="Menu utilisateur">
+          <Link to="/profil" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+            Profil
+          </Link>
+          <Link to="/panier" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+            Mon panier
+          </Link>
+          <Link to="/mes-ventes" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+            Mes Ventes
+          </Link>
+          <Link to="/mes-negociations" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+            Mes Négociations
+          </Link>
+          <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+            Mes Enchères
+          </Link>
+          <button className="profile-dropdown-item profile-dropdown-logout" onClick={handleLogout}>
+            Déconnexion
+          </button>
+        </nav>
+      )}
+    </div>
+  )
+}
