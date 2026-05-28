@@ -141,7 +141,7 @@ function ConnectedHome() {
           getProduits({ ...params, type_vente: 'enchere' }),
         ])
         if (cancelled) return
-        setProduits((resProduits.produits ?? []).slice(0, 8))
+        setProduits((resProduits.produits ?? []).filter((p) => p.type_vente !== 'enchere').slice(0, 8))
         setEncheres((resEncheres.produits ?? []).slice(0, 8))
       } catch {
         if (!cancelled) { setProduits([]); setEncheres([]) }
