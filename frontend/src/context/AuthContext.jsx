@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
 
   async function login(email, password) {
     const response = await apiLogin(email, password)
+    if (response.csrf_token) setCsrfToken(response.csrf_token)
     const me = response.user ?? response
     setUser(me)
     return me
