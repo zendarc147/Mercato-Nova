@@ -92,9 +92,9 @@ export default function Produit() {
                 <IconCart />
               </button>
               {produit.type_vente === 'negociation' && (
-                <button className="produit-action-icon" aria-label="Négocier">
+                <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
                   <IconHandshake />
-                </button>
+                </Link>
               )}
               <button className="produit-cta">Achat immédiat</button>
             </div>
