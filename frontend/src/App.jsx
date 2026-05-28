@@ -7,6 +7,7 @@ import Profil from './pages/Profil'
 import Produit from './pages/Produit'
 import Notifications from './pages/Notifications'
 import Catalogue from './pages/Catalogue'
+import Negociation from './pages/Negociation'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -23,7 +24,8 @@ function AppRoutes() {
       <Route path="/catalogue" element={<Catalogue />} />
       <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
       <Route path="/produit/:id" element={<Produit />} />
-      <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} /> 
+      <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+      <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} /> 
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"
