@@ -10,21 +10,32 @@ function PrivateRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />
 }
 
+function PlaceholderPage({ title }) {
+  return <div className="page-placeholder">{title} - a venir</div>
+}
+
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"
         element={
           <PrivateRoute>
-            <div className="page-placeholder">Espace connecte - a venir</div>
+            <Home />
           </PrivateRoute>
         }
       />
+      <Route path="/catalogue" element={<PlaceholderPage title="Catalogue" />} />
+      <Route path="/encheres" element={<PlaceholderPage title="Encheres" />} />
+      <Route path="/panier" element={<PlaceholderPage title="Mon panier" />} />
+      <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
+      <Route path="/profil" element={<PlaceholderPage title="Profil" />} />
+      <Route path="/mes-ventes" element={<PlaceholderPage title="Mes ventes" />} />
+      <Route path="/mes-negociations" element={<PlaceholderPage title="Mes negociations" />} />
+      <Route path="/mes-encheres" element={<PlaceholderPage title="Mes encheres" />} />
     </Routes>
   )
 }

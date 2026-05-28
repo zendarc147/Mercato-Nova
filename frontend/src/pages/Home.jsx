@@ -1,10 +1,71 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
 
+const productSections = [
+  {
+    title: 'Recommande',
+    items: [
+      { name: 'Vase celadon', seller: 'Atelier Lune', price: '120,00 EUR' },
+      { name: 'Lithographie', seller: 'Galerie Nova', price: '85,00 EUR' },
+      { name: 'Table basse', seller: 'Maison Arp', price: '340,00 EUR' },
+      { name: 'Portrait ancien', seller: 'Lucien Morel', price: '210,00 EUR' },
+    ],
+  },
+  {
+    title: 'Articles vus recemment',
+    items: [
+      { name: 'Lampe opaline', seller: 'Studio Verre', price: '64,00 EUR' },
+      { name: 'Bracelet email', seller: 'Mina Or', price: '92,00 EUR' },
+      { name: 'Affiche 70s', seller: 'Retro Paris', price: '48,00 EUR' },
+      { name: 'Coupe signee', seller: 'C. Valin', price: '150,00 EUR' },
+    ],
+  },
+  {
+    title: 'Encheres recommandees',
+    items: [
+      { name: 'Huile marine', seller: 'Rive Gauche', price: '320,00 EUR' },
+      { name: 'Fauteuil club', seller: 'Brocantique', price: '410,00 EUR' },
+      { name: 'Montre gousset', seller: 'Temps Rare', price: '190,00 EUR' },
+      { name: 'Sculpture bois', seller: 'Atelier Sato', price: '260,00 EUR' },
+    ],
+  },
+  {
+    title: 'Encheres bientot fermees',
+    items: [
+      { name: 'Service porcelaine', seller: 'Maison Ivoire', price: '180,00 EUR' },
+      { name: 'Tapis noue main', seller: 'Nadir', price: '520,00 EUR' },
+      { name: 'Bague ancienne', seller: 'Orphee', price: '240,00 EUR' },
+      { name: 'Dessin signe', seller: 'Carnet Bleu', price: '76,00 EUR' },
+    ],
+  },
+]
+
 export default function Home() {
+  const { user, loading, logout } = useAuth()
+  const navigate = useNavigate()
+  const [profileOpen, setProfileOpen] = useState(false)
+  const isConnected = Boolean(user)
+
+  async function handleLogout() {
+    await logout()
+    navigate('/')
+  }
+
+  function handleSearch(e) {
+    e.preventDefault()
+    const query = new FormData(e.currentTarget).get('q')?.trim()
+    navigate(query ? `/catalogue?q=${encodeURIComponent(query)}` : '/catalogue')
+  }
+
+  if (loading) {
+    return <div className="page-placeholder">Chargement...</div>
+  }
+
   return (
-    <main className="guest-home">
+    <main className={isConnected ? 'connected-home' : 'guest-home'}>
       <header className="site-header">
         <Link className="brand" to="/" aria-label="Mercato Nova accueil">
           <img className="brand-logo" src={logoFondVert} alt="" />
@@ -14,13 +75,58 @@ export default function Home() {
         <nav className="main-nav" aria-label="Navigation principale">
           <Link to="/encheres">Encheres</Link>
           <Link to="/catalogue">Catalogue</Link>
-          <Link to="/login">Connexion</Link>
+          {!isConnected && <Link to="/login">Connexion</Link>}
         </nav>
 
-        <Link className="profile-link" to="/login" aria-label="Se connecter">
-          <span className="profile-head" />
-          <span className="profile-body" />
-        </Link>
+        {isConnected ? (
+          <div className="header-actions">
+            <Link className="icon-link cart-link" to="/panier" aria-label="Ouvrir le panier">
+              <span className="cart-basket" />
+              <span className="cart-wheel cart-wheel-left" />
+              <span className="cart-wheel cart-wheel-right" />
+            </Link>
+
+            <Link
+              className="icon-link notification-link"
+              to="/notifications"
+              aria-label="Ouvrir les notifications"
+            >
+              <span className="bell-body" />
+              <span className="bell-clapper" />
+            </Link>
+
+            <div className="profile-menu-wrap">
+              <button
+                className="profile-link profile-button"
+                type="button"
+                aria-label="Ouvrir le menu profil"
+                aria-expanded={profileOpen}
+                onClick={() => setProfileOpen((open) => !open)}
+              >
+                <span className="profile-head" />
+                <span className="profile-body" />
+              </button>
+
+              {profileOpen && (
+                <aside className="profile-drawer" aria-label="Menu profil">
+                  <Link to="/profil">Profil</Link>
+                  <Link to="/panier">Mon panier</Link>
+                  <Link to="/mes-ventes">Mes Ventes</Link>
+                  <Link to="/mes-negociations">Mes Negociations</Link>
+                  <Link to="/mes-encheres">Mes Encheres</Link>
+                  <button type="button" onClick={handleLogout}>
+                    Deconnexion
+                  </button>
+                </aside>
+              )}
+            </div>
+          </div>
+        ) : (
+          <Link className="profile-link" to="/login" aria-label="Se connecter">
+            <span className="profile-head" />
+            <span className="profile-body" />
+          </Link>
+        )}
       </header>
 
       <section className="guest-hero" aria-labelledby="home-title">
@@ -28,27 +134,49 @@ export default function Home() {
 
         <img className="home-pictos" src={pictosHome} alt="" aria-hidden="true" />
 
-        <form className="search-bar" role="search">
+        <form className="search-bar" role="search" onSubmit={handleSearch}>
           <span className="search-icon" aria-hidden="true" />
           <label className="sr-only" htmlFor="home-search">
             Rechercher une oeuvre
           </label>
-          <input id="home-search" name="q" type="search" />
+          <input id="home-search" name="q" type="search" placeholder="Rechercher une oeuvre" />
         </form>
       </section>
 
-      <section className="about-section" aria-labelledby="about-title">
-        <h2 id="about-title">Qui sommes-nous ?</h2>
-        <p>
-          Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
-          d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
-          rares et pieces uniques.
-          <br />
-          Pensee autant pour les professionnels que pour les nouveaux passionnes, notre plateforme
-          reunit elegance, accessibilite et decouverte a travers une experience moderne inspiree
-          des grandes maisons d'art et des marches historiques.
-        </p>
-      </section>
+      {isConnected ? (
+        <section className="home-product-sections" aria-label="Selections Mercato Nova">
+          {productSections.map((section) => (
+            <section className="product-section" key={section.title}>
+              <h2>{section.title} :</h2>
+              <div className="product-strip">
+                {section.items.map((item) => (
+                  <Link className="mini-product" to="/catalogue" key={`${section.title}-${item.name}`}>
+                    <span className="mini-product-image">produit</span>
+                    <span className="mini-product-info">
+                      <strong>{item.name}</strong>
+                      <span>{item.seller}</span>
+                      <b>{item.price}</b>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
+        </section>
+      ) : (
+        <section className="about-section" aria-labelledby="about-title">
+          <h2 id="about-title">Qui sommes-nous ?</h2>
+          <p>
+            Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
+            d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
+            rares et pieces uniques.
+            <br />
+            Pensee autant pour les professionnels que pour les nouveaux passionnes, notre plateforme
+            reunit elegance, accessibilite et decouverte a travers une experience moderne inspiree
+            des grandes maisons d'art et des marches historiques.
+          </p>
+        </section>
+      )}
     </main>
   )
 }
