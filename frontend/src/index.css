@@ -307,7 +307,7 @@ select {
   grid-template-columns: minmax(150px, 245px) 1fr minmax(150px, 245px);
   align-items: start;
   column-gap: 28px;
-  row-gap: 14px;
+  row-gap: 24px;
   padding-top: 20px;
 }
 
@@ -344,7 +344,7 @@ select {
 
 .connected-hero-picto {
   display: block;
-  width: min(180px, 100%);
+  width: min(220px, 100%);
   height: auto;
   align-self: center;
   pointer-events: none;
@@ -831,7 +831,7 @@ select {
   .connected-home .guest-hero {
     grid-template-columns: 140px 1fr 140px;
     column-gap: 18px;
-    row-gap: 14px;
+    row-gap: 22px;
     padding-top: 34px;
   }
 
@@ -845,7 +845,7 @@ select {
   }
 
   .connected-hero-picto {
-    width: min(135px, 100%);
+    width: min(150px, 100%);
   }
 
   .connected-home .search-bar {
@@ -986,11 +986,11 @@ select {
   .connected-home .guest-hero {
     grid-template-columns: 1fr 1fr;
     column-gap: 18px;
-    row-gap: 16px;
+    row-gap: 20px;
   }
 
   .connected-hero-picto {
-    width: min(130px, 42vw);
+    width: min(150px, 44vw);
   }
 
   .connected-hero-picto-left {
