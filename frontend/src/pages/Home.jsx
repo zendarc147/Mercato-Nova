@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getProduits } from '../api/produits'
+import { getRecentlyViewed } from '../api/recentlyViewed'
 import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
@@ -94,14 +95,14 @@ function ProductCard({ product }) {
   )
 }
 
-function ProductSection({ title, produits, loading }) {
+function ProductSection({ title, produits, loading, emptyMessage }) {
   return (
     <section className="product-section">
       <h2 className="product-section-title">{title}</h2>
       {loading ? (
         <p className="product-section-state">Chargement…</p>
       ) : produits.length === 0 ? (
-        <p className="product-section-state">Aucun produit disponible pour le moment.</p>
+        <p className="product-section-state">{emptyMessage ?? 'Aucun produit disponible pour le moment.'}</p>
       ) : (
         <div className="product-grid" role="list">
           {produits.map((p) => (
@@ -115,9 +116,17 @@ function ProductSection({ title, produits, loading }) {
 
 function ConnectedHome() {
   const [activeCat, setActiveCat] = useState(null)
-  const [vedettes, setVedettes] = useState([])
+  const [produits, setProduits] = useState([])
   const [encheres, setEncheres] = useState([])
+  const [recentProduits, setRecentProduits] = useState([])
+  const [recentEncheres, setRecentEncheres] = useState([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const recent = getRecentlyViewed()
+    setRecentProduits(recent.filter((p) => p.type_vente !== 'enchere'))
+    setRecentEncheres(recent.filter((p) => p.type_vente === 'enchere'))
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -125,15 +134,15 @@ function ConnectedHome() {
       setLoading(true)
       try {
         const params = activeCat ? { categorie: activeCat } : {}
-        const [resVedettes, resEncheres] = await Promise.all([
+        const [resProduits, resEncheres] = await Promise.all([
           getProduits(params),
           getProduits({ ...params, type_vente: 'enchere' }),
         ])
         if (cancelled) return
-        setVedettes((resVedettes.produits ?? []).slice(0, 8))
+        setProduits((resProduits.produits ?? []).slice(0, 8))
         setEncheres((resEncheres.produits ?? []).slice(0, 8))
       } catch {
-        if (!cancelled) { setVedettes([]); setEncheres([]) }
+        if (!cancelled) { setProduits([]); setEncheres([]) }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -165,8 +174,10 @@ function ConnectedHome() {
       </section>
 
       <div className="home-sections">
-        <ProductSection title="Recommandé :" produits={vedettes} loading={loading} />
-        <ProductSection title="Enchères en cours :" produits={encheres} loading={loading} />
+        <ProductSection title="Produits recommandés" produits={produits} loading={loading} />
+        <ProductSection title="Produits vus récemment" produits={recentProduits} loading={false} emptyMessage="Aucun produit consulté récemment." />
+        <ProductSection title="Enchères recommandées" produits={encheres} loading={loading} />
+        <ProductSection title="Enchères vues récemment" produits={recentEncheres} loading={false} emptyMessage="Aucune enchère consultée récemment." />
       </div>
     </>
   )
