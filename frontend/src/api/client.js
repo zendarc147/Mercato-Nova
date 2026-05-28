@@ -16,9 +16,10 @@ async function request(method, endpoint, body = null) {
   if (body) options.body = JSON.stringify(body)
 
   const res = await fetch(`${BASE_URL}${endpoint}`, options)
-  const data = await res.json()
+  const text = await res.text()
+  const data = text ? JSON.parse(text) : null
 
-  if (!res.ok) throw new Error(data.message || 'Erreur serveur')
+  if (!res.ok) throw new Error(data?.message || data?.error || 'Erreur serveur')
   return data
 }
 

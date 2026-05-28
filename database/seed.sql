@@ -6,11 +6,11 @@
  
 USE mercato_nova;
  
-INSERT INTO users (name, email, password, role, statut_vendeur) VALUES
-('Nova Elio', 'elio@mercatonova.fr', 'nomorelove', 'admin', NULL),
-('Kudo Shinichi', 'shinichi@mercatonova.fr', 'pasmoidutout', 'vendeur', 'valide'),
-('Tanaka Yumi', 'yumi@mercatonova.fr', 'nonmerci', 'acheteur', NULL),
-('Penatelo Lena', 'lena@mercatonova.fr', 'jenesaispas', 'acheteur', NULL);
+INSERT INTO users (name, email, password, role) VALUES
+('Nova Elio', 'elio@mercatonova.fr', '$2y$10$1RwZvWDV2REAWiqNW6ty3ebqxgwcU3kmMgQWU6kbQmhoM/BK5YaU6', 'admin'),
+('Kudo Shinichi', 'shinichi@mercatonova.fr', '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
+('Tanaka Yumi', 'yumi@mercatonova.fr', '$2y$10$A44SMkpq5opwFq8FG3MjjO.Yat1sfbz.YFbXeH1/IxMPL7VVeV08i', 'acheteur'),
+('Penatelo Lena', 'lena@mercatonova.fr', '$2y$10$nPdfaoFPH/RGLpWKD1r5IObW/wvwentB11fbdVjpk/EoBIfGz2l0q', 'acheteur');
  
 INSERT INTO produits (vendeur_id, titre, description, prix, categorie, etat, type_vente, stock, image_url) VALUES
 (2, 'Buste en marbre blanc', 'Sculpture néoclassique, marbre de Carrare, 45cm', 1200.00, 'Sculpture', 'bon_etat', 'achat_immediat', 1, 'buste.jpg'),
