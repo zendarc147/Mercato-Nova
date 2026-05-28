@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <main className={isConnected ? 'connected-home' : 'guest-home'}>
       <header className="site-header">
-        <Link className="brand" to="/" aria-label="Mercato Nova accueil">
+        <Link className="brand" to="/" aria-label="Mercato Nova accueil" onClick={() => setProfileOpen(false)}>
           <img className="brand-logo" src={logoFondVert} alt="" />
           <span className="brand-name">Mercato Nova</span>
         </Link>
@@ -99,7 +99,7 @@ export default function Home() {
 
             <div className="profile-menu-wrap">
               <button
-                className="profile-link profile-button"
+                className={profileOpen ? 'profile-link profile-button profile-button-open' : 'profile-link profile-button'}
                 type="button"
                 aria-label="Ouvrir le menu profil"
                 aria-expanded={profileOpen}
