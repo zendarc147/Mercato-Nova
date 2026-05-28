@@ -1,21 +1,13 @@
 import { Link } from 'react-router-dom'
-
-const featureIcons = [
-  { label: 'Oeuvres', type: 'painting' },
-  { label: 'Encheres', type: 'gavel' },
-  { label: 'Colonnes', type: 'column' },
-  { label: 'Objets', type: 'vase' },
-]
+import logoFondVert from '../assets/logo-fond-vert.png'
+import pictosHome from '../assets/pictos-home.png'
 
 export default function Home() {
   return (
     <main className="guest-home">
       <header className="site-header">
         <Link className="brand" to="/" aria-label="Mercato Nova accueil">
-          <span className="brand-mark">
-            <span>M</span>
-            <span>N</span>
-          </span>
+          <img className="brand-logo" src={logoFondVert} alt="" />
           <span className="brand-name">Mercato Nova</span>
         </Link>
 
@@ -34,13 +26,7 @@ export default function Home() {
       <section className="guest-hero" aria-labelledby="home-title">
         <h1 id="home-title">La place de l'art et des encheres</h1>
 
-        <div className="art-icons" aria-hidden="true">
-          {featureIcons.map((icon) => (
-            <span className={`art-icon art-icon-${icon.type}`} key={icon.label}>
-              <span className="art-shape" />
-            </span>
-          ))}
-        </div>
+        <img className="home-pictos" src={pictosHome} alt="" aria-hidden="true" />
 
         <form className="search-bar" role="search">
           <span className="search-icon" aria-hidden="true" />
