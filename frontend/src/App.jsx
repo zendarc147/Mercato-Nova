@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
@@ -12,14 +13,15 @@ function PrivateRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      {/* Pages Astrid à brancher ici */}
+      {/* Pages Astrid a brancher ici */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <PrivateRoute>
-            <div className="p-8 text-center text-gray-500">Accueil — à venir</div>
+            <div className="page-placeholder">Espace connecte - a venir</div>
           </PrivateRoute>
         }
       />
