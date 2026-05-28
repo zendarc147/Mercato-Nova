@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 
 const PREFERENCES = [
@@ -19,19 +19,13 @@ const ROLE_LABEL = {
 }
 
 export default function Profil() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [prefs, setPrefs] = useState([])
   const [prefsSaved, setPrefsSaved] = useState(false)
 
   const displayName = user?.prenom
     ? `${user.prenom} ${user.nom}`
     : (user?.name ?? '')
-
-  async function handleLogout() {
-    await logout()
-    navigate('/login')
-  }
 
   function togglePref(pref) {
     setPrefsSaved(false)
@@ -54,10 +48,7 @@ export default function Profil() {
           <Link to="/encheres">Enchères</Link>
           <Link to="/catalogue">Catalogue</Link>
         </nav>
-        <Link className="profile-link" to="/profil" aria-label="Mon profil">
-          <span className="profile-head" />
-          <span className="profile-body" />
-        </Link>
+        <ProfileMenu />
       </header>
 
       <div className="profil-content">
@@ -108,9 +99,6 @@ export default function Profil() {
           </form>
         </section>
 
-        <button className="profil-logout-btn" onClick={handleLogout}>
-          Se déconnecter
-        </button>
       </div>
     </main>
   )

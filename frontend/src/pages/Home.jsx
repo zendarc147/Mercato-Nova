@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getProduits } from '../api/produits'
+import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
 
@@ -35,10 +36,7 @@ function SiteHeader({ user }) {
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </Link>
-          <Link className="profile-link" to="/profil" aria-label="Mon profil">
-            <span className="profile-head" />
-            <span className="profile-body" />
-          </Link>
+          <ProfileMenu />
         </div>
       ) : (
         <Link className="profile-link" to="/login" aria-label="Se connecter">

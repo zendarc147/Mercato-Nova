@@ -633,6 +633,55 @@ select {
   padding: 16px 0;
 }
 
+/* ── Profile dropdown menu ── */
+
+.profile-menu-wrapper {
+  position: relative;
+}
+
+.profile-menu-btn {
+  border: none;
+  cursor: pointer;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 220px;
+  border-radius: 12px;
+  background: var(--color-deep-forest);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.profile-dropdown-item {
+  display: block;
+  padding: 16px 24px;
+  color: var(--color-warm-sand);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: 400;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 120ms ease;
+  width: 100%;
+}
+
+.profile-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-dropdown-logout {
+  border-top: 1px solid rgba(244, 233, 208, 0.2);
+  margin-top: 4px;
+}
+
 /* ── Page Profil ── */
 
 .profil-page {
