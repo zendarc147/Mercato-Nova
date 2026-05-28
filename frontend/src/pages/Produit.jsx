@@ -88,26 +88,13 @@ export default function Produit() {
             </div>
 
             <div className="produit-actions">
-              {produit.type_vente === 'achat_immediat' && (
-                <>
-                  <button className="produit-action-icon" aria-label="Ajouter au panier">
-                    <IconCart />
-                  </button>
-                  <button className="produit-cta">Achat immédiat</button>
-                </>
-              )}
-
-              {produit.type_vente === 'negociation' && (
-                <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
-                  <IconHandshake />
-                </Link>
-              )}
-
-              {produit.type_vente === 'enchere' && (
-                <Link to={`/enchere/${produit.id}`} className="produit-cta">
-                  Voir l'enchère
-                </Link>
-              )}
+              <button className="produit-action-icon" aria-label="Ajouter au panier">
+                <IconCart />
+              </button>
+              <button className="produit-action-icon" aria-label="Négocier">
+                <IconHandshake />
+              </button>
+              <button className="produit-cta">Achat immédiat</button>
             </div>
           </div>
         </div>
