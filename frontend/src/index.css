@@ -1087,3 +1087,83 @@ select {
     font-size: 24px;
   }
 }
+
+.notifications-page {
+  min-height: 100vh;
+  background: var(--color-page);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  padding: 52px 24px 64px;
+}
+
+.notifications-card {
+  max-width: 700px;
+  margin: 0 auto;
+  border-radius: 18px;
+  background: var(--color-warm-sand);
+  box-shadow: var(--shadow-soft);
+  padding: 40px;
+}
+
+.notifications-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 32px;
+  font-size: 38px;
+  font-weight: 400;
+  color: var(--color-ink);
+}
+
+.notifications-state {
+  color: var(--color-muted);
+  font-size: 18px;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.notifications-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-page);
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.notification-item:hover {
+  background: #fff8e8;
+}
+
+.notification-item--unread {
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.notification-dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-deep-forest);
+}
+
+.notification-item--unread .notification-dot {
+  background: var(--color-burnt-ochre);
+}
+
+.notification-message {
+  font-size: 17px;
+  color: var(--color-ink);
+  line-height: 1.4;
+}
