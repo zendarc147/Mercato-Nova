@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
+import pictoCatalogueGauche from '../../wireframes/picto-catalogue-gauche.png'
+import pictoCatalogueDroite from '../../wireframes/picto-catalogue-droite.png'
 
 const productSections = [
   {
@@ -132,7 +134,24 @@ export default function Home() {
       <section className="guest-hero" aria-labelledby="home-title">
         <h1 id="home-title">La place de l'art et des encheres</h1>
 
-        <img className="home-pictos" src={pictosHome} alt="" aria-hidden="true" />
+        {isConnected ? (
+          <>
+            <img
+              className="connected-hero-picto connected-hero-picto-left"
+              src={pictoCatalogueGauche}
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              className="connected-hero-picto connected-hero-picto-right"
+              src={pictoCatalogueDroite}
+              alt=""
+              aria-hidden="true"
+            />
+          </>
+        ) : (
+          <img className="home-pictos" src={pictosHome} alt="" aria-hidden="true" />
+        )}
 
         <form className="search-bar" role="search" onSubmit={handleSearch}>
           <span className="search-icon" aria-hidden="true" />

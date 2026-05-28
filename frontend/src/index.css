@@ -305,9 +305,10 @@ select {
 .connected-home .guest-hero {
   display: grid;
   grid-template-columns: minmax(150px, 245px) 1fr minmax(150px, 245px);
-  align-items: center;
-  gap: 28px;
-  padding-top: 32px;
+  align-items: start;
+  column-gap: 28px;
+  row-gap: 14px;
+  padding-top: 20px;
 }
 
 .guest-hero h1 {
@@ -322,6 +323,7 @@ select {
 .connected-home .guest-hero h1 {
   grid-column: 2;
   grid-row: 1;
+  align-self: center;
   font-size: 43px;
 }
 
@@ -340,6 +342,26 @@ select {
   pointer-events: none;
 }
 
+.connected-hero-picto {
+  display: block;
+  width: min(180px, 100%);
+  height: auto;
+  align-self: center;
+  pointer-events: none;
+}
+
+.connected-hero-picto-left {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  justify-self: center;
+}
+
+.connected-hero-picto-right {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  justify-self: center;
+}
+
 .search-bar {
   width: min(832px, calc(100vw - 48px));
   height: 51px;
@@ -352,10 +374,10 @@ select {
 }
 
 .connected-home .search-bar {
-  grid-column: 1 / -1;
+  grid-column: 2;
   width: min(545px, calc(100vw - 48px));
   height: 34px;
-  margin-top: 22px;
+  margin-top: 0;
   padding: 0 16px;
 }
 
@@ -412,7 +434,7 @@ select {
 .home-product-sections {
   display: grid;
   gap: 16px;
-  padding: 35px 22px 40px;
+  padding: 24px 22px 40px;
 }
 
 .product-section h2 {
@@ -801,7 +823,9 @@ select {
   }
 
   .connected-home .guest-hero {
-    display: block;
+    grid-template-columns: 140px 1fr 140px;
+    column-gap: 18px;
+    row-gap: 14px;
     padding-top: 34px;
   }
 
@@ -814,9 +838,14 @@ select {
     margin-top: 28px;
   }
 
+  .connected-hero-picto {
+    width: min(135px, 100%);
+  }
+
   .connected-home .search-bar {
+    grid-column: 1 / -1;
     width: min(545px, calc(100vw - 48px));
-    margin-top: 28px;
+    margin-top: 0;
   }
 
   .product-strip {
@@ -933,17 +962,38 @@ select {
   }
 
   .connected-home .guest-hero h1 {
+    grid-column: 1 / -1;
+    grid-row: 1;
     font-size: 31px;
   }
 
-  .connected-home .home-pictos {
-    width: min(360px, calc(100vw - 32px));
-    margin-top: 22px;
+  .connected-home .guest-hero {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+    row-gap: 16px;
+  }
+
+  .connected-hero-picto {
+    width: min(130px, 42vw);
+  }
+
+  .connected-hero-picto-left {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .connected-hero-picto-right {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
   }
 
   .connected-home .search-bar {
+    grid-column: 1 / -1;
+    grid-row: 3;
     width: calc(100vw - 32px);
-    margin-top: 24px;
+    margin-top: 0;
   }
 
   .home-product-sections {
