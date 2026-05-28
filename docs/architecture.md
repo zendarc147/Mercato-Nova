@@ -1,82 +1,105 @@
-# Mercato Nova — Schéma d'architecture
+# Mercato Nova — Architecture complète
 
 ## 1. Architecture globale
 
 ```mermaid
 graph TB
-    subgraph CLIENT["🖥️ Client (Navigateur)"]
-        REACT["React + Vite\nTailwind CSS"]
-        subgraph FRONTEND_LAYERS["Couches frontend"]
-            PAGES["Pages\n(Login, Register…)"]
-            COMPONENTS["Composants réutilisables"]
-            CTX["AuthContext\n(user, login, register, logout)"]
-            API_AUTH["api/auth.js\n(getCsrfToken, login, register, logout, getMe)"]
-            API_CLIENT["api/client.js\nfetch + CSRF token en mémoire"]
+    subgraph CLIENT["🖥️ Client — React + Vite + Tailwind CSS  (Astrid)"]
+        subgraph PAGES["Pages"]
+            PUB["Accueil · Catalogue · Détail produit"]
+            AUTH_P["Connexion · Inscription · Profil"]
+            TXN["Panier · Confirmation · Historique achats"]
+            MKT["Enchère · Négociation · Notifications"]
+            PRO["Dashboard vendeur · Gestion produits · Admin"]
+        end
+        CTX["AuthContext\n(user, login, logout, register)"]
+        HOOKS["Hooks\nusePolling · useCart · useAuth"]
+        APICLI["api/client.js\nfetch · CSRF token en mémoire"]
+    end
+
+    subgraph BACKEND["⚙️ API REST — PHP 8 sans framework"]
+        subgraph SHARED["Fonctions partagées (incluses par chaque endpoint)"]
+            CFG["setCorsHeaders()\nconfigureSession()\ngetDB()"]
+            MW["requireAuth() · requireRole()\ngenerateCsrfToken() · verifyCsrfToken()"]
+        end
+        subgraph MODS["Modules API  /api/"]
+            M_AUTH["auth/\ncsrf · register · login · logout · me"]
+            M_PROD["produits/\nliste+filtres · détail · créer · modifier · supprimer"]
+            M_PAN["panier/\nget · ajouter · supprimer item · vider"]
+            M_ACH["achats/\ncommander · historique"]
+            M_ENC["auctions/  — enchères\ndétail · statut · offre · poll"]
+            M_NEG["negotiations/  — négociation\nliste · détail · créer · répondre"]
+            M_NOT["notifications/\nliste · lire · tout-lire"]
+            M_PRF["profil/\nget · modifier"]
+            M_ADM["admin/\nusers"]
         end
     end
 
-    subgraph SERVER["⚙️ Serveur PHP 8 (sans framework)"]
-        subgraph CONFIG["Config (incluse par chaque endpoint)"]
-            CORS_FN["cors.php → setCorsHeaders()"]
-            SESSION_FN["session.php → configureSession()"]
-            DB_FN["database.php → getDB()"]
-        end
-        subgraph MIDDLEWARE_FN["Middleware (fonctions opt-in par endpoint)"]
-            CSRF_FN["csrf.php\ngenerateCsrfToken()\nverifyCsrfToken()"]
-            AUTH_FN["auth.php\nrequireAuth()\nrequireRole()"]
-        end
-        subgraph API["API REST — /api"]
-            AUTH_API["auth/\ncsrf.php · register.php · login.php · logout.php · me.php"]
-            AUCTIONS_API["auctions/\nindex.php (GET détail · GET statut · POST offre)\npoll.php (GET statut léger)"]
-            NEGO_API["negotiations/\nindex.php (GET liste · GET détail · POST créer · POST répondre)"]
-            ADMIN_API["admin/\nusers.php"]
-        end
+    subgraph DB["🗄️ Base de données MySQL  (Agnes)"]
+        T1[("users")]
+        T2[("produits")]
+        T3[("encheres · offres_encheres")]
+        T4[("negociations · echanges_negociation")]
+        T5[("panier · panier_items")]
+        T6[("achats")]
+        T7[("notifications")]
     end
 
-    subgraph DB["🗄️ Base de données MySQL"]
-        USERS[("users")]
-        PRODUITS[("produits")]
-        ENCHERES[("encheres\noffres_encheres")]
-        NEGOCIATIONS[("negociations\nechanges_negociation")]
-        NOTIFICATIONS[("notifications")]
-    end
-
-    REACT --> PAGES
-    PAGES --> COMPONENTS
     PAGES --> CTX
-    CTX --> API_AUTH
-    API_AUTH --> API_CLIENT
+    PAGES --> HOOKS
+    PAGES --> APICLI
+    CTX --> APICLI
+    HOOKS --> APICLI
 
-    API_CLIENT -->|"HTTPS + JSON\ncredentials: include"| CORS_FN
-    CORS_FN --> SESSION_FN
-    SESSION_FN --> AUTH_API
-    SESSION_FN --> AUCTIONS_API
-    SESSION_FN --> NEGO_API
-    SESSION_FN --> ADMIN_API
+    APICLI -->|"HTTPS · JSON\nX-CSRF-Token\ncredentials: include"| MODS
 
-    AUTH_API --> DB_FN
-    AUCTIONS_API --> DB_FN
-    NEGO_API --> DB_FN
-    ADMIN_API --> DB_FN
+    MODS --> SHARED
+    SHARED -->|"PDO prepared statements"| DB
+```
 
-    AUCTIONS_API -.->|"POST offre\n(verifyCsrfToken + requireAuth)"| CSRF_FN
-    AUCTIONS_API -.->|"POST offre\n(verifyCsrfToken + requireAuth)"| AUTH_FN
-    NEGO_API -.->|"POST créer/répondre\n(verifyCsrfToken + requireAuth)"| CSRF_FN
-    NEGO_API -.->|"GET liste/détail\n(requireAuth)"| AUTH_FN
-    AUTH_API -.->|"POST logout\n(verifyCsrfToken)"| CSRF_FN
-    AUTH_API -.->|"GET me\n(requireAuth)"| AUTH_FN
-    ADMIN_API -.->|"requireRole('admin')"| AUTH_FN
+> **Séparation stricte** : le frontend React ne touche jamais MySQL. Toute donnée transite par l'API PHP. Le CSRF token est transporté en header `X-CSRF-Token` sur chaque requête mutante (POST / PUT / DELETE).
 
-    DB_FN -->|"PDO prepared\nstatements"| USERS
-    DB_FN --> PRODUITS
-    DB_FN --> ENCHERES
-    DB_FN --> NEGOCIATIONS
-    DB_FN --> NOTIFICATIONS
+---
+
+## 2. Pages frontend et navigation (Astrid)
+
+| Route | Page | Accès | Description |
+|---|---|---|---|
+| `/` | Accueil | Public | Mise en avant des produits, enchères en cours, catégories |
+| `/catalogue` | Catalogue | Public | Liste des produits, filtres prix/catégorie/état/type, recherche, tri |
+| `/produits/:id` | Détail produit | Public | Fiche produit, boutons Acheter / Panier / Enchérir / Négocier selon `type_vente` |
+| `/connexion` | Connexion | Public (non connecté) | Formulaire login |
+| `/inscription` | Inscription | Public (non connecté) | Formulaire register |
+| `/profil` | Profil | Connecté | Infos utilisateur, stats, modification mot de passe |
+| `/panier` | Panier | Connecté | Articles en attente, quantités, sous-total, bouton Commander |
+| `/confirmation/:id` | Confirmation | Connecté | Récapitulatif achat validé |
+| `/achats` | Historique achats | Connecté | Liste des transactions passées |
+| `/encheres/:produitId` | Enchère en cours | Connecté | Timer live, historique offres, formulaire mise |
+| `/negociations` | Mes négociations | Connecté | Liste des négociations actives et terminées |
+| `/negociations/:id` | Détail négociation | Connecté (participant) | Fil d'échanges, boutons contre-offre / accepter / refuser |
+| `/notifications` | Notifications | Connecté | Centre de notifications, marquer comme lu |
+| `/vendeur/produits` | Gestion produits | Vendeur | Créer, modifier, supprimer ses annonces |
+| `/admin` | Administration | Admin | Liste et gestion des utilisateurs |
+
+```mermaid
+flowchart LR
+    HOME["Accueil"] --> CAT["Catalogue"]
+    CAT --> PROD["Détail produit"]
+    PROD -->|"type_vente = achat_immediat"| PAN["Panier"]
+    PROD -->|"type_vente = enchere"| ENC["Enchère"]
+    PROD -->|"type_vente = negociation"| NEG["Négociation"]
+    PAN --> CONF["Confirmation"]
+    ENC --> NOT["Notifications"]
+    NEG --> NOT
+    HOME --> CONN["Connexion / Inscription"]
+    CONN --> HOME
+    HOME --> PRF["Profil"]
+    HOME --> ADM["Admin"]
 ```
 
 ---
 
-## 2. Flux d'initialisation et d'authentification
+## 3. Flux d'initialisation et d'authentification (Max)
 
 Le token CSRF est obtenu **avant** toute authentification, dès le démarrage de l'app.
 
@@ -84,7 +107,7 @@ Le token CSRF est obtenu **avant** toute authentification, dès le démarrage de
 sequenceDiagram
     actor U as Utilisateur
     participant F as React (AuthContext)
-    participant A as API PHP /auth
+    participant A as PHP /auth
     participant DB as MySQL
 
     Note over F: Montage de l'app (useEffect)
@@ -93,123 +116,238 @@ sequenceDiagram
     A->>A: configureSession() → session_start()
     A->>A: generateCsrfToken() → $_SESSION['csrf_token']
     A-->>F: 200 { csrf_token }
-    F->>F: setCsrfToken(token) — stocké en mémoire module
+    F->>F: setCsrfToken(token) — stocké en variable de module JS
 
     F->>A: GET /auth/me.php
     A->>A: requireAuth() — lit $_SESSION['user_id']
-    alt Session active
+    alt Session active (cookie valide)
         A->>DB: SELECT id, name, email, role FROM users WHERE id = ?
         DB-->>A: user
         A-->>F: 200 { id, name, email, role }
-        F->>F: setUser(me)
+        F->>F: setUser(user)
     else Pas de session
-        A-->>F: 401 Non authentifié
+        A-->>F: 401
         F->>F: setUser(null)
     end
 
-    U->>F: Remplit formulaire login
-    F->>A: POST /auth/login.php (pas de CSRF requis — endpoint public)
-    A->>A: configureSession()
+    U->>F: Formulaire connexion
+    F->>A: POST /auth/login.php  ← pas de CSRF (endpoint public)
     A->>DB: SELECT * FROM users WHERE email = ?
-    DB-->>A: user
     A->>A: password_verify()
     A->>A: session_regenerate_id(true)
     A->>A: $_SESSION['user_id'] = id
-    A->>A: generateCsrfToken() → retourne le token de session
-    A-->>F: 200 { success: true, user, csrf_token }
+    A->>A: generateCsrfToken()
+    A-->>F: 200 { success, user, csrf_token }
     F->>F: setUser(user) + setCsrfToken(csrf_token)
-    F->>U: Redirige vers dashboard
 
-    Note over F,A: Toutes les requêtes POST/PUT/DELETE suivantes<br/>incluent X-CSRF-Token: <token> dans le header
+    U->>F: Bouton déconnexion
+    F->>A: POST /auth/logout.php  [X-CSRF-Token: token]
+    A->>A: verifyCsrfToken()
+    A->>A: session_destroy()
+    A-->>F: 200 { message }
+    F->>F: setUser(null)
 ```
 
-> **Points clés :**
-> - `register.php` et `login.php` ne vérifient **pas** le CSRF (l'utilisateur n'a pas encore de session initiale fiable)
-> - `logout.php` vérifie le CSRF (la session est active, on peut valider)
-> - Le token CSRF est stocké côté serveur dans `$_SESSION['csrf_token']` et côté client en variable de module JS (pas de localStorage)
+> `register.php` et `login.php` ne vérifient **pas** le CSRF — l'utilisateur n'a pas encore de session. `logout.php` le vérifie car la session est active.
 
 ---
 
-## 3. Flux enchères (avec polling)
+## 4. Flux catalogue et produits (Lily — backend · Astrid — frontend)
 
-Les transitions d'état sont calculées **à la lecture** (pas de cron) via `transitionnerEtat()`.
+```mermaid
+sequenceDiagram
+    actor U as Visiteur / Acheteur
+    actor V as Vendeur
+    participant F as React
+    participant API as PHP /produits
+    participant DB as MySQL
+
+    U->>F: Accède à /catalogue (ou recherche)
+    F->>API: GET /produits?categorie=X&prix_max=500&recherche=montre&tri=prix_asc
+    API->>DB: SELECT produits WHERE ... ORDER BY ... LIMIT/OFFSET
+    DB-->>API: liste paginée
+    API-->>F: 200 { produits: [...], total, page }
+    F->>F: Affiche les ProductCards
+
+    U->>F: Clique sur un produit
+    F->>API: GET /produits/{id}
+    API->>DB: SELECT produit + vendeur + enchere/negociation associée
+    DB-->>API: détail complet
+    API-->>F: 200 { produit, vendeur, type_vente, ... }
+    F->>F: Affiche la fiche produit avec le bon bouton d'action
+
+    V->>F: Crée un produit (Dashboard vendeur)
+    F->>API: POST /produits  [CSRF + Auth vendeur]
+    API->>API: verifyCsrfToken() + requireRole('vendeur')
+    API->>DB: INSERT produits (titre, prix, type_vente, stock, ...)
+    DB-->>API: produit_id
+    alt type_vente = 'enchere'
+        API->>DB: INSERT encheres (produit_id, prix_depart, date_debut, date_fin)
+    end
+    API-->>F: 201 { produit }
+```
+
+---
+
+## 5. Flux panier et achat immédiat (Lily — backend · Astrid — frontend)
+
+```mermaid
+sequenceDiagram
+    actor U as Acheteur
+    participant F as React
+    participant API_PAN as PHP /panier
+    participant API_ACH as PHP /achats
+    participant DB as MySQL
+
+    U->>F: "Ajouter au panier" sur fiche produit
+    F->>API_PAN: POST /panier  [CSRF + Auth]
+    API_PAN->>API_PAN: requireAuth()
+    API_PAN->>DB: SELECT panier WHERE utilisateur_id = ? (ou INSERT si absent)
+    API_PAN->>DB: INSERT panier_items (panier_id, produit_id, quantite, prix_unitaire)
+    API_PAN-->>F: 201 { success, nb_articles }
+    F->>F: Met à jour le badge panier (useCart)
+
+    U->>F: Visite /panier
+    F->>API_PAN: GET /panier  [Auth]
+    API_PAN->>DB: SELECT panier_items JOIN produits WHERE panier.utilisateur_id = ?
+    DB-->>API_PAN: items avec stock disponible
+    API_PAN-->>F: 200 { items: [...], total }
+    F->>F: Affiche le récapitulatif
+
+    U->>F: "Commander"
+    F->>API_ACH: POST /achats  [CSRF + Auth]
+    API_ACH->>API_ACH: verifyCsrfToken() + requireAuth()
+    API_ACH->>DB: BEGIN TRANSACTION
+    loop Pour chaque item du panier
+        API_ACH->>DB: SELECT produit FOR UPDATE (verrou concurrence)
+        API_ACH->>API_ACH: Vérifie stock >= quantite
+        API_ACH->>DB: UPDATE produits SET stock = stock - quantite
+        API_ACH->>DB: INSERT achats (acheteur_id, vendeur_id, produit_id, montant, type='achat_immediat')
+        API_ACH->>DB: INSERT notifications (vendeur — nouvel achat)
+    end
+    API_ACH->>DB: DELETE panier_items (vider le panier)
+    API_ACH->>DB: COMMIT
+    API_ACH-->>F: 201 { achats: [...] }
+    F->>F: Redirige vers /confirmation/:id
+
+    Note over API_ACH,DB: Achat direct sans panier (bouton "Acheter maintenant") :<br/>même flux POST /achats mais avec produit_id + quantite directs
+```
+
+---
+
+## 6. Flux enchères — polling toutes les 3s (Max — backend · Astrid — frontend)
+
+Les transitions d'état sont calculées **à chaque lecture** via `transitionnerEtat()` — pas de cron.
 
 ```mermaid
 sequenceDiagram
     actor V as Vendeur
     actor A as Acheteur
     participant F as React
-    participant API as API PHP /auctions/index.php
+    participant API as PHP /auctions
     participant DB as MySQL
 
-    V->>F: Crée un produit type "enchere" + enchère associée
-    Note over DB: INSERT produits (type_vente='enchere')<br/>INSERT encheres (etat='en_attente', date_debut, date_fin)
+    V->>F: Crée un produit type_vente='enchere'
+    Note over DB: INSERT produits + INSERT encheres\n(etat='en_attente', date_debut, date_fin)
 
-    Note over F: Polling toutes les 3s via poll.php (GET léger)
+    Note over F: Polling toutes les 3s via poll.php
 
     loop Toutes les 3 secondes
         F->>API: GET /auctions/index.php?produit_id=X&action=statut
         API->>DB: SELECT encheres WHERE produit_id = ?
-        DB-->>API: enchere
-        API->>API: transitionnerEtat() — calcule en_attente→en_cours→terminee selon NOW()
+        API->>API: transitionnerEtat()\nen_attente→en_cours→terminee selon NOW()
         alt Transition détectée
             API->>DB: UPDATE encheres SET etat = ?
         end
         API-->>F: 200 { etat, meilleure_offre, meilleur_encherisseur_id, secondes_restantes }
-        F->>F: Met à jour l'UI
+        F->>F: Met à jour le timer et la mise actuelle
     end
 
-    A->>F: Place une enchère (montant)
-    F->>API: POST /auctions/index.php?produit_id=X&action=offre\n[X-CSRF-Token: token]
+    A->>F: Saisit un montant et clique "Enchérir"
+    F->>API: POST /auctions/index.php?produit_id=X&action=offre\n[X-CSRF-Token]
     API->>API: verifyCsrfToken() + requireAuth()
     API->>DB: BEGIN TRANSACTION
-    API->>DB: SELECT encheres WHERE produit_id = ? FOR UPDATE
-    API->>API: transitionnerEtat() — vérifie que etat = 'en_cours'
-    API->>API: vérifie montant > plancher (meilleure_offre ?? prix_depart)
-    API->>DB: INSERT offres_encheres (enchere_id, utilisateur_id, montant)
-    API->>DB: UPDATE encheres SET meilleure_offre = ?, meilleur_encherisseur_id = ?
-    alt Ancien meilleur enchérisseur existe
+    API->>DB: SELECT encheres FOR UPDATE
+    API->>API: Vérifie etat='en_cours' et montant > plancher
+    API->>DB: INSERT offres_encheres
+    API->>DB: UPDATE encheres SET meilleure_offre, meilleur_encherisseur_id
+    alt Ancien leader existait
         API->>DB: INSERT notifications (type='enchere_surenchere')
     end
     API->>DB: COMMIT
-    API-->>F: 201 { success: true, nouvelle_meilleure_offre }
+    API-->>F: 201 { success, nouvelle_meilleure_offre }
 ```
 
-> **États enchère :** `en_attente` → `en_cours` → `terminee` | `annulee`
-> Transitions calculées lazily à chaque appel GET — aucun cron ou worker externe.
+**États de l'enchère :** `en_attente` → `en_cours` → `terminee` | `annulee`
 
 ---
 
-## 4. Flux négociation (machine à états)
+## 7. Flux négociation — machine à états (Max — backend · Astrid — frontend)
 
 ```mermaid
 stateDiagram-v2
     [*] --> en_attente : Acheteur POST /negociations\n(produit type_vente='negociation')
-    en_attente --> contre_offre : Vendeur répond action=contre_offre
-    en_attente --> accepte : Vendeur répond action=accepter
-    en_attente --> refuse : Vendeur répond action=refuser
-    contre_offre --> contre_offre : L'autre partie répond action=contre_offre
-    contre_offre --> accepte : L'une des parties répond action=accepter
-    contre_offre --> refuse : L'une des parties répond action=refuser
+    en_attente --> contre_offre : Vendeur — action=contre_offre
+    en_attente --> accepte : Vendeur — action=accepter
+    en_attente --> refuse : Vendeur — action=refuser
+    contre_offre --> contre_offre : Autre partie — action=contre_offre
+    contre_offre --> accepte : L'une des parties — action=accepter
+    contre_offre --> refuse : L'une des parties — action=refuser
     en_attente --> expire : expires_at dépassé (7 jours) — détecté à la lecture
     contre_offre --> expire : expires_at dépassé (7 jours) — détecté à la lecture
-    accepte --> [*]
+    accepte --> [*] : Achat créé automatiquement
     refuse --> [*]
     expire --> [*]
 ```
 
-**Règle d'alternance** : le champ `dernier_acteur` (`acheteur` | `vendeur`) empêche la même partie de répondre deux fois de suite. Après l'offre initiale de l'acheteur, c'est au vendeur de répondre, puis alternance.
+**Règle d'alternance** : le champ `dernier_acteur` (`acheteur` | `vendeur`) empêche la même partie de répondre deux fois de suite.
 
-**Transitions légales** (vérifiées côté serveur) :
+**Transitions légales** vérifiées côté serveur (`transitionsLegales()`) :
 
-| État courant | action=`contre_offre` | action=`accepter` | action=`refuser` |
+| État courant | `contre_offre` | `accepter` | `refuser` |
 |---|---|---|---|
 | `en_attente` | → `contre_offre` | → `accepte` | → `refuse` |
 | `contre_offre` | → `contre_offre` | → `accepte` | → `refuse` |
 
 ---
 
-## 5. Schéma de base de données (tables réelles)
+## 8. Notifications (Lily — backend · Astrid — frontend)
+
+Les notifications sont **insérées par le backend** lors d'événements métier. Le frontend les consomme en polling léger ou au chargement.
+
+| Type | Déclencheur | Destinataire |
+|---|---|---|
+| `enchere_surenchere` | Quelqu'un surenchérit | Ancien meilleur enchérisseur |
+| `negociation_nouvelle` | Acheteur crée une négociation | Vendeur |
+| `negociation_reponse` | Contre-offre / acceptation / refus | L'autre partie |
+| `achat_confirme` | Commande passée | Vendeur |
+
+```mermaid
+sequenceDiagram
+    participant F as React (Navbar)
+    participant API as PHP /notifications
+    participant DB as MySQL
+
+    loop Au chargement + rafraîchissement
+        F->>API: GET /notifications  [Auth]
+        API->>DB: SELECT notifications WHERE utilisateur_id = ? ORDER BY created_at DESC
+        DB-->>API: liste
+        API-->>F: 200 { notifications: [...], nb_non_lues }
+        F->>F: Affiche le badge et la liste
+    end
+
+    F->>API: PUT /notifications/{id}/lire  [CSRF + Auth]
+    API->>DB: UPDATE notifications SET lu = 1 WHERE id = ?
+    API-->>F: 200 { success }
+
+    F->>API: PUT /notifications/lire-tout  [CSRF + Auth]
+    API->>DB: UPDATE notifications SET lu = 1 WHERE utilisateur_id = ?
+    API-->>F: 200 { success }
+```
+
+---
+
+## 9. Schéma de base de données complet (Agnes)
 
 ```mermaid
 erDiagram
@@ -272,6 +410,30 @@ erDiagram
         text message
         timestamp created_at
     }
+    panier {
+        int id PK
+        int utilisateur_id FK "UNIQUE"
+        timestamp created_at
+        timestamp updated_at
+    }
+    panier_items {
+        int id PK
+        int panier_id FK
+        int produit_id FK
+        int quantite
+        decimal prix_unitaire
+    }
+    achats {
+        int id PK
+        int acheteur_id FK
+        int vendeur_id FK
+        int produit_id FK
+        int quantite
+        decimal montant
+        enum type "achat_immediat|enchere|negociation"
+        enum statut "confirme|annule"
+        timestamp created_at
+    }
     notifications {
         int id PK
         int utilisateur_id FK
@@ -285,10 +447,16 @@ erDiagram
     users ||--o{ offres_encheres : "enchérit"
     users ||--o{ negociations : "acheteur"
     users ||--o{ negociations : "vendeur"
+    users ||--o| panier : "possède"
+    users ||--o{ achats : "acheteur"
+    users ||--o{ achats : "vendeur"
     users ||--o{ notifications : "reçoit"
     produits ||--o| encheres : "a une enchère"
     produits ||--o{ negociations : "négocié"
+    produits ||--o{ panier_items : "dans panier"
+    produits ||--o{ achats : "acheté"
     encheres ||--o{ offres_encheres : "reçoit"
     encheres }o--o| users : "meilleur enchérisseur"
     negociations ||--o{ echanges_negociation : "contient"
+    panier ||--o{ panier_items : "contient"
 ```
