@@ -90,3 +90,34 @@ CREATE TABLE IF NOT EXISTS echanges_negociation (
   created_at      TIMESTAMP                 NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (negociation_id) REFERENCES negociations(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS panier (
+  id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  utilisateur_id INT UNSIGNED  NOT NULL,
+  produit_id     INT UNSIGNED  NOT NULL,
+  quantite       INT UNSIGNED  NOT NULL DEFAULT 1,
+  created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_panier (utilisateur_id, produit_id),
+  FOREIGN KEY (utilisateur_id) REFERENCES users(id)    ON DELETE CASCADE,
+  FOREIGN KEY (produit_id)     REFERENCES produits(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS commandes (
+  id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  utilisateur_id INT UNSIGNED                          NOT NULL,
+  total          DECIMAL(10,2)                         NOT NULL,
+  statut         ENUM('payee','annulee','remboursee')  NOT NULL DEFAULT 'payee',
+  moyen_paiement ENUM('carte','paypal','virement')     NOT NULL,
+  created_at     TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (utilisateur_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS commande_items (
+  id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  commande_id    INT UNSIGNED  NOT NULL,
+  produit_id     INT UNSIGNED  NOT NULL,
+  quantite       INT UNSIGNED  NOT NULL,
+  prix_unitaire  DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (commande_id) REFERENCES commandes(id) ON DELETE CASCADE,
+  FOREIGN KEY (produit_id)  REFERENCES produits(id)  ON DELETE CASCADE
+) ENGINE=InnoDB;

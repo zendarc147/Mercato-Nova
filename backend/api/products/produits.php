@@ -1,11 +1,11 @@
 <?php
 // backend/api/produits.php
 
-require_once __DIR__ . '/cors.php';
-require_once __DIR__ . '/database.php';
-require_once __DIR__ . '/auth.php';
-require_once __DIR__ . '/csrf.php';
-require_once __DIR__ . '/reponse.php';
+require_once __DIR__ . '/../../config/cors.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../middleware/auth.php';
+require_once __DIR__ . '/../../middleware/csrf.php';
+require_once __DIR__ . '/../reponse/reponse.php';
 
 setCorsHeaders(); // Activation sécurité CORS
 
@@ -44,8 +44,9 @@ switch ($methode) {
             $params = [':prix_min' => $prix_min, ':prix_max' => $prix_max];
 
             if ($q !== '') {
-                $sql .= " AND (titre LIKE :q OR description LIKE :q)";
-                $params[':q'] = "%$q%";
+                $sql .= " AND (titre LIKE :q1 OR description LIKE :q2)";
+                $params[':q1'] = "%$q%";
+                $params[':q2'] = "%$q%";
             }
             if ($categorie !== '') {
                 $sql .= " AND categorie = :categorie";
