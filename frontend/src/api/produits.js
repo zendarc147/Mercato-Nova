@@ -15,3 +15,11 @@ export async function getProduits(params = {}) {
     return { produits: MOCK_PRODUITS }
   }
 }
+
+export async function getProduit(id) {
+  try {
+    return await api.get(`/produits/${id}`)
+  } catch {
+    return MOCK_PRODUITS.find((p) => p.id === Number(id)) ?? null
+  }
+}
