@@ -157,7 +157,7 @@ Si un endpoint n'est pas encore prêt, utiliser des données mockées dans un fi
 ### Livrable 2 — deadline dimanche 31 mai 2026 à 23h55
 
 - [ ] Page d'accueil : hero, catégories, produits en vedette
-- [ ] Pages auth frontend : inscription, connexion, profil/session
+- [x] Pages auth frontend : inscription, connexion *(profil/session manquant)*
 - [ ] Page catalogue avec filtres : catégorie, prix min/max, état
 - [ ] Barre de recherche fonctionnelle
 - [ ] Fiche produit : description, photos, boutons d'action
