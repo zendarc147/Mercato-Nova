@@ -158,7 +158,7 @@ Si un endpoint n'est pas encore prêt, utiliser des données mockées dans un fi
 
 - [x] Page d'accueil : hero, catégories, produits en vedette → PR #91
 - [x] Pages auth frontend : inscription, connexion *(profil/session manquant)*
-- [ ] Page catalogue avec filtres : catégorie, prix min/max, état
+- [x] Page catalogue avec filtres : catégorie, prix min/max, état
 - [ ] Barre de recherche fonctionnelle
 - [ ] Fiche produit : description, photos, boutons d'action
 - [ ] Interface enchère : timer compte à rebours, liste des offres, formulaire enchérir

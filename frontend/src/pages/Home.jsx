@@ -62,7 +62,9 @@ function HeroSection() {
       <h1 id="home-title">La place de l'art et des enchères</h1>
       <img className="home-pictos" src={pictosHome} alt="" aria-hidden="true" />
       <form className="search-bar" role="search" onSubmit={handleSearch}>
-        <span className="search-icon" aria-hidden="true" />
+        <button className="search-submit" type="submit" aria-label="Lancer la recherche">
+          <span className="search-icon" aria-hidden="true" />
+        </button>
         <label className="sr-only" htmlFor="home-search">Rechercher une œuvre</label>
         <input
           id="home-search"
