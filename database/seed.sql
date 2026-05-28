@@ -41,11 +41,13 @@ INSERT INTO notifications (utilisateur_id, type, message, lu) VALUES
 (4, 'enchere_gagnee', 'Vous menez l enchère sur « Toile abstraite — Série Feu » avec 980€', 0),
 (3, 'commande', 'Félicitations, vous avez remporté « Gravure sur bois — Forêt »', 1);
  
-INSERT INTO panier (utilisateur_id) VALUES (4);
+INSERT INTO panier (utilisateur_id, produit_id, quantite) VALUES
+(4, 1, 1);
  
-INSERT INTO panier_items (panier_id, produit_id, quantite, prix_unitaire) VALUES
-(1, 1, 1, 1200.00);
- 
-INSERT INTO achats (acheteur_id, vendeur_id, produit_id, quantite, montant, type, statut) VALUES
-(3, 2, 4, 1, 320.00, 'enchere', 'confirme'),
-(4, 2, 1, 1, 1200.00, 'achat_immediat', 'confirme');
+INSERT INTO commandes (utilisateur_id, total, statut, moyen_paiement) VALUES
+(3, 320.00, 'payee', 'carte'),
+(4, 1200.00, 'payee', 'carte');
+
+INSERT INTO commande_items (commande_id, produit_id, quantite, prix_unitaire) VALUES
+(1, 4, 1, 320.00),
+(2, 1, 1, 1200.00);
