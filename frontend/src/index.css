@@ -457,10 +457,10 @@ select {
 .mini-product {
   min-width: 0;
   display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
+  grid-template-columns: 148px minmax(0, 1fr);
   align-items: center;
   gap: 11px;
-  min-height: 118px;
+  min-height: 148px;
   border: 1px solid rgba(45, 74, 62, 0.28);
   border-radius: 8px;
   padding: 8px;
@@ -478,8 +478,8 @@ select {
 }
 
 .mini-product-image {
-  width: 118px;
-  height: 102px;
+  width: 148px;
+  height: 132px;
   display: grid;
   place-items: center;
   border-radius: 8px;
@@ -860,13 +860,13 @@ select {
   }
 
   .mini-product {
-    grid-template-columns: 112px minmax(0, 1fr);
-    min-height: 112px;
+    grid-template-columns: 138px minmax(0, 1fr);
+    min-height: 138px;
   }
 
   .mini-product-image {
-    width: 112px;
-    height: 96px;
+    width: 138px;
+    height: 122px;
   }
 
   .guest-hero h1 {
@@ -1028,13 +1028,13 @@ select {
   }
 
   .mini-product {
-    grid-template-columns: 112px minmax(0, 1fr);
-    min-height: 112px;
+    grid-template-columns: 128px minmax(0, 1fr);
+    min-height: 128px;
   }
 
   .mini-product-image {
-    width: 112px;
-    height: 96px;
+    width: 128px;
+    height: 112px;
   }
 
   .about-section {
