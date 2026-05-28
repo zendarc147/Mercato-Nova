@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Profil from './pages/Profil'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -16,6 +17,7 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"
