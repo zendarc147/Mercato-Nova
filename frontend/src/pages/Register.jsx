@@ -9,8 +9,8 @@ const preferenceOptions = [
   'Sculpture',
   "Mobilier d'exception",
   'Joaillerie et accessoires',
-  'Curiosites et collections',
-  "Metiers d'art",
+  'Curiosités et collections',
+  "Métiers d'art",
 ]
 
 export default function Register() {
@@ -46,7 +46,7 @@ export default function Register() {
     e.preventDefault()
     setError('')
     if (form.mot_de_passe.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caracteres.')
+      setError('Le mot de passe doit contenir au moins 8 caractères.')
       return
     }
     setStep('preferences')
@@ -82,7 +82,7 @@ export default function Register() {
             </div>
 
             <nav className="main-nav" aria-label="Navigation principale">
-              <span>Encheres</span>
+              <span>Enchères</span>
               <span>Catalogue</span>
               <span>Connexion</span>
             </nav>
@@ -94,7 +94,7 @@ export default function Register() {
           </header>
 
           <section className="guest-hero">
-            <h1>La place de l'art et des encheres</h1>
+            <h1>La place de l'art et des enchères</h1>
             <img className="home-pictos" src={pictosHome} alt="" />
 
             <div className="search-bar">
@@ -106,9 +106,9 @@ export default function Register() {
           <section className="about-section">
             <h2>Qui sommes-nous ?</h2>
             <p>
-              Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
-              d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
-              rares et pieces uniques.
+              Mercato Nova est une plateforme d'enchères et de vente dédiée à toutes les formes
+              d'art : œuvres classiques, créations contemporaines, artisanat, photographie, objets
+              rares et pièces uniques.
             </p>
           </section>
         </div>
@@ -117,14 +117,14 @@ export default function Register() {
       <div className={step === 'preferences' ? 'auth-card auth-card-survey' : 'auth-card'}>
         {step === 'account' ? (
           <>
-            <h1>Creer un compte</h1>
+            <h1>Créer un compte</h1>
 
             {error && <p className="form-error">{error}</p>}
 
             <form onSubmit={handleNext} className="auth-form">
               <div className="form-row">
                 <div className="form-field">
-                  <label htmlFor="register-prenom">Prenom</label>
+                  <label htmlFor="register-prenom">Prénom</label>
                   <input
                     id="register-prenom"
                     type="text"
@@ -162,7 +162,7 @@ export default function Register() {
 
               <div className="form-field">
                 <label htmlFor="register-password">
-                  Mot de passe <span>(8 caracteres min)</span>
+                  Mot de passe <span>(8 caractères min)</span>
                 </label>
                 <input
                   id="register-password"
@@ -189,18 +189,18 @@ export default function Register() {
             </form>
 
             <p className="auth-switch">
-              Deja un compte ? <Link to="/login">Se connecter</Link>
+              Déjà un compte ? <Link to="/login">Se connecter</Link>
             </p>
           </>
         ) : (
           <>
-            <h1>Indiquez vos preferences</h1>
+            <h1>Indiquez vos préférences</h1>
 
             {error && <p className="form-error">{error}</p>}
 
             <form onSubmit={handleSubmit} className="preference-form">
               <fieldset className="preference-list">
-                <legend className="sr-only">Preferences artistiques</legend>
+                <legend className="sr-only">Préférences artistiques</legend>
                 {preferenceOptions.map((preference) => (
                   <label className="preference-option" key={preference}>
                     <input
@@ -214,7 +214,7 @@ export default function Register() {
                 ))}
               </fieldset>
 
-              <p className="preference-note">Vous pourrez changer a tout moment</p>
+              <p className="preference-note">Vous pourrez changer à tout moment</p>
 
               <div className="auth-actions">
                 <button

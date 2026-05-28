@@ -40,7 +40,7 @@ export default function Login() {
             </div>
 
             <nav className="main-nav" aria-label="Navigation principale">
-              <span>Encheres</span>
+              <span>Enchères</span>
               <span>Catalogue</span>
               <span>Connexion</span>
             </nav>
@@ -52,7 +52,7 @@ export default function Login() {
           </header>
 
           <section className="guest-hero">
-            <h1>La place de l'art et des encheres</h1>
+            <h1>La place de l'art et des enchères</h1>
             <img className="home-pictos" src={pictosHome} alt="" />
 
             <div className="search-bar">
@@ -64,9 +64,9 @@ export default function Login() {
           <section className="about-section">
             <h2>Qui sommes-nous ?</h2>
             <p>
-              Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
-              d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
-              rares et pieces uniques.
+              Mercato Nova est une plateforme d'enchères et de vente dédiée à toutes les formes
+              d'art : œuvres classiques, créations contemporaines, artisanat, photographie, objets
+              rares et pièces uniques.
             </p>
           </section>
         </div>

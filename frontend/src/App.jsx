@@ -11,7 +11,7 @@ function PrivateRoute({ children }) {
 }
 
 function PlaceholderPage({ title }) {
-  return <div className="page-placeholder">{title} - a venir</div>
+  return <div className="page-placeholder">{title} - à venir</div>
 }
 
 function AppRoutes() {
@@ -29,13 +29,13 @@ function AppRoutes() {
         }
       />
       <Route path="/catalogue" element={<PlaceholderPage title="Catalogue" />} />
-      <Route path="/encheres" element={<PlaceholderPage title="Encheres" />} />
+      <Route path="/encheres" element={<PlaceholderPage title="Enchères" />} />
       <Route path="/panier" element={<PlaceholderPage title="Mon panier" />} />
       <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
       <Route path="/profil" element={<PlaceholderPage title="Profil" />} />
       <Route path="/mes-ventes" element={<PlaceholderPage title="Mes ventes" />} />
-      <Route path="/mes-negociations" element={<PlaceholderPage title="Mes negociations" />} />
-      <Route path="/mes-encheres" element={<PlaceholderPage title="Mes encheres" />} />
+      <Route path="/mes-negociations" element={<PlaceholderPage title="Mes négociations" />} />
+      <Route path="/mes-encheres" element={<PlaceholderPage title="Mes enchères" />} />
     </Routes>
   )
 }

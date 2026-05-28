@@ -8,25 +8,25 @@ import pictoCatalogueDroite from '../../wireframes/picto-catalogue-droite.png'
 
 const productSections = [
   {
-    title: 'Recommande',
+    title: 'Recommandé',
     items: [
-      { name: 'Vase celadon', seller: 'Atelier Lune', price: '120,00 EUR' },
+      { name: 'Vase céladon', seller: 'Atelier Lune', price: '120,00 EUR' },
       { name: 'Lithographie', seller: 'Galerie Nova', price: '85,00 EUR' },
       { name: 'Table basse', seller: 'Maison Arp', price: '340,00 EUR' },
       { name: 'Portrait ancien', seller: 'Lucien Morel', price: '210,00 EUR' },
     ],
   },
   {
-    title: 'Articles vus recemment',
+    title: 'Articles vus récemment',
     items: [
       { name: 'Lampe opaline', seller: 'Studio Verre', price: '64,00 EUR' },
-      { name: 'Bracelet email', seller: 'Mina Or', price: '92,00 EUR' },
-      { name: 'Affiche 70s', seller: 'Retro Paris', price: '48,00 EUR' },
-      { name: 'Coupe signee', seller: 'C. Valin', price: '150,00 EUR' },
+      { name: 'Bracelet émail', seller: 'Mina Or', price: '92,00 EUR' },
+      { name: 'Affiche 70s', seller: 'Rétro Paris', price: '48,00 EUR' },
+      { name: 'Coupe signée', seller: 'C. Valin', price: '150,00 EUR' },
     ],
   },
   {
-    title: 'Encheres recommandees',
+    title: 'Enchères recommandées',
     items: [
       { name: 'Huile marine', seller: 'Rive Gauche', price: '320,00 EUR' },
       { name: 'Fauteuil club', seller: 'Brocantique', price: '410,00 EUR' },
@@ -35,12 +35,12 @@ const productSections = [
     ],
   },
   {
-    title: 'Encheres bientot fermees',
+    title: 'Enchères bientôt fermées',
     items: [
       { name: 'Service porcelaine', seller: 'Maison Ivoire', price: '180,00 EUR' },
-      { name: 'Tapis noue main', seller: 'Nadir', price: '520,00 EUR' },
-      { name: 'Bague ancienne', seller: 'Orphee', price: '240,00 EUR' },
-      { name: 'Dessin signe', seller: 'Carnet Bleu', price: '76,00 EUR' },
+      { name: 'Tapis noué main', seller: 'Nadir', price: '520,00 EUR' },
+      { name: 'Bague ancienne', seller: 'Orphée', price: '240,00 EUR' },
+      { name: 'Dessin signé', seller: 'Carnet Bleu', price: '76,00 EUR' },
     ],
   },
 ]
@@ -75,7 +75,7 @@ export default function Home() {
         </Link>
 
         <nav className="main-nav" aria-label="Navigation principale">
-          <Link to="/encheres">Encheres</Link>
+          <Link to="/encheres">Enchères</Link>
           <Link to="/catalogue">Catalogue</Link>
           {!isConnected && <Link to="/login">Connexion</Link>}
         </nav>
@@ -114,10 +114,10 @@ export default function Home() {
                   <Link to="/profil">Profil</Link>
                   <Link to="/panier">Mon panier</Link>
                   <Link to="/mes-ventes">Mes Ventes</Link>
-                  <Link to="/mes-negociations">Mes Negociations</Link>
-                  <Link to="/mes-encheres">Mes Encheres</Link>
+                  <Link to="/mes-negociations">Mes Négociations</Link>
+                  <Link to="/mes-encheres">Mes Enchères</Link>
                   <button type="button" onClick={handleLogout}>
-                    Deconnexion
+                    Déconnexion
                   </button>
                 </aside>
               )}
@@ -132,7 +132,7 @@ export default function Home() {
       </header>
 
       <section className="guest-hero" aria-labelledby="home-title">
-        <h1 id="home-title">La place de l'art et des encheres</h1>
+        <h1 id="home-title">La place de l'art et des enchères</h1>
 
         {isConnected ? (
           <>
@@ -156,14 +156,14 @@ export default function Home() {
         <form className="search-bar" role="search" onSubmit={handleSearch}>
           <span className="search-icon" aria-hidden="true" />
           <label className="sr-only" htmlFor="home-search">
-            Rechercher une oeuvre
+            Rechercher une œuvre
           </label>
-          <input id="home-search" name="q" type="search" placeholder="Rechercher une oeuvre" />
+          <input id="home-search" name="q" type="search" placeholder="Rechercher une œuvre" />
         </form>
       </section>
 
       {isConnected ? (
-        <section className="home-product-sections" aria-label="Selections Mercato Nova">
+        <section className="home-product-sections" aria-label="Sélections Mercato Nova">
           {productSections.map((section) => (
             <section className="product-section" key={section.title}>
               <h2>{section.title} :</h2>
@@ -186,13 +186,13 @@ export default function Home() {
         <section className="about-section" aria-labelledby="about-title">
           <h2 id="about-title">Qui sommes-nous ?</h2>
           <p>
-            Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
-            d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
-            rares et pieces uniques.
+            Mercato Nova est une plateforme d'enchères et de vente dédiée à toutes les formes
+            d'art : œuvres classiques, créations contemporaines, artisanat, photographie, objets
+            rares et pièces uniques.
             <br />
-            Pensee autant pour les professionnels que pour les nouveaux passionnes, notre plateforme
-            reunit elegance, accessibilite et decouverte a travers une experience moderne inspiree
-            des grandes maisons d'art et des marches historiques.
+            Pensée autant pour les professionnels que pour les nouveaux passionnés, notre plateforme
+            réunit élégance, accessibilité et découverte à travers une expérience moderne inspirée
+            des grandes maisons d'art et des marchés historiques.
           </p>
         </section>
       )}
