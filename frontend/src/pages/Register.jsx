@@ -1,16 +1,55 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import logoFondVert from '../assets/logo-fond-vert.png'
+import pictosHome from '../assets/pictos-home.png'
+
+const preferenceOptions = [
+  'Peinture',
+  'Sculpture',
+  "Mobilier d'exception",
+  'Joaillerie et accessoires',
+  'Curiosites et collections',
+  "Metiers d'art",
+]
 
 export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'acheteur' })
+  const [step, setStep] = useState('account')
+  const [form, setForm] = useState({
+    prenom: '',
+    nom: '',
+    email: '',
+    mot_de_passe: '',
+    role: 'acheteur',
+    preferences: [],
+  })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   function handleChange(e) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
+  }
+
+  function handlePreferenceChange(e) {
+    const { value, checked } = e.target
+    setForm((f) => ({
+      ...f,
+      preferences: checked
+        ? [...f.preferences, value]
+        : f.preferences.filter((preference) => preference !== value),
+    }))
+  }
+
+  function handleNext(e) {
+    e.preventDefault()
+    setError('')
+    if (form.mot_de_passe.length < 8) {
+      setError('Le mot de passe doit contenir au moins 8 caracteres.')
+      return
+    }
+    setStep('preferences')
   }
 
   async function handleSubmit(e) {
@@ -27,69 +66,172 @@ export default function Register() {
     }
   }
 
+  const pageClassName =
+    step === 'preferences'
+      ? 'auth-page auth-page-survey auth-page-with-background'
+      : 'auth-page auth-page-with-background'
+
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1>Creer un compte</h1>
+    <div className={pageClassName}>
+      <div className="auth-background" aria-hidden="true">
+        <div className="guest-home">
+          <header className="site-header">
+            <div className="brand">
+              <img className="brand-logo" src={logoFondVert} alt="" />
+              <span className="brand-name">Mercato Nova</span>
+            </div>
 
-        {error && <p className="form-error">{error}</p>}
+            <nav className="main-nav" aria-label="Navigation principale">
+              <span>Encheres</span>
+              <span>Catalogue</span>
+              <span>Connexion</span>
+            </nav>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-field">
-            <label htmlFor="register-name">Nom complet</label>
-            <input
-              id="register-name"
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+            <span className="profile-link">
+              <span className="profile-head" />
+              <span className="profile-body" />
+            </span>
+          </header>
 
-          <div className="form-field">
-            <label htmlFor="register-email">Email</label>
-            <input
-              id="register-email"
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <section className="guest-hero">
+            <h1>La place de l'art et des encheres</h1>
+            <img className="home-pictos" src={pictosHome} alt="" />
 
-          <div className="form-field">
-            <label htmlFor="register-password">
-              Mot de passe <span>(8 caracteres min)</span>
-            </label>
-            <input
-              id="register-password"
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              minLength={8}
-            />
-          </div>
+            <div className="search-bar">
+              <span className="search-icon" />
+              <input type="search" tabIndex="-1" />
+            </div>
+          </section>
 
-          <div className="form-field">
-            <label htmlFor="register-role">Je suis...</label>
-            <select id="register-role" name="role" value={form.role} onChange={handleChange}>
-              <option value="acheteur">Acheteur</option>
-              <option value="vendeur">Vendeur</option>
-            </select>
-          </div>
+          <section className="about-section">
+            <h2>Qui sommes-nous ?</h2>
+            <p>
+              Mercato Nova est une plateforme d'encheres et de vente dediee a toutes les formes
+              d'art : oeuvres classiques, creations contemporaines, artisanat, photographie, objets
+              rares et pieces uniques.
+            </p>
+          </section>
+        </div>
+      </div>
 
-          <button type="submit" disabled={loading} className="primary-button">
-            {loading ? 'Creation...' : 'Creer mon compte'}
-          </button>
-        </form>
+      <div className={step === 'preferences' ? 'auth-card auth-card-survey' : 'auth-card'}>
+        {step === 'account' ? (
+          <>
+            <h1>Creer un compte</h1>
 
-        <p className="auth-switch">
-          Deja un compte ? <Link to="/login">Se connecter</Link>
-        </p>
+            {error && <p className="form-error">{error}</p>}
+
+            <form onSubmit={handleNext} className="auth-form">
+              <div className="form-row">
+                <div className="form-field">
+                  <label htmlFor="register-prenom">Prenom</label>
+                  <input
+                    id="register-prenom"
+                    type="text"
+                    name="prenom"
+                    value={form.prenom}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="register-nom">Nom</label>
+                  <input
+                    id="register-nom"
+                    type="text"
+                    name="nom"
+                    value={form.nom}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="register-email">Email</label>
+                <input
+                  id="register-email"
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="register-password">
+                  Mot de passe <span>(8 caracteres min)</span>
+                </label>
+                <input
+                  id="register-password"
+                  type="password"
+                  name="mot_de_passe"
+                  value={form.mot_de_passe}
+                  onChange={handleChange}
+                  required
+                  minLength={8}
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="register-role">Je suis...</label>
+                <select id="register-role" name="role" value={form.role} onChange={handleChange}>
+                  <option value="acheteur">Acheteur</option>
+                  <option value="vendeur">Vendeur</option>
+                </select>
+              </div>
+
+              <button type="submit" className="primary-button">
+                Suite
+              </button>
+            </form>
+
+            <p className="auth-switch">
+              Deja un compte ? <Link to="/login">Se connecter</Link>
+            </p>
+          </>
+        ) : (
+          <>
+            <h1>Indiquez vos preferences</h1>
+
+            {error && <p className="form-error">{error}</p>}
+
+            <form onSubmit={handleSubmit} className="preference-form">
+              <fieldset className="preference-list">
+                <legend className="sr-only">Preferences artistiques</legend>
+                {preferenceOptions.map((preference) => (
+                  <label className="preference-option" key={preference}>
+                    <input
+                      type="checkbox"
+                      value={preference}
+                      checked={form.preferences.includes(preference)}
+                      onChange={handlePreferenceChange}
+                    />
+                    <span>{preference}</span>
+                  </label>
+                ))}
+              </fieldset>
+
+              <p className="preference-note">Vous pourrez changer a tout moment</p>
+
+              <div className="auth-actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setStep('account')}
+                  disabled={loading}
+                >
+                  Retour
+                </button>
+                <button type="submit" disabled={loading} className="primary-button">
+                  {loading ? 'Inscription...' : 'Inscription'}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   )

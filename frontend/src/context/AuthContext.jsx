@@ -25,13 +25,15 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function login(email, password) {
-    const me = await apiLogin(email, password)
+    const response = await apiLogin(email, password)
+    const me = response.user ?? response
     setUser(me)
     return me
   }
 
   async function register(data) {
-    const me = await apiRegister(data)
+    const response = await apiRegister(data)
+    const me = response.user ?? response
     setUser(me)
     return me
   }
