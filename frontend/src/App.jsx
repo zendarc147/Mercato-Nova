@@ -16,6 +16,7 @@ import Panier from './pages/Panier'
 import MesNegociations from './pages/MesNegociations'
 import MesVentes from './pages/MesVentes'
 import MesEncheres from './pages/MesEncheres'
+import AdminDemandes from './pages/AdminDemandes'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -31,6 +32,13 @@ function SellerRoute({ children }) {
   return user.role === 'vendeur' || user.role === 'admin'
     ? children
     : <Navigate to="/profil" replace />
+}
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Navigate to="/login" replace />
+  return user.role === 'admin' ? children : <Navigate to="/" replace />
 }
 
 function AppRoutes() {
@@ -51,6 +59,7 @@ function AppRoutes() {
       <Route path="/mes-ventes" element={<SellerRoute><MesVentes /></SellerRoute>} />
       <Route path="/mes-negociations" element={<PrivateRoute><MesNegociations /></PrivateRoute>} />
       <Route path="/mes-encheres" element={<SellerRoute><MesEncheres /></SellerRoute>} />
+      <Route path="/admin/demandes" element={<AdminRoute><AdminDemandes /></AdminRoute>} />
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"

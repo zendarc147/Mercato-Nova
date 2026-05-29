@@ -10,6 +10,7 @@ export default function ProfileMenu() {
   const [logoutError, setLogoutError] = useState(null)
   const ref = useRef(null)
   const canAccessSellerPages = user?.role === 'vendeur' || user?.role === 'admin'
+  const isAdmin = user?.role === 'admin'
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -63,6 +64,14 @@ export default function ProfileMenu() {
               </Link>
               <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
                 Mes Enchères
+              </Link>
+            </>
+          )}
+          {isAdmin && (
+            <>
+              <hr className="profile-dropdown-separator" />
+              <Link to="/admin/demandes" className="profile-dropdown-item profile-dropdown-item--admin" onClick={() => setOpen(false)}>
+                Demandes vendeur
               </Link>
             </>
           )}
