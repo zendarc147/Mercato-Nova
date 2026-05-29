@@ -111,7 +111,9 @@ export default function Paiement() {
             <strong>{Number(totalAffiche).toFixed(2)} €</strong>
           </div>
           {!fromPanier && (
-            <p className="paiement-recap-note">Prix négocié et accepté par les deux parties.</p>
+            <p className="paiement-recap-note">
+              {state?.fromAuction ? "Prix final de l'enchère remportée." : 'Prix négocié et accepté par les deux parties.'}
+            </p>
           )}
         </div>
 
@@ -140,8 +142,8 @@ export default function Paiement() {
             {loading ? 'Traitement…' : `Payer ${Number(totalAffiche).toFixed(2)} €`}
           </button>
 
-          <Link className="paiement-link-back" to={fromPanier ? '/panier' : `/negociation/${produit.id}`}>
-            ← Retour {fromPanier ? 'au panier' : 'à la négociation'}
+          <Link className="paiement-link-back" to={fromPanier ? '/panier' : state?.fromAuction ? `/enchere/${produit.id}` : `/negociation/${produit.id}`}>
+            ← Retour {fromPanier ? 'au panier' : state?.fromAuction ? "à l'enchère" : 'à la négociation'}
           </Link>
         </form>
       </div>

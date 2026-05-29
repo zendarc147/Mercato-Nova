@@ -25,6 +25,8 @@ if ($method === 'GET' && $action === 'statut') {
     getStatut($produit_id);
 } elseif ($method === 'POST' && $action === 'offre') {
     placerOffre($produit_id);
+} elseif ($method === 'POST' && $action === 'relance_paiement') {
+    relancerPaiement($produit_id);
 } elseif ($method === 'GET' && $action === null) {
     getDetail($produit_id);
 } else {
@@ -192,4 +194,58 @@ function placerOffre(int $produit_id): void {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Erreur serveur']);
     }
+}
+
+// -------------------------------------------------------------------
+// POST /encheres/{produit_id}/relance-paiement
+// Notifie le meilleur encherisseur de payer une enchere terminee.
+// -------------------------------------------------------------------
+function relancerPaiement(int $produit_id): void {
+    verifyCsrfToken();
+    $user = requireAuth();
+
+    $pdo     = getDB();
+    $enchere = fetchEnchereByProduit($pdo, $produit_id);
+
+    if (!$enchere) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'EnchÃ¨re introuvable']);
+        return;
+    }
+
+    $enchere = transitionnerEtat($pdo, $enchere);
+
+    if ($enchere['etat'] !== 'terminee') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => "L'enchÃ¨re n'est pas encore terminÃ©e"]);
+        return;
+    }
+
+    if (!$enchere['meilleur_encherisseur_id']) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Aucun acheteur Ã  notifier']);
+        return;
+    }
+
+    $stmt = $pdo->prepare('SELECT vendeur_id, titre FROM produits WHERE id = ?');
+    $stmt->execute([$produit_id]);
+    $produit = $stmt->fetch();
+
+    if (!$produit) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'Produit introuvable']);
+        return;
+    }
+
+    if ((int) $produit['vendeur_id'] !== (int) $user['id'] && $user['role'] !== 'admin') {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Seul le vendeur ou un admin peut notifier l acheteur']);
+        return;
+    }
+
+    $message = "Votre enchÃ¨re remportÃ©e pour Â« {$produit['titre']} Â» est terminÃ©e. Merci de procÃ©der au paiement.";
+    $stmt = $pdo->prepare('INSERT INTO notifications (utilisateur_id, type, message) VALUES (?, ?, ?)');
+    $stmt->execute([(int) $enchere['meilleur_encherisseur_id'], 'enchere_paiement', $message]);
+
+    echo json_encode(['success' => true]);
 }
