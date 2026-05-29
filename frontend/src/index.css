@@ -3157,17 +3157,21 @@ select {
 
 /* ===== MES VENTES VENDEUR ===== */
 .mes-ventes-page {
+/* ===== MES ENCHERES VENDEUR ===== */
+.mes-encheres-page {
   min-height: 100vh;
   background: var(--color-page);
 }
 
 .mes-ventes-content {
+.mes-encheres-content {
   max-width: 1040px;
   margin: 0 auto;
   padding: 44px 24px 72px;
 }
 
 .mes-ventes-heading {
+.mes-encheres-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -3176,6 +3180,10 @@ select {
 }
 
 .mes-ventes-heading p {
+  margin-bottom: 28px;
+}
+
+.mes-encheres-heading p {
   margin: 0 0 5px;
   color: var(--color-burnt-ochre);
   font-size: 13px;
@@ -3185,6 +3193,7 @@ select {
 }
 
 .mes-ventes-heading h1 {
+.mes-encheres-heading h1 {
   margin: 0;
   color: var(--color-deep-forest);
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -3194,6 +3203,7 @@ select {
 }
 
 .mes-ventes-outline-link {
+.mes-encheres-new-link {
   flex: 0 0 auto;
   border: 1px solid rgba(45, 74, 62, 0.32);
   border-radius: 999px;
@@ -3205,6 +3215,8 @@ select {
 
 .mes-ventes-outline-link:hover,
 .mes-ventes-outline-link:focus-visible {
+.mes-encheres-new-link:hover,
+.mes-encheres-new-link:focus-visible {
   background: var(--color-deep-forest);
   color: #ffffff;
 }
@@ -3288,6 +3300,9 @@ select {
 .mes-ventes-state,
 .mes-ventes-empty {
   margin: 34px 0 0;
+.mes-encheres-state,
+.mes-encheres-empty {
+  margin: 36px 0 0;
   border-radius: 12px;
   padding: 30px;
   background: var(--color-warm-sand);
@@ -3300,6 +3315,12 @@ select {
 }
 
 .mes-ventes-empty h2 {
+.mes-encheres-state--error,
+.mes-encheres-action-error {
+  color: #9d2d1f;
+}
+
+.mes-encheres-empty h2 {
   margin: 0 0 8px;
   color: var(--color-deep-forest);
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -3312,12 +3333,20 @@ select {
 }
 
 .mes-ventes-list {
+.mes-encheres-empty p {
+  margin: 0;
+}
+
+.mes-encheres-list {
   display: grid;
   gap: 16px;
 }
 
 .mes-ventes-card {
   display: grid;
+.mes-encheres-card {
+  display: grid;
+  gap: 0;
   border: 1px solid rgba(45, 74, 62, 0.2);
   border-radius: 12px;
   background: #ffffff;
@@ -3326,6 +3355,7 @@ select {
 }
 
 .mes-ventes-card-link {
+.mes-encheres-card-link {
   display: grid;
   grid-template-columns: 180px minmax(0, 1fr);
   gap: 20px;
@@ -3338,6 +3368,12 @@ select {
 }
 
 .mes-ventes-image {
+.mes-encheres-card-link:hover h2,
+.mes-encheres-card-link:focus-visible h2 {
+  color: var(--color-burnt-ochre);
+}
+
+.mes-encheres-image {
   width: 100%;
   aspect-ratio: 4 / 3;
   display: grid;
@@ -3349,12 +3385,14 @@ select {
 }
 
 .mes-ventes-image img {
+.mes-encheres-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .mes-ventes-info {
+.mes-encheres-info {
   min-width: 0;
   display: grid;
   gap: 10px;
@@ -3362,6 +3400,7 @@ select {
 }
 
 .mes-ventes-title-row {
+.mes-encheres-title-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
@@ -3369,6 +3408,7 @@ select {
 }
 
 .mes-ventes-title-row h2 {
+.mes-encheres-title-row h2 {
   margin: 0;
   color: var(--color-deep-forest);
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -3379,6 +3419,7 @@ select {
 }
 
 .mes-ventes-info > p {
+.mes-encheres-info > p {
   display: -webkit-box;
   margin: 0;
   color: var(--color-muted);
@@ -3394,6 +3435,11 @@ select {
   padding: 5px 10px;
   background: rgba(224, 123, 57, 0.12);
   color: var(--color-burnt-ochre);
+.mes-encheres-status {
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: rgba(155, 107, 155, 0.12);
+  color: var(--color-artist-mauve);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
@@ -3405,12 +3451,29 @@ select {
 }
 
 .mes-ventes-meta {
+.mes-encheres-status--terminee {
+  background: rgba(45, 74, 62, 0.12);
+  color: var(--color-deep-forest);
+}
+
+.mes-encheres-status--en_attente {
+  background: rgba(212, 168, 83, 0.18);
+  color: #8a6425;
+}
+
+.mes-encheres-status--annulee {
+  background: #f1ece6;
+  color: var(--color-muted);
+}
+
+.mes-encheres-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .mes-ventes-meta span {
+.mes-encheres-meta span {
   min-width: 0;
   border-radius: 10px;
   padding: 10px 12px;
@@ -3419,6 +3482,8 @@ select {
 
 .mes-ventes-meta small,
 .mes-ventes-meta strong {
+.mes-encheres-meta small,
+.mes-encheres-meta strong {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3426,12 +3491,14 @@ select {
 }
 
 .mes-ventes-meta small {
+.mes-encheres-meta small {
   margin-bottom: 4px;
   color: var(--color-muted);
   font-size: 12px;
 }
 
 .mes-ventes-meta strong {
+.mes-encheres-meta strong {
   color: var(--color-ink);
   font-size: 15px;
 }
@@ -3439,6 +3506,10 @@ select {
 .mes-ventes-actions {
   display: flex;
   align-items: center;
+.mes-encheres-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   border-top: 1px solid rgba(45, 74, 62, 0.14);
   padding: 12px 16px 16px;
   background: rgba(244, 233, 208, 0.38);
@@ -3461,6 +3532,39 @@ select {
 @media (max-width: 760px) {
   .mes-ventes-heading,
   .mes-ventes-toolbar {
+.mes-encheres-remind {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 18px;
+  background: var(--color-burnt-ochre);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.mes-encheres-remind:hover {
+  transform: translateY(-1px);
+}
+
+.mes-encheres-remind:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+}
+
+.mes-encheres-action-note,
+.mes-encheres-action-error {
+  margin: 0;
+  font-size: 14px;
+}
+
+.mes-encheres-action-note {
+  color: var(--color-deep-forest);
+}
+
+@media (max-width: 760px) {
+  .mes-encheres-heading {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -3485,5 +3589,24 @@ select {
   .mes-ventes-toolbar label,
   .mes-ventes-toolbar select {
     width: 100%;
+  .mes-encheres-heading h1 {
+    font-size: 36px;
+  }
+
+  .mes-encheres-card-link {
+    grid-template-columns: 1fr;
+  }
+
+  .mes-encheres-image {
+    max-height: 240px;
+  }
+
+  .mes-encheres-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .mes-encheres-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
