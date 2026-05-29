@@ -88,8 +88,12 @@ function getImageSrc(imageUrl) {
 
 function ProductCard({ product }) {
   const imgSrc = getImageSrc(product.image_url)
+  const detailPath = product.type_vente === 'enchere'
+    ? `/enchere/${product.id}`
+    : `/produit/${product.id}`
+
   return (
-    <Link to={`/produit/${product.id}`} className="product-card" role="listitem">
+    <Link to={detailPath} className="product-card" role="listitem">
       <div className="product-card-img">
         {imgSrc
           ? <img src={imgSrc} alt={product.titre} />

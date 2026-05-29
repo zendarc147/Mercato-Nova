@@ -1096,21 +1096,27 @@ select {
 
 .fiche-enchere-layout {
   display: grid;
-  grid-template-columns: 191px minmax(0, 1fr);
+  grid-template-columns: minmax(430px, 46vw) minmax(0, 1fr);
   min-height: calc(100vh - 68px);
 }
 
 .fiche-enchere-product {
   display: grid;
   align-content: start;
-  gap: 13px;
-  padding: 48px 30px 32px 39px;
+  gap: 16px;
+  padding: 28px 36px 32px;
   background: var(--color-warm-sand);
 }
 
+.fiche-enchere-gallery {
+  position: relative;
+  width: 100%;
+}
+
 .fiche-enchere-photo {
-  width: 121px;
-  height: 101px;
+  width: 100%;
+  height: min(61vh, 620px);
+  min-height: 410px;
   display: grid;
   place-items: center;
   border-radius: 8px;
@@ -1127,6 +1133,54 @@ select {
   object-fit: cover;
 }
 
+.fiche-enchere-photo-arrow {
+  position: absolute;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(45, 74, 62, 0.88);
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 31px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.fiche-enchere-photo-arrow--prev {
+  left: 12px;
+}
+
+.fiche-enchere-photo-arrow--next {
+  right: 12px;
+}
+
+.fiche-enchere-photo-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -4px;
+}
+
+.fiche-enchere-photo-dot {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--color-deep-forest);
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fiche-enchere-photo-dot--active {
+  background: var(--color-deep-forest);
+}
+
 .fiche-enchere-product h2,
 .fiche-enchere-product p {
   margin: 0;
@@ -1134,7 +1188,7 @@ select {
 
 .fiche-enchere-product h2 {
   color: #000000;
-  font-size: 25px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.05;
 }
@@ -1154,13 +1208,13 @@ select {
 
 .fiche-enchere-description strong {
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 400;
 }
 
 .fiche-enchere-main {
   min-width: 0;
-  padding: 27px 54px 40px 16px;
+  padding: 31px 54px 40px 40px;
 }
 
 .fiche-enchere-topline {
@@ -1904,8 +1958,13 @@ select {
   }
 
   .fiche-enchere-product {
-    grid-template-columns: 121px minmax(0, 1fr);
+    grid-template-columns: minmax(180px, 32vw) minmax(0, 1fr);
     padding: 22px 16px;
+  }
+
+  .fiche-enchere-photo {
+    height: min(42vh, 360px);
+    min-height: 240px;
   }
 
   .fiche-enchere-description {
@@ -2016,6 +2075,11 @@ select {
 
   .fiche-enchere-product {
     grid-template-columns: 1fr;
+  }
+
+  .fiche-enchere-photo {
+    height: min(56vh, 420px);
+    min-height: 280px;
   }
 
   .fiche-enchere-topline h1,
