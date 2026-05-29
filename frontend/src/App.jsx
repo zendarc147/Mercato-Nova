@@ -19,6 +19,16 @@ function PrivateRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />
 }
 
+function SellerRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Navigate to="/login" replace />
+
+  return user.role === 'vendeur' || user.role === 'admin'
+    ? children
+    : <Navigate to="/profil" replace />
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -33,6 +43,9 @@ function AppRoutes() {
       <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} />
       <Route path="/paiement" element={<PrivateRoute><Paiement /></PrivateRoute>} />
       <Route path="/panier" element={<PrivateRoute><Panier /></PrivateRoute>} />
+      <Route path="/mes-ventes" element={<SellerRoute><div className="page-placeholder">Mes ventes - a venir</div></SellerRoute>} />
+      <Route path="/mes-negociations" element={<SellerRoute><div className="page-placeholder">Mes negociations - a venir</div></SellerRoute>} />
+      <Route path="/mes-encheres" element={<SellerRoute><div className="page-placeholder">Mes encheres - a venir</div></SellerRoute>} />
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"

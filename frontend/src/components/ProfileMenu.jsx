@@ -3,12 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProfileMenu() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [logoutError, setLogoutError] = useState(null)
   const ref = useRef(null)
+  const canAccessSellerPages = user?.role === 'vendeur' || user?.role === 'admin'
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -52,6 +53,8 @@ export default function ProfileMenu() {
           <Link to="/panier" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mon panier
           </Link>
+          {canAccessSellerPages && (
+            <>
           <Link to="/mes-ventes" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mes Ventes
           </Link>
@@ -61,6 +64,8 @@ export default function ProfileMenu() {
           <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mes Enchères
           </Link>
+            </>
+          )}
           <button
             className="profile-dropdown-item profile-dropdown-logout"
             onClick={handleLogout}
