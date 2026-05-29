@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../middleware/auth.php';
 
 setCorsHeaders();
 configureSession();
-hearder('Content-Type: application/json');
+header('Content-Type: application/json');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
@@ -28,7 +28,7 @@ function listerNotifications(): void{
     $user = requireAuth();
     $pdo = getDB();
     $stmt = $pdo->prepare(
-        'SELECT id, type, message, lu, created_at FROM notifications WHERE utilisateur_id = ? ORDER BY created_et DESC LIMIT 30'
+        'SELECT id, type, message, lu, created_at FROM notifications WHERE utilisateur_id = ? ORDER BY created_at DESC LIMIT 30'
     );
     $stmt->execute([$user['id']]);
     $rows = $stmt->fetchAll();

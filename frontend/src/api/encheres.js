@@ -9,7 +9,10 @@ const MOCK_ENCHERES = {
     meilleur_encherisseur: { id: 4, nom: 'Lena Martin' },
     etat: 'en_cours',
     date_fin: futureDate(2),
-    historique: [],
+    historique: [
+      { utilisateur_id: 4, nom: 'Lena Martin', montant: 980, date: new Date().toISOString() },
+      { utilisateur_id: 3, nom: 'Camille Durand', montant: 900, date: new Date().toISOString() },
+    ],
   },
   6: {
     id: 2,
@@ -19,7 +22,10 @@ const MOCK_ENCHERES = {
     meilleur_encherisseur: { id: 9, nom: 'Lucas Bernard' },
     etat: 'en_cours',
     date_fin: futureDate(5),
-    historique: [],
+    historique: [
+      { utilisateur_id: 9, nom: 'Lucas Bernard', montant: 360, date: new Date().toISOString() },
+      { utilisateur_id: 11, nom: 'Ryo Tanaka', montant: 330, date: new Date().toISOString() },
+    ],
   },
 }
 
@@ -77,5 +83,21 @@ export async function getEnchereStatut(produitId) {
         return statusFromDetail(getMockEnchere(produitId))
       }
     }
+  }
+}
+
+export async function placerOffre(produitId, montant) {
+  try {
+    return await api.post(`/encheres/${produitId}/offre`, { montant })
+  } catch {
+    return await api.post(`/auctions/index.php?produit_id=${produitId}&action=offre`, { montant })
+  }
+}
+
+export async function relancerPaiementEnchere(produitId) {
+  try {
+    return await api.post(`/encheres/${produitId}/relance-paiement`, {})
+  } catch {
+    return await api.post(`/auctions/index.php?produit_id=${produitId}&action=relance_paiement`, {})
   }
 }

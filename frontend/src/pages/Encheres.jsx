@@ -155,7 +155,7 @@ function AuctionCard({ product, auction, now }) {
 
   return (
     <article className="catalogue-card enchere-card">
-      <Link className="catalogue-card-link enchere-card-link" to={`/produit/${product.id}`}>
+      <Link className="catalogue-card-link enchere-card-link" to={`/enchere/${product.id}`}>
         <AuctionImage product={product} />
         <div className="catalogue-card-body enchere-card-body">
           <div className="enchere-card-heading">
