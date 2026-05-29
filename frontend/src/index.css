@@ -509,6 +509,28 @@ select {
   color: #ffffff;
 }
 
+.header-icon-cart {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -7px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--color-burnt-ochre);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  pointer-events: none;
+}
+
 /* ── Categories row ── */
 
 .categories-row {
@@ -963,6 +985,15 @@ select {
   transform: scale(1.04);
 }
 
+.catalogue-cart-button--done {
+  background: #2e7d52;
+  transform: none !important;
+}
+
+.catalogue-cart-button--done:hover {
+  background: #2e7d52;
+}
+
 .catalogue-state {
   display: grid;
   justify-items: center;
@@ -1331,6 +1362,29 @@ select {
   color: var(--color-muted);
 }
 
+.produit-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.produit-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(45, 74, 62, 0.25);
+  cursor: pointer;
+  padding: 0;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.produit-dot--active {
+  background: var(--color-deep-forest);
+  transform: scale(1.25);
+}
+
 .produit-info {
   display: flex;
   flex-direction: column;
@@ -1415,6 +1469,10 @@ select {
 
 .produit-action-icon:hover {
   opacity: 0.85;
+}
+
+.produit-action-icon--done {
+  background: #2e7d52;
 }
 
 .produit-cta {
@@ -2294,5 +2352,197 @@ select {
   .paiement-layout {
     grid-template-columns: 1fr;
     margin: 24px auto;
+  }
+}
+
+/* ── Page panier ── */
+
+.panier-page {
+  min-height: 100vh;
+  background: var(--color-page);
+}
+
+.panier-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.panier-title-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 32px;
+  color: var(--color-deep-forest);
+}
+
+.panier-title-row h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--color-deep-forest);
+}
+
+.panier-title-icon {
+  display: flex;
+  align-items: center;
+}
+
+.panier-state {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 17px;
+  color: var(--color-muted);
+}
+
+.panier-state--error {
+  color: #9d2d1f;
+}
+
+.panier-state--empty {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.panier-list {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panier-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--color-warm-sand);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.panier-item-image {
+  flex: 0 0 80px;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.panier-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panier-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.panier-item-titre {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-burnt-ochre);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panier-item-vendeur {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.panier-item-prix {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.panier-item-remove {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(45, 74, 62, 0.3);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-deep-forest);
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.panier-item-remove:hover {
+  background: var(--color-deep-forest);
+  border-color: var(--color-deep-forest);
+  color: #ffffff;
+}
+
+.panier-item-remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.panier-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.panier-btn-payer {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 52px;
+  background: var(--color-deep-forest);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 140ms ease;
+}
+
+.panier-btn-payer:hover {
+  opacity: 0.85;
+}
+
+.panier-btn-payer:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.panier-nb-articles {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+@media (max-width: 600px) {
+  .panier-title-row h1 {
+    font-size: 34px;
+  }
+
+  .panier-footer {
+    flex-direction: column;
+    gap: 16px;
   }
 }

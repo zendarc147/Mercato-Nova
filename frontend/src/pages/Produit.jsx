@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getProduit } from '../api/produits'
 import { addToRecentlyViewed } from '../api/recentlyViewed'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
+import { addToCart } from '../api/panier'
 import SiteHeader from '../components/SiteHeader'
 
 function IconCart() {
@@ -25,12 +27,43 @@ function IconHandshake() {
   )
 }
 
+function buildPhotos(imageUrl, produitId) {
+  const base = imageUrl?.startsWith('http')
+    ? imageUrl
+    : imageUrl
+      ? `/uploads/produits/${imageUrl}`
+      : null
+
+  if (!base) {
+    return [
+      `https://picsum.photos/seed/mn${produitId}/600/400`,
+      `https://picsum.photos/seed/mn${produitId}-2/600/400`,
+      `https://picsum.photos/seed/mn${produitId}-3/600/400`,
+    ]
+  }
+
+  if (base.includes('picsum.photos/seed/')) {
+    const seed = base.match(/\/seed\/([^/]+)\//)?.[1] ?? `mn${produitId}`
+    return [
+      base,
+      `https://picsum.photos/seed/${seed}-2/600/400`,
+      `https://picsum.photos/seed/${seed}-3/600/400`,
+    ]
+  }
+
+  return [base]
+}
+
 export default function Produit() {
   const { id } = useParams()
   const { user } = useAuth()
+  const { refreshCart } = useCart()
+  const navigate = useNavigate()
   const [produit, setProduit] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [cartState, setCartState] = useState('idle')
+  const [photoIndex, setPhotoIndex] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -43,6 +76,7 @@ export default function Produit() {
         setError('Produit introuvable.')
       } else {
         setProduit(data)
+        setPhotoIndex(0)
         addToRecentlyViewed(data)
       }
       setLoading(false)
@@ -50,6 +84,30 @@ export default function Produit() {
     load()
     return () => { cancelled = true }
   }, [id])
+
+  async function handleAddToCart() {
+    if (!user) { navigate('/login'); return }
+    setCartState('adding')
+    try {
+      await addToCart(Number(id), 1)
+      refreshCart()
+      setCartState('done')
+      setTimeout(() => setCartState('idle'), 2000)
+    } catch {
+      setCartState('idle')
+    }
+  }
+
+  const photos = produit ? buildPhotos(produit.image_url, produit.id) : []
+  const currentPhoto = photos[photoIndex] ?? null
+
+  function prevPhoto() {
+    setPhotoIndex((i) => (i - 1 + photos.length) % photos.length)
+  }
+
+  function nextPhoto() {
+    setPhotoIndex((i) => (i + 1) % photos.length)
+  }
 
   return (
     <main className="produit-page">
@@ -62,14 +120,35 @@ export default function Produit() {
         <div className="produit-layout">
           <div className="produit-top">
             <div className="produit-image-wrapper">
-              <button className="produit-arrow" aria-label="Image précédente">&#9664;</button>
+              {photos.length > 1 && (
+                <button className="produit-arrow" aria-label="Image précédente" onClick={prevPhoto}>
+                  &#9664;
+                </button>
+              )}
               <div className="produit-image">
-                {produit.image_url
-                  ? <img src={`/uploads/produits/${produit.image_url}`} alt={produit.titre} />
+                {currentPhoto
+                  ? <img src={currentPhoto} alt={`${produit.titre} — photo ${photoIndex + 1}`} />
                   : <span className="produit-img-placeholder">photo produit</span>}
               </div>
-              <button className="produit-arrow" aria-label="Image suivante">&#9654;</button>
+              {photos.length > 1 && (
+                <button className="produit-arrow" aria-label="Image suivante" onClick={nextPhoto}>
+                  &#9654;
+                </button>
+              )}
             </div>
+
+            {photos.length > 1 && (
+              <div className="produit-dots">
+                {photos.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`produit-dot${i === photoIndex ? ' produit-dot--active' : ''}`}
+                    aria-label={`Photo ${i + 1}`}
+                    onClick={() => setPhotoIndex(i)}
+                  />
+                ))}
+              </div>
+            )}
 
             <div className="produit-info">
               <h1 className="produit-titre">{produit.titre}</h1>
@@ -88,8 +167,19 @@ export default function Produit() {
             </div>
 
             <div className="produit-actions">
-              <button className="produit-action-icon" aria-label="Ajouter au panier">
-                <IconCart />
+              <button
+                className={`produit-action-icon${cartState === 'done' ? ' produit-action-icon--done' : ''}`}
+                aria-label="Ajouter au panier"
+                onClick={handleAddToCart}
+                disabled={cartState === 'adding' || cartState === 'done'}
+              >
+                {cartState === 'done' ? (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : (
+                  <IconCart />
+                )}
               </button>
               {produit.type_vente === 'negociation' && (
                 <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
