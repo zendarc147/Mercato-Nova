@@ -36,9 +36,14 @@ function listerNegociations(): void {
 
     $stmt = $pdo->prepare(
         'SELECT n.id,
-                pr.titre  AS produit_titre,
+                n.produit_id,
+                pr.titre     AS produit_titre,
+                pr.image_url AS produit_image,
                 n.etat,
                 n.derniere_offre,
+                n.dernier_acteur,
+                n.acheteur_id,
+                n.vendeur_id,
                 n.updated_at
          FROM negociations n
          JOIN produits pr ON pr.id = n.produit_id
@@ -49,11 +54,16 @@ function listerNegociations(): void {
     $rows = $stmt->fetchAll();
 
     $negociations = array_map(fn($r) => [
-        'id'            => (int) $r['id'],
-        'produit_titre' => $r['produit_titre'],
-        'etat'          => $r['etat'],
+        'id'             => (int) $r['id'],
+        'produit_id'     => (int) $r['produit_id'],
+        'produit_titre'  => $r['produit_titre'],
+        'produit_image'  => $r['produit_image'],
+        'etat'           => $r['etat'],
         'derniere_offre' => (float) $r['derniere_offre'],
-        'updated_at'    => $r['updated_at'],
+        'dernier_acteur' => $r['dernier_acteur'],
+        'acheteur_id'    => (int) $r['acheteur_id'],
+        'vendeur_id'     => (int) $r['vendeur_id'],
+        'updated_at'     => $r['updated_at'],
     ], $rows);
 
     echo json_encode(['negociations' => $negociations]);

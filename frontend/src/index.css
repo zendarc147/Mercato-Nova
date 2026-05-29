@@ -2637,3 +2637,178 @@ select {
     gap: 16px;
   }
 }
+
+/* ===== MES NÉGOCIATIONS ===== */
+.mes-negos-page {
+  min-height: 100vh;
+  background: var(--color-bg, #FFFCEF);
+}
+
+.mes-negos-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.mes-negos-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-forest, #2D4A3E);
+  margin-bottom: 32px;
+}
+
+.mes-negos-section {
+  margin-bottom: 40px;
+}
+
+.mes-negos-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-forest, #2D4A3E);
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+
+.mes-negos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mes-negos-list--termines .mes-negos-item {
+  opacity: 0.7;
+}
+
+.mes-negos-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e8e0cc;
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.mes-negos-item:hover {
+  box-shadow: 0 4px 16px rgba(45, 74, 62, 0.10);
+  border-color: var(--color-forest, #2D4A3E);
+}
+
+.mes-negos-item--termine:hover {
+  border-color: #ccc;
+}
+
+.mes-negos-item-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f0ece0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 12px;
+}
+
+.mes-negos-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mes-negos-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mes-negos-item-titre {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-forest, #2D4A3E);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mes-negos-item-offre {
+  font-size: 13px;
+  color: #666;
+}
+
+.mes-negos-item-offre strong {
+  color: var(--color-ocre, #E07B39);
+}
+
+.mes-negos-item-tour {
+  flex-shrink: 0;
+}
+
+/* Badges état */
+.nego-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nego-badge--attente   { background: #fff3cd; color: #856404; }
+.nego-badge--encours   { background: #d4edff; color: #0055a4; }
+.nego-badge--accepte   { background: #d4edda; color: #155724; }
+.nego-badge--refuse    { background: #f8d7da; color: #721c24; }
+.nego-badge--expire    { background: #e2e3e5; color: #383d41; }
+
+/* Badges tour */
+.tour-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.tour-badge--action  { background: var(--color-ocre, #E07B39); color: #fff; }
+.tour-badge--attente { background: #f0ece0; color: #888; }
+
+.mes-negos-state {
+  text-align: center;
+  padding: 48px 0;
+  color: #888;
+  font-size: 16px;
+}
+
+.mes-negos-state--error { color: #c0392b; }
+
+.mes-negos-state a {
+  color: var(--color-ocre, #E07B39);
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .mes-negos-title { font-size: 26px; }
+
+  .mes-negos-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .mes-negos-item-tour {
+    width: 100%;
+  }
+}
