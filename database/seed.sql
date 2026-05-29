@@ -38,19 +38,19 @@ SET FOREIGN_KEY_CHECKS = 1;
 --               6=Camille 7=Ibrahim 8=Sofia
 --               9=Lucas 10=Emma 11=Ryo 12=Fatou 13=Julien
 INSERT INTO users (name, email, password, role) VALUES
-('Nova Elio',         'elio@mercatonova.fr',    '$2y$10$1RwZvWDV2REAWiqNW6ty3ebqxgwcU3kmMgQWU6kbQmhoM/BK5YaU6', 'admin'),
-('Kudo Shinichi',     'shinichi@mercatonova.fr', '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
-('Tanaka Yumi',       'yumi@mercatonova.fr',     '$2y$10$A44SMkpq5opwFq8FG3MjjO.Yat1sfbz.YFbXeH1/IxMPL7VVeV08i', 'acheteur'),
-('Penatelo Lena',     'lena@mercatonova.fr',     '$2y$10$nPdfaoFPH/RGLpWKD1r5IObW/wvwentB11fbdVjpk/EoBIfGz2l0q', 'acheteur'),
-('Amara Diallo',      'amara@mercatonova.fr',    '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
-('Camille Rousseau',  'camille@mercatonova.fr',  '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
-('Ibrahim Al-Rashid', 'ibrahim@mercatonova.fr',  '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
-('Sofia Marchetti',   'sofia@mercatonova.fr',    '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'vendeur'),
-('Lucas Bernard',     'lucas@mercatonova.fr',    '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'acheteur'),
-('Emma Johansson',    'emma@mercatonova.fr',     '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'acheteur'),
-('Ryo Matsuda',       'ryo@mercatonova.fr',      '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'acheteur'),
-('Fatou Ndiaye',      'fatou@mercatonova.fr',    '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'acheteur'),
-('Julien Moreau',     'julien@mercatonova.fr',   '$2y$10$avxEpAgTIf07A2XqLT7QxOCHIsvPSfFC1PxvoWxkprQzmGMt/SwMu', 'acheteur');
+('Nova Elio',         'elio@mercatonova.fr',    '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'admin'),
+('Kudo Shinichi',     'shinichi@mercatonova.fr', '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'vendeur'),
+('Tanaka Yumi',       'yumi@mercatonova.fr',     '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Penatelo Lena',     'lena@mercatonova.fr',     '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Amara Diallo',      'amara@mercatonova.fr',    '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'vendeur'),
+('Camille Rousseau',  'camille@mercatonova.fr',  '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'vendeur'),
+('Ibrahim Al-Rashid', 'ibrahim@mercatonova.fr',  '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'vendeur'),
+('Sofia Marchetti',   'sofia@mercatonova.fr',    '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'vendeur'),
+('Lucas Bernard',     'lucas@mercatonova.fr',    '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Emma Johansson',    'emma@mercatonova.fr',     '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Ryo Matsuda',       'ryo@mercatonova.fr',      '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Fatou Ndiaye',      'fatou@mercatonova.fr',    '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur'),
+('Julien Moreau',     'julien@mercatonova.fr',   '$2y$10$mRXzpQhR7QiMBpQZlu8IyOfNhphIpnkC53MGWz8SvA9OM8fQK8OwG', 'acheteur');
 
 -- ── 2. Produits ───────────────────────────────────────────────
 --   30 produits · vendeurs 2, 5, 6, 7, 8
