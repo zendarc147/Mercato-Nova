@@ -119,74 +119,76 @@ export default function Produit() {
       {produit && (
         <div className="produit-layout">
           <div className="produit-top">
-            <div className="produit-image-wrapper">
-              {photos.length > 1 && (
-                <button className="produit-arrow" aria-label="Image précédente" onClick={prevPhoto}>
-                  &#9664;
-                </button>
-              )}
-              <div className="produit-image">
-                {currentPhoto
-                  ? <img src={currentPhoto} alt={`${produit.titre} — photo ${photoIndex + 1}`} />
-                  : <span className="produit-img-placeholder">photo produit</span>}
+            {/* Colonne gauche : galerie */}
+            <div className="produit-galerie">
+              <div className="produit-image-wrapper">
+                {photos.length > 1 && (
+                  <button className="produit-arrow" aria-label="Image précédente" onClick={prevPhoto}>
+                    &#9664;
+                  </button>
+                )}
+                <div className="produit-image">
+                  {currentPhoto
+                    ? <img src={currentPhoto} alt={`${produit.titre} — photo ${photoIndex + 1}`} />
+                    : <span className="produit-img-placeholder">photo produit</span>}
+                </div>
+                {photos.length > 1 && (
+                  <button className="produit-arrow" aria-label="Image suivante" onClick={nextPhoto}>
+                    &#9654;
+                  </button>
+                )}
               </div>
+
               {photos.length > 1 && (
-                <button className="produit-arrow" aria-label="Image suivante" onClick={nextPhoto}>
-                  &#9654;
-                </button>
+                <div className="produit-dots">
+                  {photos.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`produit-dot${i === photoIndex ? ' produit-dot--active' : ''}`}
+                      aria-label={`Photo ${i + 1}`}
+                      onClick={() => setPhotoIndex(i)}
+                    />
+                  ))}
+                </div>
               )}
             </div>
 
-            {photos.length > 1 && (
-              <div className="produit-dots">
-                {photos.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`produit-dot${i === photoIndex ? ' produit-dot--active' : ''}`}
-                    aria-label={`Photo ${i + 1}`}
-                    onClick={() => setPhotoIndex(i)}
-                  />
-                ))}
-              </div>
-            )}
-
+            {/* Colonne droite : toutes les infos */}
             <div className="produit-info">
               <h1 className="produit-titre">{produit.titre}</h1>
               <p className="produit-vendeur">
                 {produit.vendeur?.prenom ? `${produit.vendeur.prenom} ` : ''}{produit.vendeur?.nom ?? 'Vendeur'}
               </p>
               <p className="produit-categorie">{produit.categorie}</p>
-              <p className="produit-prix">Prix : {Number(produit.prix).toFixed(2)} €</p>
-            </div>
-          </div>
+              <p className="produit-prix">{Number(produit.prix).toFixed(2)} €</p>
 
-          <div className="produit-bottom">
-            <div className="produit-description">
-              <strong>Description :</strong>
-              <p>{produit.description ?? '—'}</p>
-            </div>
+              <div className="produit-description">
+                <strong>Description</strong>
+                <p>{produit.description ?? '—'}</p>
+              </div>
 
-            <div className="produit-actions">
-              <button
-                className={`produit-action-icon${cartState === 'done' ? ' produit-action-icon--done' : ''}`}
-                aria-label="Ajouter au panier"
-                onClick={handleAddToCart}
-                disabled={cartState === 'adding' || cartState === 'done'}
-              >
-                {cartState === 'done' ? (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <IconCart />
+              <div className="produit-actions">
+                <button
+                  className={`produit-action-icon${cartState === 'done' ? ' produit-action-icon--done' : ''}`}
+                  aria-label="Ajouter au panier"
+                  onClick={handleAddToCart}
+                  disabled={cartState === 'adding' || cartState === 'done'}
+                >
+                  {cartState === 'done' ? (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <IconCart />
+                  )}
+                </button>
+                {produit.type_vente === 'negociation' && (
+                  <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
+                    <IconHandshake />
+                  </Link>
                 )}
-              </button>
-              {produit.type_vente === 'negociation' && (
-                <Link to={`/negociation/${produit.id}`} className="produit-action-icon" aria-label="Négocier">
-                  <IconHandshake />
-                </Link>
-              )}
-              <button className="produit-cta">Achat immédiat</button>
+                <button className="produit-cta">Achat immédiat</button>
+              </div>
             </div>
           </div>
         </div>
