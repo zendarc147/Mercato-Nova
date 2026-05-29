@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { getProduits } from '../api/produits'
+import { addToCart } from '../api/panier'
 import SiteHeader from '../components/SiteHeader'
 import pictoCatalogueLeft from '../../wireframes/picto-catalogue-gauche.png'
 import pictoCatalogueRight from '../../wireframes/picto-catalogue-droite.png'
@@ -61,8 +63,10 @@ function sortProducts(products, sortBy) {
   return sorted
 }
 
-function CatalogueCard({ product }) {
+function CatalogueCard({ product, onAddToCart, addingIds, doneIds }) {
   const seller = product.vendeur?.nom || product.vendeur_nom || (product.vendeur_id ? `Vendeur #${product.vendeur_id}` : 'Vendeur')
+  const isAdding = addingIds.has(product.id)
+  const isDone = doneIds.has(product.id)
 
   return (
     <article className="catalogue-card">
@@ -74,12 +78,24 @@ function CatalogueCard({ product }) {
           <strong>{formatPrice(product.prix)}</strong>
         </div>
       </Link>
-      <button className="catalogue-cart-button" type="button" aria-label={`Ajouter ${product.titre} au panier`}>
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="9" cy="21" r="1" />
-          <circle cx="20" cy="21" r="1" />
-          <path d="M1 1h4l2.6 13.2a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-        </svg>
+      <button
+        className={`catalogue-cart-button${isDone ? ' catalogue-cart-button--done' : ''}`}
+        type="button"
+        aria-label={`Ajouter ${product.titre} au panier`}
+        onClick={() => onAddToCart(product.id)}
+        disabled={isAdding || isDone}
+      >
+        {isDone ? (
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.6 13.2a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+          </svg>
+        )}
       </button>
     </article>
   )
@@ -106,6 +122,8 @@ function ProductImage({ product }) {
 
 export default function Catalogue() {
   const { user } = useAuth()
+  const { refreshCart } = useCart()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const urlQuery = searchParams.get('q') || ''
   const [searchValue, setSearchValue] = useState(urlQuery)
@@ -115,6 +133,8 @@ export default function Catalogue() {
   const [selectedCategories, setSelectedCategories] = useState([])
   const [maxPrice, setMaxPrice] = useState('')
   const [sortBy, setSortBy] = useState('date_desc')
+  const [addingIds, setAddingIds] = useState(new Set())
+  const [doneIds, setDoneIds] = useState(new Set())
 
   useEffect(() => {
     setSearchValue(urlQuery)
@@ -184,6 +204,23 @@ export default function Catalogue() {
     setSelectedCategories([])
     setMaxPrice('')
     setSortBy('date_desc')
+  }
+
+  async function handleAddToCart(productId) {
+    if (!user) { navigate('/login'); return }
+    setAddingIds((prev) => new Set(prev).add(productId))
+    try {
+      await addToCart(productId, 1)
+      setDoneIds((prev) => new Set(prev).add(productId))
+      refreshCart()
+      setTimeout(() => {
+        setDoneIds((prev) => { const next = new Set(prev); next.delete(productId); return next })
+      }, 2000)
+    } catch {
+      // silently ignore
+    } finally {
+      setAddingIds((prev) => { const next = new Set(prev); next.delete(productId); return next })
+    }
   }
 
   return (
@@ -286,7 +323,13 @@ export default function Catalogue() {
           ) : (
             <div className="catalogue-grid">
               {displayedProducts.map((product) => (
-                <CatalogueCard key={product.id} product={product} />
+                <CatalogueCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  addingIds={addingIds}
+                  doneIds={doneIds}
+                />
               ))}
             </div>
           )}

@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { CartProvider } from './context/CartContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -8,6 +9,8 @@ import Produit from './pages/Produit'
 import Notifications from './pages/Notifications'
 import Catalogue from './pages/Catalogue'
 import Negociation from './pages/Negociation'
+import Paiement from './pages/Paiement'
+import Panier from './pages/Panier'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -25,7 +28,9 @@ function AppRoutes() {
       <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
       <Route path="/produit/:id" element={<Produit />} />
       <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
-      <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} /> 
+      <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} />
+      <Route path="/paiement" element={<PrivateRoute><Paiement /></PrivateRoute>} />
+      <Route path="/panier" element={<PrivateRoute><Panier /></PrivateRoute>} />
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"
@@ -42,7 +47,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <CartProvider>
+        <AppRoutes />
+      </CartProvider>
     </AuthProvider>
   )
 }

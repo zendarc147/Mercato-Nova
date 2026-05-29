@@ -226,6 +226,9 @@ INSERT INTO notifications (utilisateur_id, type, message, lu) VALUES
 (13, 'enchere_gagnee',       'Vous menez l enchère sur « Photographie — Désert au lever » avec 780€', 0),
 (13, 'negociation_nouvelle', 'Négociation initiée pour « Aquarelle — Vue sur l Arno »', 1);
 
+-- ── 7b. Images produits (Picsum Photos, stables par seed) ───
+UPDATE produits SET image_url = CONCAT('https://picsum.photos/seed/mn', id, '/600/400');
+
 -- ── 8. Panier ────────────────────────────────────────────────
 INSERT INTO panier (utilisateur_id, produit_id, quantite) VALUES
 (4,  1, 1),   -- Lena veut le buste en marbre

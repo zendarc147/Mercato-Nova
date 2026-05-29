@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import ProfileMenu from './ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
+import { useCart } from '../context/CartContext'
 
 export default function SiteHeader({ user }) {
+  const { cartCount } = useCart()
+
   return (
     <header className="site-header">
       <Link className="brand" to="/" aria-label="Mercato Nova accueil">
@@ -18,11 +21,16 @@ export default function SiteHeader({ user }) {
 
       {user ? (
         <div className="header-icons">
-          <Link to="/panier" className="header-icon-link" aria-label="Panier">
+          <Link to="/panier" className="header-icon-link header-icon-cart" aria-label={`Panier${cartCount > 0 ? ` (${cartCount} article${cartCount > 1 ? 's' : ''})` : ''}`}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
+            {cartCount > 0 && (
+              <span className="cart-badge" aria-hidden="true">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
           </Link>
           <Link to="/notifications" className="header-icon-link" aria-label="Notifications">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
