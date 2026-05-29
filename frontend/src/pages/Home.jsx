@@ -80,12 +80,19 @@ function HeroSection() {
   )
 }
 
+function getImageSrc(imageUrl) {
+  if (!imageUrl) return null
+  if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
+  return `/uploads/produits/${imageUrl}`
+}
+
 function ProductCard({ product }) {
+  const imgSrc = getImageSrc(product.image_url)
   return (
     <Link to={`/produit/${product.id}`} className="product-card" role="listitem">
       <div className="product-card-img">
-        {product.image_url
-          ? <img src={`/uploads/produits/${product.image_url}`} alt={product.titre} />
+        {imgSrc
+          ? <img src={imgSrc} alt={product.titre} />
           : <span className="product-img-placeholder">Œuvre</span>}
       </div>
       <div className="product-card-info">
@@ -117,6 +124,7 @@ function ProductSection({ title, produits, loading, emptyMessage }) {
 }
 
 function ConnectedHome() {
+  const { user } = useAuth()
   const [activeCat, setActiveCat] = useState(null)
   const [produits, setProduits] = useState([])
   const [encheres, setEncheres] = useState([])
@@ -141,7 +149,12 @@ function ConnectedHome() {
           getProduits({ ...params, type_vente: 'enchere' }),
         ])
         if (cancelled) return
-        setProduits((resProduits.produits ?? []).filter((p) => p.type_vente !== 'enchere').slice(0, 8))
+        const userPrefs = user?.preferences ?? []
+        const allProduits = (resProduits.produits ?? []).filter((p) => p.type_vente !== 'enchere')
+        const filtered = userPrefs.length > 0
+          ? allProduits.filter((p) => userPrefs.includes(p.categorie))
+          : allProduits
+        setProduits((filtered.length > 0 ? filtered : allProduits).slice(0, 8))
         setEncheres((resEncheres.produits ?? []).slice(0, 8))
       } catch {
         if (!cancelled) { setProduits([]); setEncheres([]) }

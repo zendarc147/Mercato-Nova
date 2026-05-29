@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { savePreferences } from '../api/profil'
 import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 
@@ -20,12 +21,18 @@ const ROLE_LABEL = {
 }
 
 export default function Profil() {
-  const { user, logout } = useAuth()
+  const { user, logout, refreshUser } = useAuth()
   const navigate = useNavigate()
   const [prefs, setPrefs] = useState([])
   const [prefsSaved, setPrefsSaved] = useState(false)
+  const [prefsError, setPrefsError] = useState(null)
+  const [prefsLoading, setPrefsLoading] = useState(false)
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [logoutError, setLogoutError] = useState(null)
+
+  useEffect(() => {
+    if (user?.preferences) setPrefs(user.preferences)
+  }, [user])
 
   async function handleLogout() {
     setLogoutLoading(true)
@@ -48,9 +55,20 @@ export default function Profil() {
     setPrefs((p) => p.includes(pref) ? p.filter((x) => x !== pref) : [...p, pref])
   }
 
-  function handleSavePrefs(e) {
+  async function handleSavePrefs(e) {
     e.preventDefault()
-    setPrefsSaved(true)
+    setPrefsLoading(true)
+    setPrefsError(null)
+    setPrefsSaved(false)
+    try {
+      await savePreferences(prefs)
+      await refreshUser()
+      setPrefsSaved(true)
+    } catch (err) {
+      setPrefsError(err.message || 'Erreur lors de la sauvegarde.')
+    } finally {
+      setPrefsLoading(false)
+    }
   }
 
   return (
@@ -107,10 +125,13 @@ export default function Profil() {
               ))}
             </div>
             {prefsSaved && (
-              <p className="profil-saved-msg">Préférences enregistrées *(synchro serveur à venir)*</p>
+              <p className="profil-saved-msg">Préférences enregistrées ✓</p>
             )}
-            <button type="submit" className="secondary-button profil-save-btn">
-              Sauvegarder
+            {prefsError && (
+              <p className="profil-saved-msg profil-error-msg">{prefsError}</p>
+            )}
+            <button type="submit" className="secondary-button profil-save-btn" disabled={prefsLoading}>
+              {prefsLoading ? 'Sauvegarde…' : 'Sauvegarder'}
             </button>
           </form>
         </section>

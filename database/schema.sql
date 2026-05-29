@@ -8,13 +8,15 @@ CREATE DATABASE IF NOT EXISTS mercato_nova
 USE mercato_nova;
 
 CREATE TABLE IF NOT EXISTS users (
-  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name       VARCHAR(100)                        NOT NULL,
-  email      VARCHAR(255)                        NOT NULL UNIQUE,
-  password   VARCHAR(255)                        NOT NULL,
-  role       ENUM('acheteur','vendeur','admin')  NOT NULL DEFAULT 'acheteur',
-  created_at TIMESTAMP                           NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name        VARCHAR(100)                        NOT NULL,
+  email       VARCHAR(255)                        NOT NULL UNIQUE,
+  password    VARCHAR(255)                        NOT NULL,
+  role        ENUM('acheteur','vendeur','admin')  NOT NULL DEFAULT 'acheteur',
+  preferences VARCHAR(500)                        DEFAULT NULL,
+  created_at  TIMESTAMP                           NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+-- Si la table existe déjà : ALTER TABLE users ADD COLUMN preferences VARCHAR(500) DEFAULT NULL;
 
 CREATE TABLE IF NOT EXISTS produits (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

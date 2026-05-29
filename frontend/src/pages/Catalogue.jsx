@@ -135,6 +135,7 @@ export default function Catalogue() {
   const [sortBy, setSortBy] = useState('date_desc')
   const [addingIds, setAddingIds] = useState(new Set())
   const [doneIds, setDoneIds] = useState(new Set())
+  const [negoOnly, setNegoOnly] = useState(false)
 
   useEffect(() => {
     setSearchValue(urlQuery)
@@ -180,10 +181,11 @@ export default function Catalogue() {
       return (!query || title.includes(query) || description.includes(query))
         && (selectedCategories.length === 0 || selectedCategories.includes(normalizeCategory(product.categorie)))
         && (selectedMax === null || price <= selectedMax)
+        && (!negoOnly || product.type_vente === 'negociation')
     })
 
     return sortProducts(filtered, sortBy)
-  }, [maxPrice, products, selectedCategories, sortBy, urlQuery])
+  }, [maxPrice, negoOnly, products, selectedCategories, sortBy, urlQuery])
 
   function handleSearchSubmit(event) {
     event.preventDefault()
@@ -204,6 +206,9 @@ export default function Catalogue() {
     setSelectedCategories([])
     setMaxPrice('')
     setSortBy('date_desc')
+    setNegoOnly(false)
+    setSearchValue('')
+    setSearchParams({})
   }
 
   async function handleAddToCart(productId) {
@@ -263,6 +268,18 @@ export default function Catalogue() {
                 <span>{category.label}</span>
               </label>
             ))}
+          </fieldset>
+
+          <fieldset className="catalogue-filter-group">
+            <legend>Type de vente</legend>
+            <label className="catalogue-checkbox">
+              <input
+                type="checkbox"
+                checked={negoOnly}
+                onChange={(e) => setNegoOnly(e.target.checked)}
+              />
+              <span>Ouvert à la négociation</span>
+            </label>
           </fieldset>
 
           <div className="catalogue-price-filter">
