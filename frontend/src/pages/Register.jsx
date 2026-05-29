@@ -58,7 +58,7 @@ export default function Register() {
     setLoading(true)
     try {
       await register(form)
-      navigate('/dashboard')
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.message)
     } finally {
