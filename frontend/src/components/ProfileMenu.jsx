@@ -53,17 +53,17 @@ export default function ProfileMenu() {
           <Link to="/panier" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mon panier
           </Link>
-          {canAccessSellerPages && (
-            <>
-          <Link to="/mes-ventes" className="profile-dropdown-item" onClick={() => setOpen(false)}>
-            Mes Ventes
-          </Link>
           <Link to="/mes-negociations" className="profile-dropdown-item" onClick={() => setOpen(false)}>
             Mes Négociations
           </Link>
-          <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
-            Mes Enchères
-          </Link>
+          {canAccessSellerPages && (
+            <>
+              <Link to="/mes-ventes" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+                Mes Ventes
+              </Link>
+              <Link to="/mes-encheres" className="profile-dropdown-item" onClick={() => setOpen(false)}>
+                Mes Enchères
+              </Link>
             </>
           )}
           <button
