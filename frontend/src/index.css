@@ -801,6 +801,10 @@ select {
   accent-color: var(--color-deep-forest);
 }
 
+.enchere-status-filter {
+  margin-top: 24px;
+}
+
 .catalogue-price-filter {
   display: grid;
   gap: 9px;
@@ -992,6 +996,93 @@ select {
 
 .catalogue-cart-button--done:hover {
   background: #2e7d52;
+}
+
+.enchere-card-link {
+  padding-bottom: 12px;
+}
+
+.enchere-card-body {
+  padding-right: 0;
+}
+
+.enchere-card-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.enchere-status {
+  min-width: 76px;
+  border: 1px solid rgba(45, 74, 62, 0.24);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #ffffff;
+  color: var(--color-deep-forest);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.enchere-status--en_cours {
+  border-color: rgba(155, 107, 155, 0.34);
+  background: rgba(155, 107, 155, 0.13);
+  color: var(--color-artist-mauve);
+}
+
+.enchere-status--en_attente {
+  border-color: rgba(212, 168, 83, 0.45);
+  background: rgba(212, 168, 83, 0.16);
+  color: #8a6425;
+}
+
+.enchere-status--terminee,
+.enchere-status--annulee {
+  border-color: rgba(45, 74, 62, 0.24);
+  background: rgba(45, 74, 62, 0.08);
+  color: var(--color-muted);
+}
+
+.enchere-card-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(96px, auto);
+  gap: 10px;
+  align-items: end;
+}
+
+.enchere-card-meta span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.enchere-card-meta small {
+  color: var(--color-muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.enchere-timer {
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: var(--color-deep-forest);
+  color: var(--color-warm-sand);
+}
+
+.enchere-timer small,
+.enchere-timer strong {
+  color: inherit;
+}
+
+.enchere-timer strong {
+  font-size: 15px;
+  white-space: nowrap;
 }
 
 .catalogue-state {

@@ -8,6 +8,7 @@ import Profil from './pages/Profil'
 import Produit from './pages/Produit'
 import Notifications from './pages/Notifications'
 import Catalogue from './pages/Catalogue'
+import Encheres from './pages/Encheres'
 import Negociation from './pages/Negociation'
 import Paiement from './pages/Paiement'
 import Panier from './pages/Panier'
@@ -25,6 +26,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/catalogue" element={<Catalogue />} />
+      <Route path="/encheres" element={<Encheres />} />
       <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
       <Route path="/produit/:id" element={<Produit />} />
       <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
