@@ -1991,6 +1991,20 @@ select {
   color: var(--color-deep-forest);
 }
 
+.nego-btn--payer {
+  background: var(--color-burnt-ochre);
+  margin-top: 12px;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.nego-terminee {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
 /* Formulaires */
 
 .nego-init-form,
@@ -2059,4 +2073,226 @@ select {
   font-size: 17px;
   color: var(--color-ink);
   line-height: 1.4;
+}
+
+/* ── Nego : bloc final acceptée + bouton payer ── */
+
+.nego-terminee {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.nego-btn--payer {
+  display: inline-block;
+  background: var(--color-burnt-ochre);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 140ms ease;
+}
+
+.nego-btn--payer:hover {
+  opacity: 0.85;
+}
+
+/* ── Page paiement ── */
+
+.paiement-page {
+  min-height: 100vh;
+  background: var(--color-page);
+}
+
+.paiement-state {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: var(--color-muted);
+}
+
+.paiement-state--error {
+  color: #9d2d1f;
+}
+
+.paiement-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 860px;
+  margin: 48px auto;
+  padding: 0 24px 64px;
+}
+
+.paiement-recap {
+  background: var(--color-warm-sand);
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: fit-content;
+}
+
+.paiement-recap h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  color: var(--color-deep-forest);
+}
+
+.paiement-recap-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  color: var(--color-ink);
+}
+
+.paiement-recap-total {
+  border-top: 1px solid rgba(45, 74, 62, 0.2);
+  padding-top: 10px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.paiement-recap-note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.paiement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.paiement-form h1 {
+  margin: 0;
+  font-size: 32px;
+  color: var(--color-deep-forest);
+}
+
+.paiement-moyens {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paiement-moyens legend {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-deep-forest);
+  margin-bottom: 8px;
+}
+
+.paiement-moyen-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 14px;
+  border: 1px solid rgba(45, 74, 62, 0.24);
+  border-radius: 10px;
+  transition: border-color 120ms ease;
+}
+
+.paiement-moyen-option:has(input:checked) {
+  border-color: var(--color-burnt-ochre);
+  background: rgba(224, 123, 57, 0.06);
+}
+
+.paiement-btn {
+  display: inline-block;
+  text-align: center;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 30px;
+  background: var(--color-burnt-ochre);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 140ms ease;
+}
+
+.paiement-btn:hover {
+  opacity: 0.85;
+}
+
+.paiement-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.paiement-error {
+  margin: 0;
+  font-size: 14px;
+  color: #9d2d1f;
+}
+
+.paiement-link-back {
+  font-size: 14px;
+  color: var(--color-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.paiement-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 480px;
+  margin: 80px auto;
+  padding: 48px 32px;
+  background: var(--color-warm-sand);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.paiement-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-deep-forest);
+  color: #ffffff;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paiement-success h1 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--color-deep-forest);
+}
+
+.paiement-success p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-ink);
+}
+
+.paiement-success-detail {
+  font-size: 14px !important;
+  color: var(--color-muted) !important;
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  .paiement-layout {
+    grid-template-columns: 1fr;
+    margin: 24px auto;
+  }
 }

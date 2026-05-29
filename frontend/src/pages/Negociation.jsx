@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import SiteHeader from '../components/SiteHeader'
 import { getProduit } from '../api/produits'
@@ -45,7 +45,7 @@ export default function Negociation() {
       setProduit(p)
 
       const match = (liste.negociations ?? []).find(
-        (n) => n.produit_titre === p.titre && ['en_attente', 'contre_offre'].includes(n.etat)
+        (n) => n.produit_titre === p.titre
       )
       if (match) {
         const detail = await getNegociation(match.id)
@@ -198,9 +198,23 @@ export default function Negociation() {
                   </div>
 
                   {negoTerminee ? (
-                    <p className="nego-etat-final">
-                      Négociation {negociation.etat === 'accepte' ? 'acceptée ✓' : negociation.etat === 'refuse' ? 'refusée' : 'expirée'}.
-                    </p>
+                    <div className="nego-terminee">
+                      <p className="nego-etat-final">
+                        Négociation {negociation.etat === 'accepte' ? 'acceptée ✓' : negociation.etat === 'refuse' ? 'refusée' : 'expirée'}.
+                      </p>
+                      {negociation.etat === 'accepte' && monRole === 'acheteur' && (
+                        <Link
+                          className="nego-btn nego-btn--payer"
+                          to="/paiement"
+                          state={{
+                            produit,
+                            prixAccepte: negociation.echanges?.at(-1)?.montant ?? produit.prix,
+                          }}
+                        >
+                          Passer au paiement →
+                        </Link>
+                      )}
+                    </div>
                   ) : estMonTour && (
                     <div className="nego-actions">
                       {showOfferForm ? (
