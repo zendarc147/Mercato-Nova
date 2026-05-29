@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getProduit } from '../api/produits'
 import { getEnchere, getEnchereStatut, placerOffre, relancerPaiementEnchere } from '../api/encheres'
+import { addToRecentlyViewed } from '../api/recentlyViewed'
 import SiteHeader from '../components/SiteHeader'
 
 function formatPrice(value) {
@@ -124,6 +125,7 @@ export default function Enchere() {
         }
 
         setProduct(productData)
+        addToRecentlyViewed({ ...productData, type_vente: 'enchere' })
         setPhotoIndex(0)
         setAuction({ ...auctionData, fetchedAt: Date.now() })
         setOfferAmount(String(Math.ceil(getCurrentBid(auctionData, productData) + 10)))
