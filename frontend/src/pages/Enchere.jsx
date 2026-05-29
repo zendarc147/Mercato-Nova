@@ -18,6 +18,36 @@ function getImageSrc(imageUrl) {
   return `/uploads/produits/${imageUrl}`
 }
 
+function buildAuctionPhotos(product) {
+  const rawPhotos = [
+    ...(Array.isArray(product?.images) ? product.images : []),
+    ...(Array.isArray(product?.photos) ? product.photos : []),
+    ...(Array.isArray(product?.image_urls) ? product.image_urls : []),
+    product?.image_url,
+  ].filter(Boolean)
+
+  const photos = rawPhotos
+    .map((photo) => typeof photo === 'string' ? getImageSrc(photo) : getImageSrc(photo.url || photo.image_url))
+    .filter(Boolean)
+
+  if (photos.length > 1) return [...new Set(photos)]
+  if (photos.length === 1 && photos[0].includes('picsum.photos/seed/')) {
+    const seed = photos[0].match(/\/seed\/([^/]+)\//)?.[1] ?? `mn${product.id}`
+    return [
+      photos[0],
+      `https://picsum.photos/seed/${seed}-2/900/760`,
+      `https://picsum.photos/seed/${seed}-3/900/760`,
+    ]
+  }
+  if (photos.length === 1) return photos
+
+  return [
+    `https://picsum.photos/seed/mn${product?.id ?? 'auction'}/900/760`,
+    `https://picsum.photos/seed/mn${product?.id ?? 'auction'}-2/900/760`,
+    `https://picsum.photos/seed/mn${product?.id ?? 'auction'}-3/900/760`,
+  ]
+}
+
 function getRemainingSeconds(auction, now) {
   if (!auction) return null
   if (auction.date_fin) {
@@ -68,6 +98,7 @@ export default function Enchere() {
   const [offerLoading, setOfferLoading] = useState(false)
   const [notifyLoading, setNotifyLoading] = useState(false)
   const [notifyMessage, setNotifyMessage] = useState('')
+  const [photoIndex, setPhotoIndex] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
@@ -93,6 +124,7 @@ export default function Enchere() {
         }
 
         setProduct(productData)
+        setPhotoIndex(0)
         setAuction({ ...auctionData, fetchedAt: Date.now() })
         setOfferAmount(String(Math.ceil(getCurrentBid(auctionData, productData) + 10)))
       } catch (err) {
@@ -131,6 +163,8 @@ export default function Enchere() {
   const remainingSeconds = getRemainingSeconds(auction, now)
   const finished = isAuctionFinished(auction, remainingSeconds)
   const currentBid = getCurrentBid(auction, product)
+  const photos = product ? buildAuctionPhotos(product) : []
+  const currentPhoto = photos[photoIndex] ?? null
   const bestBidderId = auction?.meilleur_encherisseur?.id ?? auction?.meilleur_encherisseur_id
   const isWinner = Boolean(user?.id && bestBidderId && Number(user.id) === Number(bestBidderId))
   const isSeller = Boolean(
@@ -146,6 +180,14 @@ export default function Enchere() {
       .sort((a, b) => Number(b.montant) - Number(a.montant))
       .slice(0, 4)
   }, [auction])
+
+  function prevPhoto() {
+    setPhotoIndex((index) => (index - 1 + photos.length) % photos.length)
+  }
+
+  function nextPhoto() {
+    setPhotoIndex((index) => (index + 1) % photos.length)
+  }
 
   async function reloadAuction() {
     const nextAuction = await getEnchere(produitId)
@@ -213,11 +255,37 @@ export default function Enchere() {
       {!loading && !error && product && auction && (
         <section className="fiche-enchere-layout" aria-labelledby="fiche-enchere-title">
           <aside className="fiche-enchere-product">
-            <div className="fiche-enchere-photo">
-              {getImageSrc(product.image_url)
-                ? <img src={getImageSrc(product.image_url)} alt={product.titre} />
+            <div className="fiche-enchere-gallery">
+              <div className="fiche-enchere-photo">
+                {currentPhoto
+                ? <img src={currentPhoto} alt={`${product.titre} - photo ${photoIndex + 1}`} />
                 : <span>photo produit</span>}
+              </div>
+
+              {photos.length > 1 && (
+                <>
+                  <button className="fiche-enchere-photo-arrow fiche-enchere-photo-arrow--prev" type="button" aria-label="Image precedente" onClick={prevPhoto}>
+                    &#8249;
+                  </button>
+                  <button className="fiche-enchere-photo-arrow fiche-enchere-photo-arrow--next" type="button" aria-label="Image suivante" onClick={nextPhoto}>
+                    &#8250;
+                  </button>
+                </>
+              )}
             </div>
+            {photos.length > 1 && (
+              <div className="fiche-enchere-photo-dots" aria-label="Choix de l'image">
+                {photos.map((photo, index) => (
+                  <button
+                    key={photo}
+                    className={`fiche-enchere-photo-dot${index === photoIndex ? ' fiche-enchere-photo-dot--active' : ''}`}
+                    type="button"
+                    aria-label={`Afficher la photo ${index + 1}`}
+                    onClick={() => setPhotoIndex(index)}
+                  />
+                ))}
+              </div>
+            )}
             <h2>{product.titre}</h2>
             <p>{getSellerName(product)}</p>
             <div className="fiche-enchere-description">
