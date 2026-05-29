@@ -128,9 +128,11 @@ export default function Negociation() {
             {/* Panneau gauche : produit */}
             <div className="nego-produit">
               <div className="nego-produit-image">
-                {produit.image_url
-                  ? <img src={`/uploads/produits/${produit.image_url}`} alt={produit.titre} />
-                  : <span>photo produit</span>}
+                {produit.image_url && (produit.image_url.startsWith('http') || produit.image_url.startsWith('/'))
+                  ? <img src={produit.image_url} alt={produit.titre} />
+                  : produit.image_url
+                    ? <img src={`/uploads/produits/${produit.image_url}`} alt={produit.titre} />
+                    : <span>photo produit</span>}
               </div>
               <p className="nego-produit-titre">{produit.titre}</p>
               <p className="nego-produit-vendeur">{produit.vendeur?.nom}</p>

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $user = requireAuth();
 
 $pdo  = getDB();
-$stmt = $pdo->prepare('SELECT id, name, email, role FROM users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, name, email, role, preferences FROM users WHERE id = ?');
 $stmt->execute([$user['id']]);
 $data = $stmt->fetch();
 
@@ -28,4 +28,5 @@ if (!$data) {
     exit;
 }
 
+$data['preferences'] = $data['preferences'] ? json_decode($data['preferences'], true) : [];
 echo json_encode($data);

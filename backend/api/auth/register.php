@@ -20,6 +20,7 @@ $prenom       = trim($body['prenom'] ?? '');
 $email        = trim($body['email'] ?? '');
 $mot_de_passe = $body['mot_de_passe'] ?? '';
 $role         = in_array($body['role'] ?? '', ['acheteur', 'vendeur']) ? $body['role'] : 'acheteur';
+$preferences  = isset($body['preferences']) && is_array($body['preferences']) ? json_encode($body['preferences']) : null;
 
 if (!$nom || !$prenom || !$email || !$mot_de_passe) {
     http_response_code(422);
@@ -50,8 +51,8 @@ if ($stmt->fetch()) {
 
 $name = $prenom . ' ' . $nom;
 $hash = password_hash($mot_de_passe, PASSWORD_BCRYPT);
-$stmt = $pdo->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
-$stmt->execute([$name, $email, $hash, $role]);
+$stmt = $pdo->prepare('INSERT INTO users (name, email, password, role, preferences) VALUES (?, ?, ?, ?, ?)');
+$stmt->execute([$name, $email, $hash, $role, $preferences]);
 $id = (int) $pdo->lastInsertId();
 
 session_regenerate_id(true);
