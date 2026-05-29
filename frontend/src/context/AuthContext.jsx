@@ -33,8 +33,10 @@ export function AuthProvider({ children }) {
   }
 
   async function register(data) {
-    const response = await apiRegister(data)
-    const me = response.user ?? response
+    await apiRegister(data)
+    const { csrf_token } = await getCsrfToken()
+    setCsrfToken(csrf_token)
+    const me = await getMe()
     setUser(me)
     return me
   }

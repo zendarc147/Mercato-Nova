@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { soumettreDemandeVendeur } from '../api/vendeurs'
+import DemandeVendeurForm from '../components/DemandeVendeurForm'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
 
@@ -52,12 +54,23 @@ export default function Register() {
     setStep('preferences')
   }
 
-  async function handleSubmit(e) {
+  function handlePrefsNext(e) {
     e.preventDefault()
+    if (form.role === 'vendeur') {
+      setStep('demande_vendeur')
+    } else {
+      doRegister()
+    }
+  }
+
+  async function doRegister(demandeData) {
     setError('')
     setLoading(true)
     try {
-      await register(form)
+      await register({ ...form, role: 'acheteur' })
+      if (form.role === 'vendeur' && demandeData) {
+        await soumettreDemandeVendeur(demandeData)
+      }
       navigate('/', { replace: true })
     } catch (err) {
       setError(err.message)
@@ -67,7 +80,7 @@ export default function Register() {
   }
 
   const pageClassName =
-    step === 'preferences'
+    step === 'preferences' || step === 'demande_vendeur'
       ? 'auth-page auth-page-survey auth-page-with-background'
       : 'auth-page auth-page-with-background'
 
@@ -114,7 +127,7 @@ export default function Register() {
         </div>
       </div>
 
-      <div className={step === 'preferences' ? 'auth-card auth-card-survey' : 'auth-card'}>
+      <div className={step === 'account' ? 'auth-card' : 'auth-card auth-card-survey'}>
         {step === 'account' ? (
           <>
             <h1>Creer un compte</h1>
@@ -192,13 +205,13 @@ export default function Register() {
               Deja un compte ? <Link to="/login">Se connecter</Link>
             </p>
           </>
-        ) : (
+        ) : step === 'preferences' ? (
           <>
             <h1>Indiquez vos preferences</h1>
 
             {error && <p className="form-error">{error}</p>}
 
-            <form onSubmit={handleSubmit} className="preference-form">
+            <form onSubmit={handlePrefsNext} className="preference-form">
               <fieldset className="preference-list">
                 <legend className="sr-only">Preferences artistiques</legend>
                 {preferenceOptions.map((preference) => (
@@ -226,10 +239,23 @@ export default function Register() {
                   Retour
                 </button>
                 <button type="submit" disabled={loading} className="primary-button">
-                  {loading ? 'Inscription...' : 'Inscription'}
+                  {form.role === 'vendeur' ? 'Suite' : (loading ? 'Inscription...' : 'Inscription')}
                 </button>
               </div>
             </form>
+          </>
+        ) : (
+          <>
+            <h1>Devenir vendeur</h1>
+            <p className="preference-note" style={{ marginBottom: '20px' }}>
+              Votre dossier sera examiné par un modérateur avant validation.
+            </p>
+            <DemandeVendeurForm
+              onSubmit={(demandeData) => doRegister(demandeData)}
+              onCancel={() => setStep('preferences')}
+              loading={loading}
+              error={error}
+            />
           </>
         )}
       </div>

@@ -123,3 +123,19 @@ CREATE TABLE IF NOT EXISTS commande_items (
   FOREIGN KEY (commande_id) REFERENCES commandes(id) ON DELETE CASCADE,
   FOREIGN KEY (produit_id)  REFERENCES produits(id)  ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS demandes_vendeur (
+  id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id        INT UNSIGNED  NOT NULL UNIQUE,
+  nom_boutique   VARCHAR(255)  NOT NULL,
+  description    TEXT          NOT NULL,
+  categories     VARCHAR(500)  DEFAULT NULL,
+  experience     VARCHAR(50)   NOT NULL,
+  site_web       VARCHAR(500)  DEFAULT NULL,
+  telephone      VARCHAR(30)   DEFAULT NULL,
+  motivation     TEXT          NOT NULL,
+  etat           ENUM('en_attente','approuve','refuse') NOT NULL DEFAULT 'en_attente',
+  created_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

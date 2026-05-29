@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { savePreferences } from '../api/profil'
+import { soumettreDemandeVendeur, getDemandeVendeur } from '../api/vendeurs'
+import DemandeVendeurForm from '../components/DemandeVendeurForm'
 import ProfileMenu from '../components/ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 
@@ -29,10 +31,38 @@ export default function Profil() {
   const [prefsLoading, setPrefsLoading] = useState(false)
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [logoutError, setLogoutError] = useState(null)
+  const [demandeEtat, setDemandeEtat] = useState(null)
+  const [showDemandeForm, setShowDemandeForm] = useState(false)
+  const [demandeLoading, setDemandeLoading] = useState(false)
+  const [demandeError, setDemandeError] = useState(null)
+  const [demandeSuccess, setDemandeSuccess] = useState(false)
 
   useEffect(() => {
     if (user?.preferences) setPrefs(user.preferences)
   }, [user])
+
+  useEffect(() => {
+    if (user?.role === 'acheteur') {
+      getDemandeVendeur()
+        .then(({ demande }) => setDemandeEtat(demande?.etat ?? null))
+        .catch(() => {})
+    }
+  }, [user])
+
+  async function handleDemandeSubmit(demandeData) {
+    setDemandeLoading(true)
+    setDemandeError(null)
+    try {
+      await soumettreDemandeVendeur(demandeData)
+      setDemandeSuccess(true)
+      setShowDemandeForm(false)
+      setDemandeEtat('en_attente')
+    } catch (err) {
+      setDemandeError(err.message || 'Erreur lors de l\'envoi.')
+    } finally {
+      setDemandeLoading(false)
+    }
+  }
 
   async function handleLogout() {
     setLogoutLoading(true)
@@ -101,12 +131,57 @@ export default function Profil() {
         </div>
 
         {user?.role === 'acheteur' && (
-          <button
-            className="primary-button profil-vendeur-btn"
-            onClick={() => alert('Fonctionnalité à venir — contacter un administrateur.')}
-          >
-            Être Vendeur
-          </button>
+          <section className="profil-vendeur-section">
+            {demandeSuccess && (
+              <div className="profil-demande-success">
+                Demande envoyée — un modérateur examinera votre dossier.
+              </div>
+            )}
+
+            {!demandeSuccess && demandeEtat === 'en_attente' && (
+              <div className="profil-demande-pending">
+                Votre demande vendeur est en cours d'examen.
+              </div>
+            )}
+
+            {!demandeSuccess && demandeEtat === 'refuse' && !showDemandeForm && (
+              <>
+                <div className="profil-demande-refused">
+                  Votre demande a été refusée. Vous pouvez en soumettre une nouvelle.
+                </div>
+                <button
+                  className="primary-button profil-vendeur-btn"
+                  onClick={() => { setDemandeError(null); setShowDemandeForm(true) }}
+                >
+                  Soumettre une nouvelle demande
+                </button>
+              </>
+            )}
+
+            {!demandeSuccess && demandeEtat === null && !showDemandeForm && (
+              <button
+                className="primary-button profil-vendeur-btn"
+                onClick={() => { setDemandeError(null); setShowDemandeForm(true) }}
+              >
+                Être Vendeur
+              </button>
+            )}
+
+            {showDemandeForm && (
+              <div className="profil-demande-form-wrapper">
+                <h2 className="profil-demande-title">Demande vendeur</h2>
+                <p className="profil-demande-subtitle">
+                  Votre dossier sera examiné par un modérateur avant validation.
+                </p>
+                <DemandeVendeurForm
+                  onSubmit={handleDemandeSubmit}
+                  onCancel={() => setShowDemandeForm(false)}
+                  loading={demandeLoading}
+                  error={demandeError}
+                />
+              </div>
+            )}
+          </section>
         )}
 
         <section className="profil-prefs">
