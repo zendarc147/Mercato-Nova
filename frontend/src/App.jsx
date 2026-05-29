@@ -8,6 +8,7 @@ import Profil from './pages/Profil'
 import Produit from './pages/Produit'
 import Notifications from './pages/Notifications'
 import Catalogue from './pages/Catalogue'
+import Encheres from './pages/Encheres'
 import Negociation from './pages/Negociation'
 import Paiement from './pages/Paiement'
 import Panier from './pages/Panier'
@@ -18,6 +19,16 @@ function PrivateRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />
 }
 
+function SellerRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Navigate to="/login" replace />
+
+  return user.role === 'vendeur' || user.role === 'admin'
+    ? children
+    : <Navigate to="/profil" replace />
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -25,12 +36,16 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/catalogue" element={<Catalogue />} />
+      <Route path="/encheres" element={<Encheres />} />
       <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
       <Route path="/produit/:id" element={<Produit />} />
       <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
       <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} />
       <Route path="/paiement" element={<PrivateRoute><Paiement /></PrivateRoute>} />
       <Route path="/panier" element={<PrivateRoute><Panier /></PrivateRoute>} />
+      <Route path="/mes-ventes" element={<SellerRoute><div className="page-placeholder">Mes ventes - a venir</div></SellerRoute>} />
+      <Route path="/mes-negociations" element={<SellerRoute><div className="page-placeholder">Mes negociations - a venir</div></SellerRoute>} />
+      <Route path="/mes-encheres" element={<SellerRoute><div className="page-placeholder">Mes encheres - a venir</div></SellerRoute>} />
       {/* Pages Astrid a brancher ici */}
       <Route
         path="/dashboard"
