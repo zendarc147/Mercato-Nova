@@ -14,6 +14,7 @@ import Negociation from './pages/Negociation'
 import Paiement from './pages/Paiement'
 import Panier from './pages/Panier'
 import MesNegociations from './pages/MesNegociations'
+import MesVentes from './pages/MesVentes'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -46,7 +47,7 @@ function AppRoutes() {
       <Route path="/negociation/:produitId" element={<PrivateRoute><Negociation /></PrivateRoute>} />
       <Route path="/paiement" element={<PrivateRoute><Paiement /></PrivateRoute>} />
       <Route path="/panier" element={<PrivateRoute><Panier /></PrivateRoute>} />
-      <Route path="/mes-ventes" element={<SellerRoute><div className="page-placeholder">Mes ventes - a venir</div></SellerRoute>} />
+      <Route path="/mes-ventes" element={<SellerRoute><MesVentes /></SellerRoute>} />
       <Route path="/mes-negociations" element={<PrivateRoute><MesNegociations /></PrivateRoute>} />
       <Route path="/mes-encheres" element={<SellerRoute><div className="page-placeholder">Mes encheres - a venir</div></SellerRoute>} />
       {/* Pages Astrid a brancher ici */}
