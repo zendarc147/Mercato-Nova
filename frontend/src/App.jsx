@@ -21,12 +21,14 @@ import AdminDemandes from './pages/AdminDemandes'
 import AdminUtilisateurs from './pages/AdminUtilisateurs'
 import NouvelleAnnonce from './pages/NouvelleAnnonce'
 
+// Route privee : si l'utilisateur n'est pas connecte, il est renvoye vers la connexion.
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return null
   return user ? children : <Navigate to="/login" replace />
 }
 
+// Route vendeur : seuls les vendeurs et les admins peuvent acceder aux pages de vente.
 function SellerRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return null
@@ -37,6 +39,7 @@ function SellerRoute({ children }) {
     : <Navigate to="/profil" replace />
 }
 
+// Route admin : elle protege les pages reservees a l'administration du site.
 function AdminRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return null
@@ -44,6 +47,7 @@ function AdminRoute({ children }) {
   return user.role === 'admin' ? children : <Navigate to="/" replace />
 }
 
+// Toutes les URLs de l'application React sont declarees ici.
 function AppRoutes() {
   return (
     <Routes>
@@ -78,6 +82,7 @@ function AppRoutes() {
   )
 }
 
+// Les Providers partagent l'etat global : session, panier et notifications.
 export default function App() {
   return (
     <AuthProvider>

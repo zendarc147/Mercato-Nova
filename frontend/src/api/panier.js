@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Appels API pour consulter le panier, le modifier et valider le paiement simule.
 export async function getCart() {
   return await api.get('/panier/panier.php')
 }

@@ -6,6 +6,7 @@ import { getEnchere, getEnchereStatut, placerOffre, relancerPaiementEnchere } fr
 import { addToRecentlyViewed } from '../api/recentlyViewed'
 import SiteHeader from '../components/SiteHeader'
 
+// Formate les montants pour que toutes les encheres affichent la meme notation.
 function formatPrice(value) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -13,12 +14,14 @@ function formatPrice(value) {
   }).format(Number(value || 0))
 }
 
+// Accepte a la fois les URLs completes et les images stockees cote backend.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Construit une petite galerie meme quand le backend ne fournit qu'une seule image.
 function buildAuctionPhotos(product) {
   const rawPhotos = [
     ...(Array.isArray(product?.images) ? product.images : []),
@@ -49,6 +52,7 @@ function buildAuctionPhotos(product) {
   ]
 }
 
+// Calcule le temps restant avec la date serveur ou avec le compteur renvoye par le polling.
 function getRemainingSeconds(auction, now) {
   if (!auction) return null
   if (auction.date_fin) {
@@ -61,6 +65,7 @@ function getRemainingSeconds(auction, now) {
   return null
 }
 
+// Transforme un nombre de secondes en affichage HH:MM:SS.
 function formatTimer(seconds) {
   if (seconds === null) return '--:--:--'
   if (seconds <= 0) return '00:00:00'
@@ -72,18 +77,22 @@ function formatTimer(seconds) {
   return [hours, minutes, secs].map((part) => String(part).padStart(2, '0')).join(':')
 }
 
+// Une enchere est terminee si son etat le dit ou si le compte a rebours arrive a zero.
 function isAuctionFinished(auction, remainingSeconds) {
   return auction?.etat === 'terminee' || auction?.etat === 'annulee' || remainingSeconds === 0
 }
 
+// Recupere le nom vendeur malgre les variations possibles de reponse API.
 function getSellerName(product) {
   return product?.vendeur?.nom || product?.vendeur_nom || (product?.vendeur_id ? `Vendeur #${product.vendeur_id}` : 'Vendeur')
 }
 
+// La meilleure offre devient le prix de reference pour verifier la prochaine offre.
 function getCurrentBid(auction, product) {
   return Number(auction?.meilleure_offre ?? auction?.prix_depart ?? product?.prix ?? 0)
 }
 
+// Fiche enchere : detail produit, compte a rebours, historique et formulaire d'offre.
 export default function Enchere() {
   const { produitId } = useParams()
   const { user } = useAuth()
@@ -104,11 +113,13 @@ export default function Enchere() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState('')
 
+  // Met a jour l'heure locale chaque seconde pour animer le compte a rebours.
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  // Charge le produit et son enchere en parallele pour accelerer l'affichage.
   useEffect(() => {
     let cancelled = false
 
@@ -143,6 +154,7 @@ export default function Enchere() {
     return () => { cancelled = true }
   }, [produitId])
 
+  // Polling : toutes les 3 secondes, on demande seulement le statut de l'enchere.
   useEffect(() => {
     if (!auction) return undefined
 
@@ -180,6 +192,7 @@ export default function Enchere() {
   const canPay = finished && isWinner
   const canNotifyWinner = finished && isSeller && bestBidderId
 
+  // Trie l'historique pour afficher les meilleures offres en premier.
   const history = useMemo(() => {
     return [...(auction?.historique ?? [])]
       .sort((a, b) => Number(b.montant) - Number(a.montant))
@@ -194,12 +207,14 @@ export default function Enchere() {
     setPhotoIndex((index) => (index + 1) % photos.length)
   }
 
+  // Recharge l'enchere complete apres une action qui peut changer son historique.
   async function reloadAuction() {
     const nextAuction = await getEnchere(produitId)
     setAuction({ ...nextAuction, fetchedAt: Date.now() })
     setOfferAmount(String(Math.ceil(getCurrentBid(nextAuction, product) + 10)))
   }
 
+  // Verifie le montant cote frontend avant d'envoyer l'offre au backend.
   async function handleOfferSubmit(event) {
     event.preventDefault()
     setOfferError('')
@@ -227,6 +242,7 @@ export default function Enchere() {
     }
   }
 
+  // Envoie le gagnant vers le paiement avec les informations de l'enchere.
   function handlePayAuction() {
     navigate('/paiement', {
       state: {
@@ -237,6 +253,7 @@ export default function Enchere() {
     })
   }
 
+  // Suppression reservee aux admins, avec confirmation avant l'appel API.
   async function handleDelete() {
     setDeleteLoading(true)
     setDeleteError('')
@@ -249,6 +266,7 @@ export default function Enchere() {
     }
   }
 
+  // Le vendeur peut relancer le gagnant pour finaliser le paiement.
   async function handleNotifyWinner() {
     setNotifyMessage('')
     setNotifyLoading(true)

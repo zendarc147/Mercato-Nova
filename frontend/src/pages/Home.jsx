@@ -9,6 +9,7 @@ import pictosHome from '../assets/pictos-home.png'
 
 const CATEGORIES = ['Peinture', 'Sculpture', 'Photographie', 'Gravure', 'Céramique', 'Bijoux']
 
+// Header local de la page d'accueil.
 function SiteHeader({ user }) {
   return (
     <header className="site-header">
@@ -49,10 +50,12 @@ function SiteHeader({ user }) {
   )
 }
 
+// Hero avec barre de recherche : il redirige vers le catalogue avec le parametre q.
 function HeroSection() {
   const [q, setQ] = useState('')
   const navigate = useNavigate()
 
+  // Envoie la recherche vers la page catalogue.
   function handleSearch(e) {
     e.preventDefault()
     if (q.trim()) navigate(`/catalogue?q=${encodeURIComponent(q.trim())}`)
@@ -80,12 +83,14 @@ function HeroSection() {
   )
 }
 
+// Normalise les chemins d'image pour les cartes de la home.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Carte produit reutilisee dans les sections de la page d'accueil.
 function ProductCard({ product }) {
   const imgSrc = getImageSrc(product.image_url)
   const detailPath = product.type_vente === 'enchere'
@@ -108,6 +113,7 @@ function ProductCard({ product }) {
   )
 }
 
+// Section de produits avec etats loading et vide.
 function ProductSection({ title, produits, loading, emptyMessage }) {
   return (
     <section className="product-section">
@@ -127,6 +133,7 @@ function ProductSection({ title, produits, loading, emptyMessage }) {
   )
 }
 
+// Accueil connecte : affiche categories, coups de coeur et historique recent.
 function ConnectedHome() {
   const { user } = useAuth()
   const [activeCat, setActiveCat] = useState(null)
@@ -136,12 +143,14 @@ function ConnectedHome() {
   const [recentEncheres, setRecentEncheres] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Charge les produits publics visibles sur la home.
   useEffect(() => {
     const recent = getRecentlyViewed()
     setRecentProduits(recent.filter((p) => p.type_vente !== 'enchere'))
     setRecentEncheres(recent.filter((p) => p.type_vente === 'enchere'))
   }, [])
 
+  // Charge l'historique recent depuis le stockage local du navigateur.
   useEffect(() => {
     let cancelled = false
     async function load() {
@@ -202,6 +211,7 @@ function ConnectedHome() {
   )
 }
 
+// Accueil visiteur : version simplifiee avant connexion.
 function GuestHome() {
   return (
     <>
@@ -222,6 +232,7 @@ function GuestHome() {
   )
 }
 
+// Choisit automatiquement l'accueil connecte ou visiteur selon la session.
 export default function Home() {
   const { user, loading } = useAuth()
 

@@ -22,6 +22,7 @@ const ROLE_LABEL = {
   admin: 'Administrateur',
 }
 
+// Page profil : informations compte, preferences, demande vendeur et deconnexion.
 export default function Profil() {
   const { user, logout, refreshUser } = useAuth()
   const navigate = useNavigate()
@@ -46,10 +47,12 @@ export default function Profil() {
   const [demandeError, setDemandeError] = useState(null)
   const [demandeSuccess, setDemandeSuccess] = useState(false)
 
+  // Recopie les infos utilisateur dans le formulaire des qu'elles changent.
   useEffect(() => {
     if (user?.preferences) setPrefs(user.preferences)
   }, [user])
 
+  // Ouvre le formulaire de modification avec les valeurs actuelles.
   function openEditForm() {
     setEditName(user?.name ?? '')
     setEditEmail(user?.email ?? '')
@@ -60,6 +63,7 @@ export default function Profil() {
     setShowEditForm(true)
   }
 
+  // Enregistre les modifications du compte puis recharge la session.
   async function handleEditSubmit(e) {
     e.preventDefault()
     if (editPassword && editPassword !== editPasswordConfirm) {
@@ -91,6 +95,7 @@ export default function Profil() {
     }
   }
 
+  // Charge l'etat de la demande vendeur pour adapter l'affichage.
   useEffect(() => {
     if (user?.role === 'acheteur') {
       getDemandeVendeur()
@@ -99,6 +104,7 @@ export default function Profil() {
     }
   }, [user])
 
+  // Envoie une demande pour devenir vendeur.
   async function handleDemandeSubmit(demandeData) {
     setDemandeLoading(true)
     setDemandeError(null)
@@ -114,6 +120,7 @@ export default function Profil() {
     }
   }
 
+  // Deconnecte l'utilisateur puis le renvoie a l'accueil.
   async function handleLogout() {
     setLogoutLoading(true)
     setLogoutError(null)
@@ -130,11 +137,13 @@ export default function Profil() {
     ? `${user.prenom} ${user.nom}`
     : (user?.name ?? '')
 
+  // Ajoute ou retire une preference artistique.
   function togglePref(pref) {
     setPrefsSaved(false)
     setPrefs((p) => p.includes(pref) ? p.filter((x) => x !== pref) : [...p, pref])
   }
 
+  // Sauvegarde les preferences dans le profil backend.
   async function handleSavePrefs(e) {
     e.preventDefault()
     setPrefsLoading(true)

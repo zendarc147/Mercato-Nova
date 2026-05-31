@@ -1,4 +1,5 @@
 <?php
+// Endpoint enchere : detail, statut leger, nouvelle offre et relance paiement.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -21,6 +22,7 @@ if (!$produit_id) {
     exit;
 }
 
+// Routage manuel : une meme URL gere plusieurs actions selon method/action.
 if ($method === 'GET' && $action === 'statut') {
     getStatut($produit_id);
 } elseif ($method === 'POST' && $action === 'offre') {
@@ -37,6 +39,7 @@ if ($method === 'GET' && $action === 'statut') {
 // -------------------------------------------------------------------
 // GET /encheres/{produit_id}
 // -------------------------------------------------------------------
+// Renvoie toutes les informations utiles pour afficher la fiche enchere.
 function getDetail(int $produit_id): void {
     $pdo     = getDB();
     $enchere = fetchEnchereByProduit($pdo, $produit_id);
@@ -82,6 +85,7 @@ function getDetail(int $produit_id): void {
 // -------------------------------------------------------------------
 // GET /encheres/{produit_id}/statut  (polling léger, appelé toutes les 3s)
 // -------------------------------------------------------------------
+// Reponse courte pour le polling regulier du frontend.
 function getStatut(int $produit_id): void {
     $pdo     = getDB();
     $enchere = fetchEnchereByProduit($pdo, $produit_id);
@@ -106,6 +110,7 @@ function getStatut(int $produit_id): void {
 // -------------------------------------------------------------------
 // POST /encheres/{produit_id}/offre
 // -------------------------------------------------------------------
+// Enregistre une offre en protegeant la concurrence entre plusieurs acheteurs.
 function placerOffre(int $produit_id): void {
     verifyCsrfToken();
     $user = requireAuth();
@@ -120,6 +125,7 @@ function placerOffre(int $produit_id): void {
     }
 
     $pdo = getDB();
+    // Transaction : on verrouille l'enchere, on verifie, puis on insere l'offre.
     $pdo->beginTransaction();
 
     try {
@@ -200,6 +206,7 @@ function placerOffre(int $produit_id): void {
 // POST /encheres/{produit_id}/relance-paiement
 // Notifie le meilleur encherisseur de payer une enchere terminee.
 // -------------------------------------------------------------------
+// Envoie une notification au gagnant lorsque le vendeur veut relancer le paiement.
 function relancerPaiement(int $produit_id): void {
     verifyCsrfToken();
     $user = requireAuth();

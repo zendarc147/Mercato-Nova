@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import pictosHome from '../assets/pictos-home.png'
 
+// Page de connexion : elle cree une session PHP via le contexte d'authentification.
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -11,10 +12,12 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Met a jour le champ modifie sans toucher aux autres champs du formulaire.
   function handleChange(e) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
+  // Envoie l'email et le mot de passe au backend puis redirige vers l'accueil.
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')

@@ -1,5 +1,6 @@
 <?php
 // backend/api/panier.php
+// Endpoint panier : consulter, ajouter, retirer et vider le panier.
 
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -13,6 +14,7 @@ $user = requireAuth(); // tout le panier doit être connecté
 $pdo = getDB();
 $methode = $_SERVER['REQUEST_METHOD'];
 
+// Le switch choisit l'action selon la methode HTTP recue.
 switch ($methode) {
     case 'GET':
         //RÉCUPÉRER LE PANIER
@@ -26,6 +28,7 @@ switch ($methode) {
         $items = $stmt->fetchAll();
 
         $total = 0;
+        // Le total est calcule cote serveur pour ne pas faire confiance au navigateur.
         foreach ($items as $item) {
             $total += ($item['prix'] * $item['quantite']);
         }

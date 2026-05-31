@@ -1,5 +1,6 @@
 <?php
 
+// Ouvre une connexion PDO a MySQL avec le mode erreur active.
 function getDB(): PDO {
     static $pdo = null;
     if ($pdo !== null) return $pdo;

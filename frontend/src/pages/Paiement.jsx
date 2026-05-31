@@ -11,6 +11,7 @@ const MOYENS = [
   { value: 'virement', label: 'Virement bancaire' },
 ]
 
+// Page de paiement simule : elle finalise un panier ou un achat direct.
 export default function Paiement() {
   const { user } = useAuth()
   const { refreshCart } = useCart()
@@ -21,6 +22,7 @@ export default function Paiement() {
   const [error, setError] = useState(null)
   const [commandeId, setCommandeId] = useState(null)
 
+  // Le state React Router indique si on vient du panier ou d'un achat direct.
   const fromPanier  = state?.fromPanier  === true
   const fromDirect  = state?.fromDirect  === true
   const items       = state?.items       ?? []
@@ -44,6 +46,7 @@ export default function Paiement() {
 
   const totalAffiche = fromPanier ? total : prixAccepte
 
+  // Envoie la validation au backend et affiche le numero de commande.
   async function handlePayer(e) {
     e.preventDefault()
     setLoading(true)

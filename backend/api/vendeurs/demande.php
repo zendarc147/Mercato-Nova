@@ -1,4 +1,5 @@
 <?php
+// Endpoint vendeur : depot et suivi d'une demande pour devenir vendeur.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -12,6 +13,7 @@ header('Content-Type: application/json');
 $user = requireAuth();
 $pdo  = getDB();
 
+// GET : renvoie la derniere demande de l'utilisateur connecte.
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $pdo->prepare('SELECT etat, created_at FROM demandes_vendeur WHERE user_id = ?');
     $stmt->execute([$user['id']]);
@@ -20,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
+// POST : cree une nouvelle demande vendeur apres verification CSRF.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrfToken();
 
@@ -68,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Si une ancienne demande existe, on la reutilise au lieu de creer un doublon.
     if ($existing) {
         $stmt = $pdo->prepare(
             'UPDATE demandes_vendeur

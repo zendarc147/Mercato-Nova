@@ -1,5 +1,6 @@
 <?php
 
+// Verifie qu'un utilisateur est connecte avant de continuer une action protegee.
 function requireAuth(): array {
     if (session_status() === PHP_SESSION_NONE) { require_once __DIR__ . '/../config/session.php'; configureSession(); }
 
@@ -15,6 +16,7 @@ function requireAuth(): array {
     ];
 }
 
+// Verifie que l'utilisateur connecte possede au moins un des roles demandes.
 function requireRole(string ...$roles): array {
     $user = requireAuth();
     if (!in_array($user['role'], $roles, true)) {

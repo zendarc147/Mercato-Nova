@@ -19,6 +19,7 @@ const FILTRES = [
   { key: 'refuse',     label: 'Refusées' },
 ]
 
+// Petit badge visuel pour comprendre rapidement l'etat d'une demande vendeur.
 function EtatBadge({ etat }) {
   const map = {
     en_attente: { label: 'En attente', cls: 'admin-badge--attente' },
@@ -29,11 +30,13 @@ function EtatBadge({ etat }) {
   return <span className={`admin-badge ${cls}`}>{label}</span>
 }
 
+// Carte detaillee d'une demande : elle s'ouvre pour montrer les informations du candidat.
 function DemandeCard({ demande, onTraiter }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [localEtat, setLocalEtat] = useState(demande.etat)
 
+  // L'admin approuve ou refuse, puis la carte met son etat local a jour.
   async function handle(action) {
     setLoading(true)
     try {
@@ -136,6 +139,7 @@ function DemandeCard({ demande, onTraiter }) {
   )
 }
 
+// Page admin pour lire et traiter les demandes de role vendeur.
 export default function AdminDemandes() {
   const { user } = useAuth()
   const [demandes, setDemandes] = useState([])
@@ -143,6 +147,7 @@ export default function AdminDemandes() {
   const [error, setError] = useState(null)
   const [filtre, setFiltre] = useState('tous')
 
+  // Charge toutes les demandes au premier affichage de la page.
   useEffect(() => {
     getDemandesVendeur()
       .then(({ demandes: data }) => setDemandes(data))
@@ -150,6 +155,7 @@ export default function AdminDemandes() {
       .finally(() => setLoading(false))
   }, [])
 
+  // Envoie la decision admin au backend, puis remplace la demande dans la liste.
   async function handleTraiter(id, action) {
     await traiterDemandeVendeur(id, action)
     setDemandes((prev) =>

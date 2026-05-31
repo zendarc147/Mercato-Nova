@@ -1,5 +1,6 @@
 <?php
 
+// Configure la session PHP utilisee pour retenir l'utilisateur connecte.
 function configureSession(): void {
     if (session_status() !== PHP_SESSION_NONE) return;
 

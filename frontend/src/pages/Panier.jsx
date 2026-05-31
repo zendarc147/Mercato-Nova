@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext'
 import SiteHeader from '../components/SiteHeader'
 import { getCart, removeFromCart } from '../api/panier'
 
+// Icone panier dessinee en SVG local pour eviter une dependance externe.
 function IconCart({ filled = false }) {
   return (
     <svg width="52" height="52" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -15,6 +16,7 @@ function IconCart({ filled = false }) {
   )
 }
 
+// Icone suppression pour le bouton retirer du panier.
 function IconTrash() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -26,12 +28,14 @@ function IconTrash() {
   )
 }
 
+// Normalise les chemins d'images des produits dans le panier.
 function getImageSrc(url) {
   if (!url) return null
   if (url.startsWith('http') || url.startsWith('/')) return url
   return `/uploads/produits/${url}`
 }
 
+// Page panier : liste les articles et prepare la validation de paiement.
 export default function Panier() {
   const { user } = useAuth()
   const { refreshCart } = useCart()
@@ -43,10 +47,12 @@ export default function Panier() {
   const [error, setError] = useState(null)
   const [removingIds, setRemovingIds] = useState(new Set())
 
+  // Charge le panier quand la page s'affiche.
   useEffect(() => {
     loadCart()
   }, [])
 
+  // Recharge le panier et le total depuis l'API.
   async function loadCart() {
     setLoading(true)
     setError(null)
@@ -61,6 +67,7 @@ export default function Panier() {
     }
   }
 
+  // Retire un produit et synchronise le compteur global.
   async function handleRemove(produit_id) {
     setRemovingIds((prev) => new Set(prev).add(produit_id))
     try {
@@ -80,6 +87,7 @@ export default function Panier() {
     }
   }
 
+  // Passe les donnees du panier a la page paiement via React Router.
   function handlePayer() {
     navigate('/paiement', {
       state: { fromPanier: true, items, total },

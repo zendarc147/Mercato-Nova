@@ -1,4 +1,5 @@
 <?php
+// Endpoint notifications : lecture et marquage comme lu.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -13,6 +14,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 $action = $_GET['action'] ?? null;
 
+// Le routage est fait a la main selon la methode HTTP et les parametres.
 if ($method === 'GET') {
     listerNotifications();
 } elseif ($method === 'POST' && $id !== null) {
@@ -24,6 +26,7 @@ if ($method === 'GET') {
     echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
 }
 
+// Renvoie les notifications de l'utilisateur connecte.
 function listerNotifications(): void{
     $user = requireAuth();
     $pdo = getDB();
@@ -46,6 +49,7 @@ function listerNotifications(): void{
     ]);
 }
 
+// Marque une notification precise comme lue.
 function marquerLue(int $id): void {
     verifyCsrfToken();
     $user = requireAuth();
@@ -68,6 +72,7 @@ function marquerLue(int $id): void {
     echo json_encode(['success' => true]);
 }
 
+// Marque toutes les notifications de l'utilisateur comme lues.
 function marquerToutesLues(): void {
     verifyCsrfToken();
     $user = requireAuth();

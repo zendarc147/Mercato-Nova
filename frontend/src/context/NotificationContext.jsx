@@ -4,10 +4,12 @@ import { getNotifications } from '../api/notifications'
 
 const NotificationContext = createContext({ unreadCount: 0, refreshNotifCount: () => {} })
 
+// Provider des notifications : il partage le nombre de notifications non lues.
 export function NotificationProvider({ children }) {
   const { user } = useAuth()
   const [unreadCount, setUnreadCount] = useState(0)
 
+  // Recharge seulement le compteur, pas toute la page notifications.
   const refreshNotifCount = useCallback(async () => {
     if (!user) { setUnreadCount(0); return }
     try {
@@ -18,6 +20,7 @@ export function NotificationProvider({ children }) {
     }
   }, [user])
 
+  // Quand l'utilisateur change, on recalcule le compteur affiche dans le header.
   useEffect(() => {
     refreshNotifCount()
   }, [refreshNotifCount])
@@ -29,6 +32,7 @@ export function NotificationProvider({ children }) {
   )
 }
 
+// Hook pratique pour lire le compteur de notifications.
 export function useNotifications() {
   return useContext(NotificationContext)
 }

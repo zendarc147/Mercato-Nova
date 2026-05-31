@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+// Menu deroulant du profil : il adapte les liens au role de l'utilisateur.
 export default function ProfileMenu() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ export default function ProfileMenu() {
   const canAccessSellerPages = user?.role === 'vendeur' || user?.role === 'admin'
   const isAdmin = user?.role === 'admin'
 
+  // Ce useEffect ferme le menu quand on clique en dehors du bloc.
   useEffect(() => {
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -22,6 +24,7 @@ export default function ProfileMenu() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // La deconnexion est asynchrone car elle appelle le backend PHP.
   async function handleLogout() {
     setLogoutLoading(true)
     setLogoutError(null)

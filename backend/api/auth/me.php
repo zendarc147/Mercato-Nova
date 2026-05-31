@@ -1,4 +1,5 @@
 <?php
+// Endpoint qui renvoie l'utilisateur actuellement connecte grace a la session PHP.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -21,6 +22,7 @@ $stmt = $pdo->prepare('SELECT id, name, email, role, statut, preferences FROM us
 $stmt->execute([$user['id']]);
 $data = $stmt->fetch();
 
+// Si le compte n'existe plus, on nettoie la session pour eviter une fausse connexion.
 if (!$data) {
     session_destroy();
     http_response_code(401);
@@ -28,6 +30,7 @@ if (!$data) {
     exit;
 }
 
+// Un compte suspendu ou banni ne doit plus rester connecte.
 if (in_array($data['statut'], ['suspendu', 'banni'], true)) {
     session_destroy();
     http_response_code(403);

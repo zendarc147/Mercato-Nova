@@ -1,5 +1,7 @@
 <?php
 
+// Fonctions partagees par les endpoints d'encheres.
+
 /**
  * Fait passer l'enchère dans le bon état selon les dates.
  * Appelée à chaque lecture — pas de cron nécessaire.
@@ -27,6 +29,7 @@ function transitionnerEtat(PDO $pdo, array $enchere): array {
     return $enchere;
 }
 
+// Charge l'enchere d'un produit ; FOR UPDATE verrouille la ligne pendant une transaction.
 function fetchEnchereByProduit(PDO $pdo, int $produit_id, bool $forUpdate = false): ?array {
     $lock = $forUpdate ? ' FOR UPDATE' : '';
     $stmt = $pdo->prepare(

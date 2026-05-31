@@ -42,6 +42,7 @@ if (!$enchere) {
     exit;
 }
 
+// A chaque lecture, on corrige l'etat si la date de fin est depassee.
 $enchere            = transitionnerEtat($pdo, $enchere);
 $secondes_restantes = max(0, strtotime($enchere['date_fin']) - time());
 

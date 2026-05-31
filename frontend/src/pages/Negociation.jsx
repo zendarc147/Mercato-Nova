@@ -5,6 +5,7 @@ import SiteHeader from '../components/SiteHeader'
 import { getProduit } from '../api/produits'
 import { getNegociations, getNegociation, creerNegociation, repondreNegociation } from '../api/negociations'
 
+// Fiche negociation : creation d'une offre et suivi du fil d'echange.
 export default function Negociation() {
   const { produitId } = useParams()
   const { user } = useAuth()
@@ -28,11 +29,13 @@ export default function Negociation() {
   const [offreError, setOffreError] = useState(null)
   const [offreLoading, setOffreLoading] = useState(false)
 
+  // Charge le produit et, si elle existe, la negociation deja ouverte par l'utilisateur.
   useEffect(() => {
     if (!user) { navigate('/login'); return }
     load()
   }, [produitId, user])
 
+  // Le chargement est separe pour pouvoir le relancer apres chaque reponse.
   async function load() {
     setLoading(true)
     setError(null)
@@ -58,6 +61,7 @@ export default function Negociation() {
     }
   }
 
+  // Cree la premiere proposition d'achat.
   async function handleInitier(e) {
     e.preventDefault()
     if (!initPrix || Number(initPrix) <= 0) { setInitError('Entrez un prix valide.'); return }
@@ -74,6 +78,7 @@ export default function Negociation() {
     }
   }
 
+  // Envoie une action sur la negociation : accepter, refuser ou contre-offre.
   async function handleRepondre(action) {
     if (action === 'contre_offre' && (!offrePrix || Number(offrePrix) <= 0)) {
       setOffreError('Entrez un prix valide.'); return

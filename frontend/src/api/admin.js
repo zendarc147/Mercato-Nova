@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Appels reserves a l'admin : demandes vendeur, utilisateurs, roles et notifications.
 export const getDemandesVendeur = () => api.get('/admin/demandes.php')
 export const traiterDemandeVendeur = (id, action) =>
   api.patch('/admin/demandes.php', { id, action })

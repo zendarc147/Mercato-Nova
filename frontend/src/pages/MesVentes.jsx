@@ -10,6 +10,7 @@ const TYPE_LABELS = {
   negociation: 'Negociation',
 }
 
+// Formate les prix des produits vendeur.
 function formatPrice(value) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -17,6 +18,7 @@ function formatPrice(value) {
   }).format(Number(value || 0))
 }
 
+// Affiche une date lisible pour les annonces.
 function formatDate(value) {
   if (!value) return 'Date inconnue'
   return new Intl.DateTimeFormat('fr-FR', {
@@ -26,17 +28,20 @@ function formatDate(value) {
   }).format(new Date(value))
 }
 
+// Normalise les chemins d'images produits.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Verifie que le produit appartient bien au vendeur connecte.
 function sellerOwnsProduct(product, user) {
   const vendorId = product.vendeur_id ?? product.vendeur?.id
   return vendorId && user?.id && Number(vendorId) === Number(user.id)
 }
 
+// Trie localement les produits vendeur.
 function sortProducts(products, sortBy) {
   return [...products].sort((a, b) => {
     if (sortBy === 'price_asc') return Number(a.prix) - Number(b.prix)
@@ -48,6 +53,7 @@ function sortProducts(products, sortBy) {
   })
 }
 
+// Image avec fallback pour les annonces vendeur.
 function MesVenteImage({ product }) {
   const [failed, setFailed] = useState(false)
   const imageSrc = getImageSrc(product.image_url)
@@ -67,6 +73,7 @@ function MesVenteImage({ product }) {
   )
 }
 
+// Page vendeur pour voir, modifier et supprimer ses annonces.
 export default function MesVentes() {
   const { user } = useAuth()
   const [products, setProducts] = useState([])
@@ -82,6 +89,7 @@ export default function MesVentes() {
   const [deleteLoading,   setDeleteLoading]   = useState(false)
   const [deleteError,     setDeleteError]     = useState(null)
 
+  // Charge les annonces du vendeur connecte.
   useEffect(() => {
     if (!user?.id) return undefined
     let cancelled = false
@@ -110,6 +118,7 @@ export default function MesVentes() {
     return () => { cancelled = true }
   }, [user])
 
+  // Envoie les modifications d'un produit au backend.
   async function handleEditSave(id, data) {
     setEditLoading(true)
     setEditError(null)
@@ -126,6 +135,7 @@ export default function MesVentes() {
     }
   }
 
+  // Supprime une annonce apres confirmation.
   async function handleDelete(id) {
     setDeleteLoading(true)
     setDeleteError(null)
@@ -139,6 +149,7 @@ export default function MesVentes() {
     }
   }
 
+  // Applique filtres et tri sans refaire d'appel API.
   const displayedProducts = useMemo(() => {
     const filtered = typeFilter === 'all'
       ? products

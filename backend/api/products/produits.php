@@ -1,5 +1,6 @@
 <?php
 // backend/api/produits.php
+// Endpoint produits : liste, detail, creation, modification et suppression.
 
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -15,6 +16,7 @@ $methode = $_SERVER['REQUEST_METHOD'];
 // Récupération de l'ID si présent dans l'URL (ex: produits.php?id=12)
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
+// Le switch choisit l'action selon la methode HTTP recue.
 switch ($methode) {
     case 'GET':
         if ($id) {
@@ -40,6 +42,7 @@ switch ($methode) {
             if ($limit > 50) $limit = 50; // Contrainte
             $offset = ($page - 1) * $limit;
 
+            // La requete est construite progressivement selon les filtres envoyes.
             $sql = "FROM produits WHERE prix BETWEEN :prix_min AND :prix_max AND stock > 0";
             $params = [':prix_min' => $prix_min, ':prix_max' => $prix_max];
 
@@ -101,6 +104,7 @@ switch ($methode) {
             envoyerJSON(400, "La date de fin est obligatoire pour une enchère.");
         }
 
+        // Transaction : creation du produit et de l'enchere associee doivent rester coherentes.
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare("

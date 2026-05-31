@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Donnees de secours utilisees si le backend enchere n'est pas encore disponible.
 const MOCK_ENCHERES = {
   2: {
     id: 1,
@@ -29,10 +30,12 @@ const MOCK_ENCHERES = {
   },
 }
 
+// Genere une date future pour que les encheres mockees aient un compte a rebours visible.
 function futureDate(days) {
   return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
 }
 
+// Recupere une enchere mockee stable a partir de l'id du produit.
 function getMockEnchere(produitId) {
   const id = Number(produitId)
   return MOCK_ENCHERES[id] ?? {
@@ -47,6 +50,7 @@ function getMockEnchere(produitId) {
   }
 }
 
+// Transforme le detail d'une enchere en resume leger pour l'affichage rapide.
 function statusFromDetail(enchere) {
   const dateFin = enchere?.date_fin ? new Date(enchere.date_fin).getTime() : Date.now()
   return {
@@ -58,6 +62,7 @@ function statusFromDetail(enchere) {
   }
 }
 
+// Charge le detail complet d'une enchere, puis tombe sur le mock si l'API echoue.
 export async function getEnchere(produitId) {
   try {
     return await api.get(`/encheres/${produitId}`)
@@ -70,6 +75,7 @@ export async function getEnchere(produitId) {
   }
 }
 
+// Appel plus leger utilise pour le polling toutes les 3 secondes.
 export async function getEnchereStatut(produitId) {
   try {
     return await api.get(`/encheres/${produitId}/statut`)
@@ -86,6 +92,7 @@ export async function getEnchereStatut(produitId) {
   }
 }
 
+// Envoie une nouvelle offre au backend.
 export async function placerOffre(produitId, montant) {
   try {
     return await api.post(`/encheres/${produitId}/offre`, { montant })
@@ -94,6 +101,7 @@ export async function placerOffre(produitId, montant) {
   }
 }
 
+// Demande au backend de notifier le gagnant qu'il doit payer son enchere.
 export async function relancerPaiementEnchere(produitId) {
   try {
     return await api.post(`/encheres/${produitId}/relance-paiement`, {})

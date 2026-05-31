@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext'
 import { addToCart } from '../api/panier'
 import SiteHeader from '../components/SiteHeader'
 
+// Icone panier locale pour le bouton d'ajout.
 function IconCart() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -16,6 +17,7 @@ function IconCart() {
   )
 }
 
+// Icone negociation locale pour le bouton d'offre.
 function IconHandshake() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -27,6 +29,7 @@ function IconHandshake() {
   )
 }
 
+// Construit une galerie de photos meme si le backend n'envoie qu'une image.
 function buildPhotos(imageUrl, produitId) {
   const base = imageUrl?.startsWith('http')
     ? imageUrl
@@ -54,6 +57,7 @@ function buildPhotos(imageUrl, produitId) {
   return [base]
 }
 
+// Fiche produit : photos, description, actions panier/achat/negociation et admin.
 export default function Produit() {
   const { id } = useParams()
   const { user } = useAuth()
@@ -68,6 +72,7 @@ export default function Produit() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteError, setDeleteError] = useState('')
 
+  // Charge le produit a partir de l'id present dans l'URL.
   useEffect(() => {
     let cancelled = false
     async function load() {
@@ -88,6 +93,7 @@ export default function Produit() {
     return () => { cancelled = true }
   }, [id])
 
+  // Suppression reservee aux admins, avec confirmation avant l'appel API.
   async function handleDelete() {
     setDeleteLoading(true)
     setDeleteError('')
@@ -100,6 +106,7 @@ export default function Produit() {
     }
   }
 
+  // Ajoute le produit au panier et met a jour le compteur du header.
   async function handleAddToCart() {
     if (!user) { navigate('/login'); return }
     setCartState('adding')
@@ -113,6 +120,7 @@ export default function Produit() {
     }
   }
 
+  // Lance un achat direct en envoyant le produit a la page paiement.
   function handleBuyNow() {
     if (!user) { navigate('/login'); return }
     navigate('/paiement', {

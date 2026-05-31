@@ -24,6 +24,7 @@ const ETAT_LABELS = {
   mauvais_etat: 'Mauvais etat',
 }
 
+// Convertit une date JavaScript au format attendu par un champ datetime-local.
 function toDatetimeLocal(date) {
   const d = new Date(date)
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
@@ -32,6 +33,7 @@ function toDatetimeLocal(date) {
 
 const NOW_MIN = toDatetimeLocal(new Date())
 
+// Page vendeur pour creer une nouvelle annonce.
 export default function NouvelleAnnonce() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -57,11 +59,13 @@ export default function NouvelleAnnonce() {
   const isEnchere = form.type_vente === 'enchere'
   const returnPath = isEnchere ? '/mes-encheres' : '/mes-ventes'
 
+  // Modifie un champ simple du formulaire.
   function handleChange(e) {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
   }
 
+  // Verifie les champs avant d'envoyer l'annonce au backend.
   function validate() {
     if (!form.titre.trim()) return 'Le titre est obligatoire.'
     if (form.titre.trim().length < 3) return 'Le titre doit contenir au moins 3 caracteres.'
@@ -82,6 +86,7 @@ export default function NouvelleAnnonce() {
     return null
   }
 
+  // Envoie l'annonce au backend puis redirige vers la page correspondante.
   async function handleSubmit(e) {
     e.preventDefault()
     const validationError = validate()
