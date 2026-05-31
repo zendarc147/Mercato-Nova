@@ -130,6 +130,9 @@ export default function Register() {
       <div className={step === 'account' ? 'auth-card' : 'auth-card auth-card-survey'}>
         {step === 'account' ? (
           <>
+            <button className="auth-back-btn" onClick={() => navigate(-1)} aria-label="Retour">
+              ← Retour
+            </button>
             <h1>Creer un compte</h1>
 
             {error && <p className="form-error">{error}</p>}

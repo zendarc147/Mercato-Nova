@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const backendTarget = env.VITE_BACKEND_TARGET || 'http://localhost:8080'
-  const backendPrefix = env.VITE_BACKEND_PREFIX || '/api'
+  const backendTarget = env.VITE_BACKEND_TARGET || 'http://localhost'
+  const backendPrefix = env.VITE_BACKEND_PREFIX || '/Mercato-Nova/backend/api'
 
   return {
     plugins: [react()],

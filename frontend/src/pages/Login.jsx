@@ -73,6 +73,9 @@ export default function Login() {
       </div>
 
       <div className="auth-card">
+        <button className="auth-back-btn" onClick={() => navigate(-1)} aria-label="Retour">
+          ← Retour
+        </button>
         <h1>Connexion</h1>
 
         {error && <p className="form-error">{error}</p>}
