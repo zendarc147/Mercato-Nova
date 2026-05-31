@@ -590,7 +590,6 @@ erDiagram
         int produit_id FK
         int quantite
         timestamp created_at
-        UNIQUE "utilisateur_id, produit_id"
     }
     commandes {
         int id PK
