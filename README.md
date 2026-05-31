@@ -9,7 +9,7 @@ Vente par achat immédiat, enchère et négociation.
 
 ### Prérequis
 
-- **MAMP** (Apache + MySQL) — Document Root pointant vers le dossier parent de `Mercato-Nova`
+- **MAMP** — Document Root pointant vers le dossier parent de `Mercato-Nova`
 - **Node.js** 18+
 
 ### 1. Base de données
@@ -18,21 +18,18 @@ Dans phpMyAdmin, créer la base puis importer dans l'ordre :
 
 ```
 database/schema.sql   ← structure des tables
-database/seed.sql     ← données de test (comptes, produits, enchères)
+database/seed.sql     ← données de test 
 ```
 
-> Si la base existe déjà et que vous voulez ajouter la colonne de statut utilisateur :
-> ```sql
-> ALTER TABLE users ADD COLUMN statut ENUM('actif','suspendu','banni') NOT NULL DEFAULT 'actif';
-> ```
+
 
 **Comptes de test (seed.sql) :**
 
 | Email | Mot de passe | Rôle |
 |---|---|---|
-| admin@mercatonova.com | Admin1234! | admin |
-| vendeur@mercatonova.com | Vendeur1234! | vendeur |
-| acheteur@mercatonova.com | Acheteur1234! | acheteur |
+| elio@mercatonova.com | Mercato1! | admin |
+| shinichi@mercatonova.fr | Mercato1! | vendeur |
+| lucas@mercatonova.com | Mercato1! | acheteur |
 
 ### 2. Backend (PHP)
 
@@ -42,7 +39,7 @@ Apache doit servir le dossier `Mercato-Nova/`. La base URL de l'API est :
 http://localhost/Mercato-Nova/backend/api
 ```
 
-Aucune installation supplémentaire — PHP pur, pas de Composer.
+
 
 ### 3. Frontend (React + Vite)
 
@@ -52,13 +49,8 @@ npm install
 npm run dev
 ```
 
-Le frontend démarre sur **http://localhost:5173** et proxifie automatiquement les appels `/api/*` vers MAMP.
+Le frontend démarre sur **http://localhost:5173** 
 
-> Pour changer la cible du proxy (ex : port différent), créer `frontend/.env` :
-> ```
-> VITE_BACKEND_TARGET=http://localhost:8888
-> VITE_BACKEND_PREFIX=/Mercato-Nova/backend/api
-> ```
 
 ---
 
@@ -99,11 +91,3 @@ Mercato-Nova/
 
 ---
 
-## Points clés pour le correcteur
-
-- **Auth** : sessions PHP + token CSRF sur toutes les requêtes mutantes (`X-CSRF-Token`)
-- **Enchères** : polling toutes les 3s, transitions d'état automatiques à la lecture (pas de cron)
-- **Négociations** : machine à états stricte, expiration automatique si pas de réponse en 48h
-- **Rôles** : `acheteur` / `vendeur` / `admin` — le passage vendeur passe par une demande modérée par l'admin
-- **Sécurité** : PDO prepared statements, `password_hash()`, comptes suspendables/bannissables par l'admin
-- **Paiement** : simulé (pas de passerelle réelle) — choix carte / PayPal / virement
