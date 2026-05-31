@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $user = requireAuth();
 
 $pdo  = getDB();
-$stmt = $pdo->prepare('SELECT id, name, email, role, preferences FROM users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, name, email, role, statut, preferences FROM users WHERE id = ?');
 $stmt->execute([$user['id']]);
 $data = $stmt->fetch();
 
@@ -25,6 +25,16 @@ if (!$data) {
     session_destroy();
     http_response_code(401);
     echo json_encode(['message' => 'Session invalide']);
+    exit;
+}
+
+if (in_array($data['statut'], ['suspendu', 'banni'], true)) {
+    session_destroy();
+    http_response_code(403);
+    $msg = $data['statut'] === 'banni'
+        ? 'Votre compte a été banni définitivement.'
+        : 'Votre compte est suspendu. Contactez l\'administration.';
+    echo json_encode(['message' => $msg]);
     exit;
 }
 

@@ -7,3 +7,7 @@ export async function getProfil() {
 export async function savePreferences(preferences) {
   return await api.put('/profil/profil.php', { preferences })
 }
+
+export async function updateInfos(data) {
+  return await api.put('/profil/profil.php', data)
+}

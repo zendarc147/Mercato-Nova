@@ -88,8 +88,8 @@ switch ($methode) {
 
     case 'POST':
         //CRÉATION DE L'ANNONCE
-        $user = requireRole('vendeur', 'admin'); // Restriction 
-        verifyCsrfToken(); // Validation CSRF
+        $user = requireRole('vendeur', 'admin');
+        verifyCsrfToken();
 
         $body = json_decode(file_get_contents('php://input'), true);
 
@@ -97,22 +97,49 @@ switch ($methode) {
             envoyerJSON(400, "Données obligatoires manquantes.");
         }
 
-        $stmt = $pdo->prepare("
-            INSERT INTO produits (titre, description, prix, categorie, etat, type_vente, stock, vendeur_id, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        ");
-        $stmt->execute([
-            $body['titre'],
-            $body['description'] ?? '',
-            (float)$body['prix'],
-            $body['categorie'] ?? 'Autres',
-            $body['etat'] ?? 'neuf',
-            $body['type_vente'],
-            (int)($body['stock'] ?? 1),
-            $user['id']
-        ]);
+        if ($body['type_vente'] === 'enchere' && empty($body['date_fin'])) {
+            envoyerJSON(400, "La date de fin est obligatoire pour une enchère.");
+        }
 
-        envoyerJSON(201, "Annonce créée avec succès", ["id" => (int)$pdo->lastInsertId()]);
+        $pdo->beginTransaction();
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO produits (titre, description, prix, categorie, etat, type_vente, stock, vendeur_id, image_url, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->execute([
+                $body['titre'],
+                $body['description'] ?? '',
+                (float)$body['prix'],
+                $body['categorie'] ?? 'Autres',
+                $body['etat'] ?? 'neuf',
+                $body['type_vente'],
+                $body['type_vente'] === 'enchere' ? 1 : (int)($body['stock'] ?? 1),
+                $user['id'],
+                !empty($body['image_url']) ? $body['image_url'] : null,
+            ]);
+
+            $produit_id = (int)$pdo->lastInsertId();
+
+            if ($body['type_vente'] === 'enchere') {
+                $prix_depart = (float)($body['prix_depart'] ?? $body['prix']);
+                $date_debut  = !empty($body['date_debut']) ? $body['date_debut'] : null;
+                $date_fin    = $body['date_fin'];
+                $etat_enc    = ($date_debut && strtotime($date_debut) > time()) ? 'en_attente' : 'en_cours';
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO encheres (produit_id, prix_depart, etat, date_debut, date_fin)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $stmt->execute([$produit_id, $prix_depart, $etat_enc, $date_debut, $date_fin]);
+            }
+
+            $pdo->commit();
+            envoyerJSON(201, "Annonce créée avec succès", ["id" => $produit_id]);
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            envoyerJSON(500, "Erreur lors de la création de l'annonce.");
+        }
         break;
 
     case 'PUT':

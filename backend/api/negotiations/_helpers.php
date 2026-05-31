@@ -12,6 +12,13 @@ function transitionnerNegociation(PDO $pdo, array $neg): array {
             $stmt = $pdo->prepare('UPDATE negociations SET etat = ? WHERE id = ?');
             $stmt->execute(['expire', $neg['id']]);
             $neg['etat'] = 'expire';
+
+            // Notifie les deux parties
+            $titre = $neg['produit_titre'] ?? 'produit';
+            $msg   = "La négociation pour « {$titre} » a expiré faute de réponse dans les 48 h.";
+            $stmtN = $pdo->prepare('INSERT INTO notifications (utilisateur_id, type, message) VALUES (?, \'negociation_expiree\', ?)');
+            $stmtN->execute([(int) $neg['acheteur_id'], $msg]);
+            $stmtN->execute([(int) $neg['vendeur_id'],  $msg]);
         }
     }
 
@@ -60,5 +67,5 @@ function transitionsLegales(): array {
 }
 
 function expireAt(): string {
-    return date('Y-m-d H:i:s', strtotime('+7 days'));
+    return date('Y-m-d H:i:s', strtotime('+48 hours'));
 }

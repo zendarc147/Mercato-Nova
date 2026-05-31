@@ -53,18 +53,21 @@ function listerNegociations(): void {
     $stmt->execute([$user['id'], $user['id']]);
     $rows = $stmt->fetchAll();
 
-    $negociations = array_map(fn($r) => [
-        'id'             => (int) $r['id'],
-        'produit_id'     => (int) $r['produit_id'],
-        'produit_titre'  => $r['produit_titre'],
-        'produit_image'  => $r['produit_image'],
-        'etat'           => $r['etat'],
-        'derniere_offre' => (float) $r['derniere_offre'],
-        'dernier_acteur' => $r['dernier_acteur'],
-        'acheteur_id'    => (int) $r['acheteur_id'],
-        'vendeur_id'     => (int) $r['vendeur_id'],
-        'updated_at'     => $r['updated_at'],
-    ], $rows);
+    $negociations = array_map(function ($r) use ($pdo) {
+        $r = transitionnerNegociation($pdo, $r);
+        return [
+            'id'             => (int) $r['id'],
+            'produit_id'     => (int) $r['produit_id'],
+            'produit_titre'  => $r['produit_titre'],
+            'produit_image'  => $r['produit_image'],
+            'etat'           => $r['etat'],
+            'derniere_offre' => (float) $r['derniere_offre'],
+            'dernier_acteur' => $r['dernier_acteur'],
+            'acheteur_id'    => (int) $r['acheteur_id'],
+            'vendeur_id'     => (int) $r['vendeur_id'],
+            'updated_at'     => $r['updated_at'],
+        ];
+    }, $rows);
 
     echo json_encode(['negociations' => $negociations]);
 }
