@@ -3155,22 +3155,21 @@ select {
   }
 }
 
-/* ===== MES VENTES VENDEUR ===== */
-.mes-ventes-page {
-/* ===== MES ENCHERES VENDEUR ===== */
+/* ===== PAGES VENDEUR ===== */
+.mes-ventes-page,
 .mes-encheres-page {
   min-height: 100vh;
   background: var(--color-page);
 }
 
-.mes-ventes-content {
+.mes-ventes-content,
 .mes-encheres-content {
   max-width: 1040px;
   margin: 0 auto;
   padding: 44px 24px 72px;
 }
 
-.mes-ventes-heading {
+.mes-ventes-heading,
 .mes-encheres-heading {
   display: flex;
   align-items: flex-end;
@@ -3179,10 +3178,7 @@ select {
   margin-bottom: 24px;
 }
 
-.mes-ventes-heading p {
-  margin-bottom: 28px;
-}
-
+.mes-ventes-heading p,
 .mes-encheres-heading p {
   margin: 0 0 5px;
   color: var(--color-burnt-ochre);
@@ -3192,7 +3188,7 @@ select {
   text-transform: uppercase;
 }
 
-.mes-ventes-heading h1 {
+.mes-ventes-heading h1,
 .mes-encheres-heading h1 {
   margin: 0;
   color: var(--color-deep-forest);
@@ -3202,7 +3198,7 @@ select {
   line-height: 1;
 }
 
-.mes-ventes-outline-link {
+.mes-ventes-outline-link,
 .mes-encheres-new-link {
   flex: 0 0 auto;
   border: 1px solid rgba(45, 74, 62, 0.32);
@@ -3214,7 +3210,7 @@ select {
 }
 
 .mes-ventes-outline-link:hover,
-.mes-ventes-outline-link:focus-visible {
+.mes-ventes-outline-link:focus-visible,
 .mes-encheres-new-link:hover,
 .mes-encheres-new-link:focus-visible {
   background: var(--color-deep-forest);
@@ -3298,11 +3294,10 @@ select {
 }
 
 .mes-ventes-state,
-.mes-ventes-empty {
-  margin: 34px 0 0;
+.mes-ventes-empty,
 .mes-encheres-state,
 .mes-encheres-empty {
-  margin: 36px 0 0;
+  margin: 34px 0 0;
   border-radius: 12px;
   padding: 30px;
   background: var(--color-warm-sand);
@@ -3310,16 +3305,13 @@ select {
   text-align: center;
 }
 
-.mes-ventes-state--error {
-  color: #9d2d1f;
-}
-
-.mes-ventes-empty h2 {
 .mes-encheres-state--error,
+.mes-ventes-state--error,
 .mes-encheres-action-error {
   color: #9d2d1f;
 }
 
+.mes-ventes-empty h2,
 .mes-encheres-empty h2 {
   margin: 0 0 8px;
   color: var(--color-deep-forest);
@@ -3328,22 +3320,18 @@ select {
   font-weight: 400;
 }
 
-.mes-ventes-empty p {
-  margin: 0;
-}
-
-.mes-ventes-list {
+.mes-ventes-empty p,
 .mes-encheres-empty p {
   margin: 0;
 }
 
+.mes-ventes-list,
 .mes-encheres-list {
   display: grid;
   gap: 16px;
 }
 
-.mes-ventes-card {
-  display: grid;
+.mes-ventes-card,
 .mes-encheres-card {
   display: grid;
   gap: 0;
@@ -3354,7 +3342,7 @@ select {
   box-shadow: 0 10px 24px rgba(45, 74, 62, 0.07);
 }
 
-.mes-ventes-card-link {
+.mes-ventes-card-link,
 .mes-encheres-card-link {
   display: grid;
   grid-template-columns: 180px minmax(0, 1fr);
@@ -3362,17 +3350,14 @@ select {
   padding: 16px;
 }
 
-.mes-ventes-card-link:hover h2,
-.mes-ventes-card-link:focus-visible h2 {
-  color: var(--color-burnt-ochre);
-}
-
-.mes-ventes-image {
 .mes-encheres-card-link:hover h2,
+.mes-ventes-card-link:hover h2,
+.mes-ventes-card-link:focus-visible h2,
 .mes-encheres-card-link:focus-visible h2 {
   color: var(--color-burnt-ochre);
 }
 
+.mes-ventes-image,
 .mes-encheres-image {
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -3384,14 +3369,14 @@ select {
   overflow: hidden;
 }
 
-.mes-ventes-image img {
+.mes-ventes-image img,
 .mes-encheres-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.mes-ventes-info {
+.mes-ventes-info,
 .mes-encheres-info {
   min-width: 0;
   display: grid;
@@ -3399,7 +3384,7 @@ select {
   align-content: start;
 }
 
-.mes-ventes-title-row {
+.mes-ventes-title-row,
 .mes-encheres-title-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -3407,7 +3392,7 @@ select {
   align-items: start;
 }
 
-.mes-ventes-title-row h2 {
+.mes-ventes-title-row h2,
 .mes-encheres-title-row h2 {
   margin: 0;
   color: var(--color-deep-forest);
@@ -3418,7 +3403,7 @@ select {
   transition: color 140ms ease;
 }
 
-.mes-ventes-info > p {
+.mes-ventes-info > p,
 .mes-encheres-info > p {
   display: -webkit-box;
   margin: 0;
@@ -3435,6 +3420,11 @@ select {
   padding: 5px 10px;
   background: rgba(224, 123, 57, 0.12);
   color: var(--color-burnt-ochre);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .mes-encheres-status {
   border-radius: 999px;
   padding: 5px 10px;
@@ -3450,7 +3440,6 @@ select {
   color: var(--color-artist-mauve);
 }
 
-.mes-ventes-meta {
 .mes-encheres-status--terminee {
   background: rgba(45, 74, 62, 0.12);
   color: var(--color-deep-forest);
@@ -3466,13 +3455,14 @@ select {
   color: var(--color-muted);
 }
 
+.mes-ventes-meta,
 .mes-encheres-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
-.mes-ventes-meta span {
+.mes-ventes-meta span,
 .mes-encheres-meta span {
   min-width: 0;
   border-radius: 10px;
@@ -3481,7 +3471,7 @@ select {
 }
 
 .mes-ventes-meta small,
-.mes-ventes-meta strong {
+.mes-ventes-meta strong,
 .mes-encheres-meta small,
 .mes-encheres-meta strong {
   display: block;
@@ -3490,14 +3480,14 @@ select {
   white-space: nowrap;
 }
 
-.mes-ventes-meta small {
+.mes-ventes-meta small,
 .mes-encheres-meta small {
   margin-bottom: 4px;
   color: var(--color-muted);
   font-size: 12px;
 }
 
-.mes-ventes-meta strong {
+.mes-ventes-meta strong,
 .mes-encheres-meta strong {
   color: var(--color-ink);
   font-size: 15px;
@@ -3506,6 +3496,11 @@ select {
 .mes-ventes-actions {
   display: flex;
   align-items: center;
+  border-top: 1px solid rgba(45, 74, 62, 0.14);
+  padding: 12px 16px 16px;
+  background: rgba(244, 233, 208, 0.38);
+}
+
 .mes-encheres-actions {
   display: flex;
   align-items: center;
@@ -3529,9 +3524,6 @@ select {
   opacity: 0.86;
 }
 
-@media (max-width: 760px) {
-  .mes-ventes-heading,
-  .mes-ventes-toolbar {
 .mes-encheres-remind {
   border: 0;
   border-radius: 999px;
@@ -3564,45 +3556,37 @@ select {
 }
 
 @media (max-width: 760px) {
+  .mes-ventes-heading,
+  .mes-ventes-toolbar,
   .mes-encheres-heading {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .mes-ventes-heading h1 {
+  .mes-ventes-heading h1,
+  .mes-encheres-heading h1 {
     font-size: 36px;
   }
 
   .mes-ventes-summary,
-  .mes-ventes-meta {
+  .mes-ventes-meta,
+  .mes-encheres-meta {
     grid-template-columns: 1fr;
   }
 
-  .mes-ventes-card-link {
+  .mes-ventes-card-link,
+  .mes-encheres-card-link {
     grid-template-columns: 1fr;
   }
 
-  .mes-ventes-image {
+  .mes-ventes-image,
+  .mes-encheres-image {
     max-height: 240px;
   }
 
   .mes-ventes-toolbar label,
   .mes-ventes-toolbar select {
     width: 100%;
-  .mes-encheres-heading h1 {
-    font-size: 36px;
-  }
-
-  .mes-encheres-card-link {
-    grid-template-columns: 1fr;
-  }
-
-  .mes-encheres-image {
-    max-height: 240px;
-  }
-
-  .mes-encheres-meta {
-    grid-template-columns: 1fr;
   }
 
   .mes-encheres-actions {
