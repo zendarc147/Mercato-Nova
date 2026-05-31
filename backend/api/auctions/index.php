@@ -216,7 +216,7 @@ function relancerPaiement(int $produit_id): void {
 
     if (!$enchere) {
         http_response_code(404);
-        echo json_encode(['success' => false, 'error' => 'EnchÃ¨re introuvable']);
+        echo json_encode(['success' => false, 'error' => 'Enchère introuvable']);
         return;
     }
 
@@ -224,13 +224,13 @@ function relancerPaiement(int $produit_id): void {
 
     if ($enchere['etat'] !== 'terminee') {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => "L'enchÃ¨re n'est pas encore terminÃ©e"]);
+        echo json_encode(['success' => false, 'error' => "L'enchère n'est pas encore terminée"]);
         return;
     }
 
     if (!$enchere['meilleur_encherisseur_id']) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Aucun acheteur Ã  notifier']);
+        echo json_encode(['success' => false, 'error' => 'Aucun acheteur à notifier']);
         return;
     }
 
@@ -246,11 +246,11 @@ function relancerPaiement(int $produit_id): void {
 
     if ((int) $produit['vendeur_id'] !== (int) $user['id'] && $user['role'] !== 'admin') {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Seul le vendeur ou un admin peut notifier l acheteur']);
+        echo json_encode(['success' => false, 'error' => 'Seul le vendeur ou un admin peut notifier l'acheteur']);
         return;
     }
 
-    $message = "Votre enchÃ¨re remportÃ©e pour Â« {$produit['titre']} Â» est terminÃ©e. Merci de procÃ©der au paiement.";
+    $message = "Votre enchère remportée pour « {$produit['titre']} » est terminée. Merci de procéder au paiement.";
     $stmt = $pdo->prepare('INSERT INTO notifications (utilisateur_id, type, message) VALUES (?, ?, ?)');
     $stmt->execute([(int) $enchere['meilleur_encherisseur_id'], 'enchere_paiement', $message]);
 
