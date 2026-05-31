@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { getProduit } from '../api/produits'
+import { getProduit, deleteProduit } from '../api/produits'
 import { addToRecentlyViewed } from '../api/recentlyViewed'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
@@ -64,6 +64,9 @@ export default function Produit() {
   const [error, setError] = useState(null)
   const [cartState, setCartState] = useState('idle')
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -85,6 +88,18 @@ export default function Produit() {
     return () => { cancelled = true }
   }, [id])
 
+  async function handleDelete() {
+    setDeleteLoading(true)
+    setDeleteError('')
+    try {
+      await deleteProduit(id)
+      navigate('/catalogue')
+    } catch (err) {
+      setDeleteError(err.message || 'Impossible de supprimer ce produit.')
+      setDeleteLoading(false)
+    }
+  }
+
   async function handleAddToCart() {
     if (!user) { navigate('/login'); return }
     setCartState('adding')
@@ -96,6 +111,17 @@ export default function Produit() {
     } catch {
       setCartState('idle')
     }
+  }
+
+  function handleBuyNow() {
+    if (!user) { navigate('/login'); return }
+    navigate('/paiement', {
+      state: {
+        produit: { id: produit.id, titre: produit.titre },
+        prixAccepte: Number(produit.prix),
+        fromDirect: true,
+      },
+    })
   }
 
   const photos = produit ? buildPhotos(produit.image_url, produit.id) : []
@@ -187,8 +213,50 @@ export default function Produit() {
                     <IconHandshake />
                   </Link>
                 )}
-                <button className="produit-cta">Achat immédiat</button>
+                {produit.type_vente !== 'enchere' && (
+                  <button className="produit-cta" onClick={handleBuyNow}>
+                    Achat immédiat
+                  </button>
+                )}
               </div>
+
+              {user?.role === 'admin' && (
+                <div className="admin-delete-zone">
+                  <p className="admin-delete-label">Zone admin</p>
+                  {!deleteConfirm ? (
+                    <button
+                      type="button"
+                      className="admin-delete-btn"
+                      onClick={() => setDeleteConfirm(true)}
+                    >
+                      Supprimer ce produit
+                    </button>
+                  ) : (
+                    <div className="admin-delete-confirm">
+                      <p>Supprimer definitivement ce produit ?</p>
+                      <div className="admin-delete-confirm-actions">
+                        <button
+                          type="button"
+                          className="admin-delete-confirm-yes"
+                          onClick={handleDelete}
+                          disabled={deleteLoading}
+                        >
+                          {deleteLoading ? 'Suppression...' : 'Oui, supprimer'}
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-delete-cancel"
+                          onClick={() => { setDeleteConfirm(false); setDeleteError('') }}
+                          disabled={deleteLoading}
+                        >
+                          Annuler
+                        </button>
+                      </div>
+                      {deleteError && <p className="admin-delete-error">{deleteError}</p>}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

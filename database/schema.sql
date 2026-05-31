@@ -13,10 +13,13 @@ CREATE TABLE IF NOT EXISTS users (
   email       VARCHAR(255)                        NOT NULL UNIQUE,
   password    VARCHAR(255)                        NOT NULL,
   role        ENUM('acheteur','vendeur','admin')  NOT NULL DEFAULT 'acheteur',
+  statut      ENUM('actif','suspendu','banni')    NOT NULL DEFAULT 'actif',
   preferences VARCHAR(500)                        DEFAULT NULL,
   created_at  TIMESTAMP                           NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
--- Si la table existe déjà : ALTER TABLE users ADD COLUMN preferences VARCHAR(500) DEFAULT NULL;
+-- Si la table existe déjà :
+-- ALTER TABLE users ADD COLUMN preferences VARCHAR(500) DEFAULT NULL;
+-- ALTER TABLE users ADD COLUMN statut ENUM('actif','suspendu','banni') NOT NULL DEFAULT 'actif';
 
 CREATE TABLE IF NOT EXISTS produits (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -53,3 +53,27 @@ export async function getProduit(id) {
     return MOCK_PRODUITS.find((p) => p.id === Number(id)) ?? null
   }
 }
+
+export async function createProduit(data) {
+  try {
+    return await api.post('/produits', data)
+  } catch {
+    return api.post('/products/produits.php', data)
+  }
+}
+
+export async function updateProduit(id, data) {
+  try {
+    return await api.put(`/produits?id=${id}`, data)
+  } catch {
+    return api.put(`/products/produits.php?id=${id}`, data)
+  }
+}
+
+export async function deleteProduit(id) {
+  try {
+    return await api.delete(`/produits?id=${id}`)
+  } catch {
+    return api.delete(`/products/produits.php?id=${id}`)
+  }
+}

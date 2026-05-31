@@ -50,9 +50,9 @@ switch ($methode) {
 
             // Récupérer le panier actuel
             $stmtPanier = $pdo->prepare("
-                SELECT p.produit_id, p.quantite, pr.stock, pr.prix 
-                FROM panier p 
-                JOIN produits pr ON p.produit_id = pr.id 
+                SELECT p.produit_id, p.quantite, pr.stock, pr.prix, pr.vendeur_id, pr.titre
+                FROM panier p
+                JOIN produits pr ON p.produit_id = pr.id
                 WHERE p.utilisateur_id = ?
             ");
             $stmtPanier->execute([$user['id']]);
@@ -90,6 +90,33 @@ switch ($methode) {
             // Vider le panier de l'acheteur
             $stmtClearCart = $pdo->prepare("DELETE FROM panier WHERE utilisateur_id = ?");
             $stmtClearCart->execute([$user['id']]);
+
+            // Notifications
+            $stmtNotif = $pdo->prepare(
+                "INSERT INTO notifications (utilisateur_id, type, message) VALUES (?, ?, ?)"
+            );
+
+            // Grouper les articles par vendeur pour une notification par vendeur
+            $parVendeur = [];
+            foreach ($panierItems as $item) {
+                $parVendeur[$item['vendeur_id']][] = $item;
+            }
+
+            foreach ($parVendeur as $vendeurId => $items) {
+                $titres  = implode(', ', array_map(fn($i) => '« ' . $i['titre'] . ' »', $items));
+                $montant = array_sum(array_map(fn($i) => $i['prix'] * $i['quantite'], $items));
+                $msg = "Votre article {$titres} a été vendu (commande #{$commandeId}) — "
+                     . number_format($montant, 2, ',', ' ') . " €.";
+                $stmtNotif->execute([$vendeurId, 'achat_vendeur', $msg]);
+            }
+
+            // Notification acheteur
+            $stmtNotif->execute([
+                $user['id'],
+                'achat_confirme',
+                "Votre commande #{$commandeId} a été confirmée. Total : "
+                . number_format($totalCommande, 2, ',', ' ') . " €.",
+            ]);
 
             $pdo->commit(); // Tout est OK : validation définitive en BDD
             envoyerJSON(201, "Paiement simulé accepté", ["commande_id" => (int)$commandeId]);

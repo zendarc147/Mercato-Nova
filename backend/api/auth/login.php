@@ -25,13 +25,25 @@ if (!$email || !$mot_de_passe) {
 }
 
 $pdo  = getDB();
-$stmt = $pdo->prepare('SELECT id, name, email, password, role FROM users WHERE email = ?');
+$stmt = $pdo->prepare('SELECT id, name, email, password, role, statut FROM users WHERE email = ?');
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
 if (!$user || !password_verify($mot_de_passe, $user['password'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Identifiants incorrects']);
+    exit;
+}
+
+if ($user['statut'] === 'suspendu') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Votre compte est suspendu. Contactez l\'administration.']);
+    exit;
+}
+
+if ($user['statut'] === 'banni') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Votre compte a été banni définitivement.']);
     exit;
 }
 

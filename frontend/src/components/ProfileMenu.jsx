@@ -73,6 +73,9 @@ export default function ProfileMenu() {
               <Link to="/admin/demandes" className="profile-dropdown-item profile-dropdown-item--admin" onClick={() => setOpen(false)}>
                 Demandes vendeur
               </Link>
+              <Link to="/admin/utilisateurs" className="profile-dropdown-item profile-dropdown-item--admin" onClick={() => setOpen(false)}>
+                Gestion utilisateurs
+              </Link>
             </>
           )}
           <button

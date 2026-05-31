@@ -21,10 +21,11 @@ export default function Paiement() {
   const [error, setError] = useState(null)
   const [commandeId, setCommandeId] = useState(null)
 
-  const fromPanier = state?.fromPanier === true
-  const items = state?.items ?? []
-  const total = state?.total ?? 0
-  const produit = state?.produit ?? null
+  const fromPanier  = state?.fromPanier  === true
+  const fromDirect  = state?.fromDirect  === true
+  const items       = state?.items       ?? []
+  const total       = state?.total       ?? 0
+  const produit     = state?.produit     ?? null
   const prixAccepte = state?.prixAccepte ?? 0
 
   const isValid = fromPanier ? items.length > 0 : produit !== null
@@ -110,7 +111,7 @@ export default function Paiement() {
             <span>Total</span>
             <strong>{Number(totalAffiche).toFixed(2)} €</strong>
           </div>
-          {!fromPanier && (
+          {!fromPanier && !fromDirect && (
             <p className="paiement-recap-note">
               {state?.fromAuction ? "Prix final de l'enchère remportée." : 'Prix négocié et accepté par les deux parties.'}
             </p>
@@ -142,8 +143,13 @@ export default function Paiement() {
             {loading ? 'Traitement…' : `Payer ${Number(totalAffiche).toFixed(2)} €`}
           </button>
 
-          <Link className="paiement-link-back" to={fromPanier ? '/panier' : state?.fromAuction ? `/enchere/${produit.id}` : `/negociation/${produit.id}`}>
-            ← Retour {fromPanier ? 'au panier' : state?.fromAuction ? "à l'enchère" : 'à la négociation'}
+          <Link className="paiement-link-back" to={
+            fromPanier   ? '/panier'
+            : fromDirect ? `/produit/${produit.id}`
+            : state?.fromAuction ? `/enchere/${produit.id}`
+            : `/negociation/${produit.id}`
+          }>
+            ← Retour {fromPanier ? 'au panier' : fromDirect ? 'au produit' : state?.fromAuction ? "à l'enchère" : 'à la négociation'}
           </Link>
         </form>
       </div>

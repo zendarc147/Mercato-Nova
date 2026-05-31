@@ -1,5 +1,7 @@
 # Env
 .env
+.env.local
+frontend/.env.local
 
 # Node
 frontend/node_modules/

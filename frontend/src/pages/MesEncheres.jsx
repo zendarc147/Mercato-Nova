@@ -219,9 +219,37 @@ export default function MesEncheres() {
             <p>Vendeur</p>
             <h1 id="mes-encheres-title">Mes encheres</h1>
           </div>
-          <Link className="mes-encheres-new-link" to="/catalogue">
-            Voir le catalogue
-          </Link>
+          <div className="mes-encheres-heading-actions">
+            <Link className="mes-encheres-cta-link" to="/nouvelle-annonce?type=enchere">
+              + Nouvelle enchere
+            </Link>
+            <Link className="mes-encheres-new-link" to="/catalogue">
+              Voir le catalogue
+            </Link>
+          </div>
+        </div>
+
+        <div className="mes-encheres-summary" aria-label="Resume des encheres">
+          <span>
+            <small>Total</small>
+            <strong>{items.length}</strong>
+          </span>
+          <span>
+            <small>En cours</small>
+            <strong>
+              {sortedItems.filter(({ auction }) =>
+                getAuctionStatus(auction, getRemainingSeconds(auction, now)).value === 'en_cours'
+              ).length}
+            </strong>
+          </span>
+          <span>
+            <small>Terminees</small>
+            <strong>
+              {sortedItems.filter(({ auction }) =>
+                getAuctionStatus(auction, getRemainingSeconds(auction, now)).value === 'terminee'
+              ).length}
+            </strong>
+          </span>
         </div>
 
         {loading && <p className="mes-encheres-state">Chargement de vos encheres...</p>}

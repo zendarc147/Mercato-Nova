@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom'
 import ProfileMenu from './ProfileMenu'
 import logoFondVert from '../assets/logo-fond-vert.png'
 import { useCart } from '../context/CartContext'
+import { useNotifications } from '../context/NotificationContext'
 
 export default function SiteHeader({ user }) {
   const { cartCount } = useCart()
+  const { unreadCount } = useNotifications()
 
   return (
     <header className="site-header">
@@ -32,11 +34,16 @@ export default function SiteHeader({ user }) {
               </span>
             )}
           </Link>
-          <Link to="/notifications" className="header-icon-link" aria-label="Notifications">
+          <Link to="/notifications" className="header-icon-link header-icon-notif" aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} non lue${unreadCount > 1 ? 's' : ''})` : ''}`}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
+            {unreadCount > 0 && (
+              <span className="notif-badge" aria-hidden="true">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </Link>
           <ProfileMenu />
         </div>

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import SiteHeader from '../components/SiteHeader'
+import EditProduitForm from '../components/EditProduitForm'
 import { getNegociations } from '../api/negociations'
+import { getProduit, updateProduit, deleteProduit } from '../api/produits'
 
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
@@ -29,17 +31,29 @@ const ETAT_CLASS = {
 function statutTour(nego, userId) {
   const terminee = ['accepte', 'refuse', 'expire'].includes(nego.etat)
   if (terminee) return null
+  const monRole = String(nego.acheteur_id) === String(userId) ? 'acheteur' : 'vendeur'
+  return nego.dernier_acteur !== monRole ? 'mon-tour' : 'attente'
+}
 
-  const monRole = nego.acheteur_id === userId ? 'acheteur' : 'vendeur'
-  const estMonTour = nego.dernier_acteur !== monRole
-  return estMonTour ? 'mon-tour' : 'attente'
+function isVendeur(nego, userId) {
+  return String(nego.acheteur_id) !== String(userId)
 }
 
 export default function MesNegociations() {
   const { user } = useAuth()
   const [negociations, setNegociations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [loading, setLoading]           = useState(true)
+  const [error, setError]               = useState(null)
+
+  const [editingNegoId,    setEditingNegoId]    = useState(null)
+  const [editingProduit,   setEditingProduit]   = useState(null)
+  const [fetchingProduit,  setFetchingProduit]  = useState(false)
+  const [editNegoLoading,  setEditNegoLoading]  = useState(false)
+  const [editNegoError,    setEditNegoError]    = useState(null)
+
+  const [confirmDeleteNegoId, setConfirmDeleteNegoId] = useState(null)
+  const [deleteNegoLoading,   setDeleteNegoLoading]   = useState(false)
+  const [deleteNegoError,     setDeleteNegoError]     = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -57,8 +71,123 @@ export default function MesNegociations() {
     load()
   }, [])
 
+  async function openNegoEdit(nego) {
+    setEditingNegoId(nego.id)
+    setEditingProduit(null)
+    setEditNegoError(null)
+    setFetchingProduit(true)
+    try {
+      const produit = await getProduit(nego.produit_id)
+      setEditingProduit(produit)
+    } catch {
+      setEditingProduit({ titre: nego.produit_titre, prix: nego.derniere_offre, description: '', stock: 1, etat: 'bon_etat' })
+    } finally {
+      setFetchingProduit(false)
+    }
+  }
+
+  function closeNegoEdit() {
+    setEditingNegoId(null)
+    setEditingProduit(null)
+    setEditNegoError(null)
+  }
+
+  async function handleEditNegoProduit(produitId, data) {
+    setEditNegoLoading(true)
+    setEditNegoError(null)
+    try {
+      await updateProduit(produitId, data)
+      closeNegoEdit()
+    } catch (err) {
+      setEditNegoError(err.message || 'Erreur lors de la mise à jour.')
+    } finally {
+      setEditNegoLoading(false)
+    }
+  }
+
+  async function handleDeleteNegoProduit(produitId) {
+    setDeleteNegoLoading(true)
+    setDeleteNegoError(null)
+    try {
+      await deleteProduit(produitId)
+      setNegociations((prev) => prev.filter((n) => n.produit_id !== produitId))
+      setConfirmDeleteNegoId(null)
+    } catch (err) {
+      setDeleteNegoError(err.message || 'Erreur lors de la suppression.')
+      setDeleteNegoLoading(false)
+    }
+  }
+
   const actives  = negociations.filter((n) => ['en_attente', 'contre_offre'].includes(n.etat))
   const termines = negociations.filter((n) => ['accepte', 'refuse', 'expire'].includes(n.etat))
+
+  function renderManageButtons(nego) {
+    if (!isVendeur(nego, user?.id)) return null
+    const isConfirming = confirmDeleteNegoId === nego.id
+    const isEditing    = editingNegoId === nego.id
+
+    if (isEditing) {
+      return (
+        <div className="mes-negos-edit-wrapper">
+          {fetchingProduit ? (
+            <p className="mes-negos-state">Chargement de l'annonce…</p>
+          ) : editingProduit ? (
+            <>
+              <p className="mes-negos-edit-heading">Modifier « {nego.produit_titre} »</p>
+              <EditProduitForm
+                product={editingProduit}
+                onSave={(data) => handleEditNegoProduit(nego.produit_id, data)}
+                onCancel={closeNegoEdit}
+                loading={editNegoLoading}
+                error={editNegoError}
+              />
+            </>
+          ) : (
+            <p className="mes-negos-state mes-negos-state--error">Impossible de charger l'annonce.</p>
+          )}
+        </div>
+      )
+    }
+
+    if (isConfirming) {
+      return (
+        <div className="mes-negos-delete-confirm">
+          <span>Supprimer cette annonce ?</span>
+          {deleteNegoError && <span className="mes-ventes-delete-error">{deleteNegoError}</span>}
+          <button
+            className="mes-ventes-delete-confirm-btn"
+            onClick={() => handleDeleteNegoProduit(nego.produit_id)}
+            disabled={deleteNegoLoading}
+          >
+            {deleteNegoLoading ? 'Suppression…' : 'Confirmer'}
+          </button>
+          <button
+            className="profil-edit-cancel"
+            onClick={() => { setConfirmDeleteNegoId(null); setDeleteNegoError(null) }}
+          >
+            Annuler
+          </button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="mes-negos-manage-btns">
+        <button
+          className="mes-ventes-edit-btn"
+          onClick={() => { openNegoEdit(nego); setConfirmDeleteNegoId(null) }}
+        >
+          Modifier l'annonce
+        </button>
+        <button
+          className="mes-ventes-delete-btn"
+          onClick={() => { setConfirmDeleteNegoId(nego.id); setEditingNegoId(null) }}
+        >
+          Supprimer l'annonce
+        </button>
+      </div>
+    )
+  }
 
   return (
     <main className="mes-negos-page">
@@ -82,7 +211,7 @@ export default function MesNegociations() {
             <h2 className="mes-negos-section-title">En cours</h2>
             <ul className="mes-negos-list">
               {actives.map((nego) => {
-                const tour = statutTour(nego, user?.id)
+                const tour   = statutTour(nego, user?.id)
                 const imgSrc = getImageSrc(nego.produit_image)
                 return (
                   <li key={nego.id}>
@@ -109,6 +238,7 @@ export default function MesNegociations() {
                         )}
                       </div>
                     </Link>
+                    {renderManageButtons(nego)}
                   </li>
                 )
               })}
@@ -140,6 +270,7 @@ export default function MesNegociations() {
                         </span>
                       </div>
                     </Link>
+                    {renderManageButtons(nego)}
                   </li>
                 )
               })}

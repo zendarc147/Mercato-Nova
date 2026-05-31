@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getProduit } from '../api/produits'
+import { getProduit, deleteProduit } from '../api/produits'
 import { getEnchere, getEnchereStatut, placerOffre, relancerPaiementEnchere } from '../api/encheres'
 import { addToRecentlyViewed } from '../api/recentlyViewed'
 import SiteHeader from '../components/SiteHeader'
@@ -100,6 +100,9 @@ export default function Enchere() {
   const [notifyLoading, setNotifyLoading] = useState(false)
   const [notifyMessage, setNotifyMessage] = useState('')
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
@@ -232,6 +235,18 @@ export default function Enchere() {
         fromAuction: true,
       },
     })
+  }
+
+  async function handleDelete() {
+    setDeleteLoading(true)
+    setDeleteError('')
+    try {
+      await deleteProduit(produitId)
+      navigate('/encheres')
+    } catch (err) {
+      setDeleteError(err.message || 'Impossible de supprimer cette enchere.')
+      setDeleteLoading(false)
+    }
   }
 
   async function handleNotifyWinner() {
@@ -373,6 +388,44 @@ export default function Enchere() {
 
               {notifyMessage && <p className="fiche-enchere-action-note">{notifyMessage}</p>}
             </div>
+
+            {user?.role === 'admin' && (
+              <div className="admin-delete-zone">
+                <p className="admin-delete-label">Zone admin</p>
+                {!deleteConfirm ? (
+                  <button
+                    type="button"
+                    className="admin-delete-btn"
+                    onClick={() => setDeleteConfirm(true)}
+                  >
+                    Supprimer cette enchere
+                  </button>
+                ) : (
+                  <div className="admin-delete-confirm">
+                    <p>Supprimer definitivement cette enchere et son produit ?</p>
+                    <div className="admin-delete-confirm-actions">
+                      <button
+                        type="button"
+                        className="admin-delete-confirm-yes"
+                        onClick={handleDelete}
+                        disabled={deleteLoading}
+                      >
+                        {deleteLoading ? 'Suppression...' : 'Oui, supprimer'}
+                      </button>
+                      <button
+                        type="button"
+                        className="admin-delete-cancel"
+                        onClick={() => { setDeleteConfirm(false); setDeleteError('') }}
+                        disabled={deleteLoading}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                    {deleteError && <p className="admin-delete-error">{deleteError}</p>}
+                  </div>
+                )}
+              </div>
+            )}
 
             <Link className="fiche-enchere-back" to="/encheres">Retour aux encheres</Link>
           </div>
