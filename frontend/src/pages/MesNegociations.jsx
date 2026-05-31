@@ -6,6 +6,7 @@ import EditProduitForm from '../components/EditProduitForm'
 import { getNegociations } from '../api/negociations'
 import { getProduit, updateProduit, deleteProduit } from '../api/produits'
 
+// Normalise les chemins d'images produits.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
@@ -28,6 +29,7 @@ const ETAT_CLASS = {
   expire:       'nego-badge--expire',
 }
 
+// Determine si c'est le tour de l'utilisateur dans une negociation.
 function statutTour(nego, userId) {
   const terminee = ['accepte', 'refuse', 'expire'].includes(nego.etat)
   if (terminee) return null
@@ -35,10 +37,12 @@ function statutTour(nego, userId) {
   return nego.dernier_acteur !== monRole ? 'mon-tour' : 'attente'
 }
 
+// Verifie si l'utilisateur connecte est le vendeur dans cette negociation.
 function isVendeur(nego, userId) {
   return String(nego.acheteur_id) !== String(userId)
 }
 
+// Page qui regroupe les negociations actives et terminees de l'utilisateur.
 export default function MesNegociations() {
   const { user } = useAuth()
   const [negociations, setNegociations] = useState([])
@@ -55,6 +59,7 @@ export default function MesNegociations() {
   const [deleteNegoLoading,   setDeleteNegoLoading]   = useState(false)
   const [deleteNegoError,     setDeleteNegoError]     = useState(null)
 
+  // Charge toutes les negociations liees a l'utilisateur connecte.
   useEffect(() => {
     async function load() {
       setLoading(true)
@@ -71,6 +76,7 @@ export default function MesNegociations() {
     load()
   }, [])
 
+  // Ouvre l'edition du produit lie a une negociation vendeur.
   async function openNegoEdit(nego) {
     setEditingNegoId(nego.id)
     setEditingProduit(null)
@@ -86,12 +92,14 @@ export default function MesNegociations() {
     }
   }
 
+  // Ferme l'edition et nettoie les erreurs temporaires.
   function closeNegoEdit() {
     setEditingNegoId(null)
     setEditingProduit(null)
     setEditNegoError(null)
   }
 
+  // Enregistre les modifications du produit attache a la negociation.
   async function handleEditNegoProduit(produitId, data) {
     setEditNegoLoading(true)
     setEditNegoError(null)
@@ -105,6 +113,7 @@ export default function MesNegociations() {
     }
   }
 
+  // Supprime le produit d'une negociation apres confirmation.
   async function handleDeleteNegoProduit(produitId) {
     setDeleteNegoLoading(true)
     setDeleteNegoError(null)

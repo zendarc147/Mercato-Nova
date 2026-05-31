@@ -15,6 +15,7 @@ const preferenceOptions = [
   "Metiers d'art",
 ]
 
+// Page d'inscription en plusieurs etapes : compte, preferences, puis option vendeur.
 export default function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
@@ -30,10 +31,12 @@ export default function Register() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Met a jour le champ modifie dans le formulaire d'inscription.
   function handleChange(e) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
+  // Les preferences sont stockees dans un tableau car plusieurs choix sont possibles.
   function handlePreferenceChange(e) {
     const { value, checked } = e.target
     setForm((f) => ({
@@ -44,6 +47,7 @@ export default function Register() {
     }))
   }
 
+  // Verifie les champs obligatoires avant de passer a l'etape preferences.
   function handleNext(e) {
     e.preventDefault()
     setError('')
@@ -54,6 +58,7 @@ export default function Register() {
     setStep('preferences')
   }
 
+  // Passe de l'etape preferences a l'etape vendeur.
   function handlePrefsNext(e) {
     e.preventDefault()
     if (form.role === 'vendeur') {
@@ -63,6 +68,7 @@ export default function Register() {
     }
   }
 
+  // Cree le compte, puis envoie la demande vendeur si elle a ete remplie.
   async function doRegister(demandeData) {
     setError('')
     setLoading(true)

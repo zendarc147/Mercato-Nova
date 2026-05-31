@@ -1,4 +1,5 @@
 <?php
+// Endpoint de connexion : il verifie les identifiants puis cree la session PHP.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -18,6 +19,7 @@ $body         = json_decode(file_get_contents('php://input'), true);
 $email        = trim($body['email'] ?? '');
 $mot_de_passe = $body['mot_de_passe'] ?? '';
 
+// Validation simple avant de chercher l'utilisateur en base.
 if (!$email || !$mot_de_passe) {
     http_response_code(422);
     echo json_encode(['success' => false, 'error' => 'Email et mot de passe requis']);
@@ -29,6 +31,7 @@ $stmt = $pdo->prepare('SELECT id, name, email, password, role, statut FROM users
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
+// password_verify compare le mot de passe tape avec le hash stocke en base.
 if (!$user || !password_verify($mot_de_passe, $user['password'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Identifiants incorrects']);

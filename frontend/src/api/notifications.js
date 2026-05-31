@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Appels API pour afficher et marquer les notifications comme lues.
 export async function getNotifications() {
   return await api.get('/notifications/index.php')
 }

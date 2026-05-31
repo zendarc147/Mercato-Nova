@@ -1,4 +1,5 @@
 <?php
+// Endpoint profil : lecture et modification des informations utilisateur.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -11,6 +12,7 @@ header('Content-Type: application/json');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Le frontend utilise GET pour lire et PUT pour mettre a jour le profil.
 if ($method === 'GET') {
     getProfil();
 } elseif ($method === 'PUT') {
@@ -20,6 +22,7 @@ if ($method === 'GET') {
     echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
 }
 
+// Lit le profil avec l'id stocke dans la session.
 function getProfil(): void {
     $user = requireAuth();
     $pdo  = getDB();
@@ -38,6 +41,7 @@ function getProfil(): void {
     echo json_encode($data);
 }
 
+// Met a jour seulement les champs envoyes par React.
 function updateProfil(): void {
     verifyCsrfToken();
     $user = requireAuth();
@@ -53,6 +57,7 @@ function updateProfil(): void {
     $sets   = [];
     $params = [];
 
+    // Construction dynamique : on ajoute uniquement les colonnes vraiment modifiees.
     if (array_key_exists('preferences', $body)) {
         if (!is_array($body['preferences'])) {
             http_response_code(400);

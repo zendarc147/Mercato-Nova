@@ -4,10 +4,12 @@ import { setCsrfToken } from '../api/client'
 
 const AuthContext = createContext(null)
 
+// Provider d'authentification : il rend l'utilisateur disponible dans toute l'application.
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // Au chargement de l'app, on recupere le token CSRF puis la session PHP existante.
   useEffect(() => {
     async function init() {
       try {
@@ -24,6 +26,7 @@ export function AuthProvider({ children }) {
     init()
   }, [])
 
+  // Connexion : le backend cree la session, puis React garde l'utilisateur en memoire.
   async function login(email, password) {
     const response = await apiLogin(email, password)
     if (response.csrf_token) setCsrfToken(response.csrf_token)
@@ -32,6 +35,7 @@ export function AuthProvider({ children }) {
     return me
   }
 
+  // Apres l'inscription, on recharge la session pour connecter directement l'utilisateur.
   async function register(data) {
     await apiRegister(data)
     const { csrf_token } = await getCsrfToken()
@@ -41,11 +45,13 @@ export function AuthProvider({ children }) {
     return me
   }
 
+  // Deconnexion : le backend detruit la session PHP et React oublie l'utilisateur.
   async function logout() {
     await apiLogout()
     setUser(null)
   }
 
+  // Recharge l'utilisateur courant apres une modification de profil.
   async function refreshUser() {
     const me = await getMe()
     setUser(me)
@@ -58,6 +64,7 @@ export function AuthProvider({ children }) {
   )
 }
 
+// Hook pratique pour lire l'authentification sans importer directement le Context.
 export function useAuth() {
   return useContext(AuthContext)
 }

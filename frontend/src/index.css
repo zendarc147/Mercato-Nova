@@ -1,4 +1,7 @@
+/* Feuille de style principale : elle regroupe la charte graphique et les pages React. */
+/* Les commentaires de section aident a retrouver rapidement la partie d'interface concernee. */
 :root {
+  /* Variables CSS : changer une couleur ici la met a jour partout ou var(...) est utilise. */
   --color-deep-forest: #2d4a3e;
   --color-warm-sand: #f4e9d0;
   --color-burnt-ochre: #e07b39;
@@ -11,6 +14,7 @@
 }
 
 * {
+  /* border-box rend les largeurs plus previsibles en incluant padding et bordure. */
   box-sizing: border-box;
 }
 
@@ -34,6 +38,7 @@ select {
 }
 
 .sr-only {
+  /* Texte cache visuellement mais encore lisible par les lecteurs d'ecran. */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2018,6 +2023,7 @@ select {
   opacity: 0.85;
 }
 
+/* Responsive : ces regles adaptent la fiche produit et l'enchere aux ecrans etroits. */
 @media (max-width: 800px) {
   .produit-layout {
     padding: 24px 20px 48px;
@@ -2869,6 +2875,7 @@ select {
   transition: border-color 120ms ease;
 }
 
+/* :has() applique le style au label parent quand son bouton radio est coche. */
 .paiement-moyen-option:has(input:checked) {
   border-color: var(--color-burnt-ochre);
   background: rgba(224, 123, 57, 0.06);

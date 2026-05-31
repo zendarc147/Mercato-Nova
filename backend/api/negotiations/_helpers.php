@@ -1,5 +1,7 @@
 <?php
 
+// Fonctions partagees par les endpoints de negociation.
+
 /**
  * Transitions d'état automatiques basées sur expires_at.
  * Appelée à chaque lecture — pas de cron nécessaire.
@@ -25,6 +27,7 @@ function transitionnerNegociation(PDO $pdo, array $neg): array {
     return $neg;
 }
 
+// Charge une negociation ; FOR UPDATE verrouille la ligne pendant une reponse.
 function fetchNegociation(PDO $pdo, int $id, bool $forUpdate = false): ?array {
     $lock = $forUpdate ? ' FOR UPDATE' : '';
     $stmt = $pdo->prepare(
@@ -66,6 +69,7 @@ function transitionsLegales(): array {
     ];
 }
 
+// Une negociation expire 48 heures apres la derniere action.
 function expireAt(): string {
     return date('Y-m-d H:i:s', strtotime('+48 hours'));
 }

@@ -33,6 +33,7 @@ const STATUS_OPTIONS = [
   { value: 'terminee', label: 'Terminée' },
 ]
 
+// Formate les prix des cartes d'encheres.
 function formatPrice(value) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -40,12 +41,14 @@ function formatPrice(value) {
   }).format(Number(value || 0))
 }
 
+// Normalise les images pour accepter les chemins backend et les URLs externes.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Normalise les categories pour comparer proprement accents, espaces et casse.
 function normalizeCategory(value) {
   return String(value || '')
     .normalize('NFD')
@@ -56,10 +59,12 @@ function normalizeCategory(value) {
     .toLowerCase()
 }
 
+// Recupere le prix courant d'une enchere, avec des valeurs de secours.
 function getAuctionPrice(product, auction) {
   return Number(auction?.meilleure_offre ?? auction?.prix_depart ?? product.prix ?? 0)
 }
 
+// Calcule le temps restant avec la date serveur ou le compteur du polling.
 function getRemainingSeconds(auction, now) {
   if (!auction) return null
   if (auction.date_fin) {
@@ -72,6 +77,7 @@ function getRemainingSeconds(auction, now) {
   return null
 }
 
+// Transforme les secondes restantes en texte court pour les cartes.
 function formatRemainingTime(seconds) {
   if (seconds === null) return 'Calcul...'
   if (seconds <= 0) return 'Terminee'
@@ -86,6 +92,7 @@ function formatRemainingTime(seconds) {
   return `${minutes}m ${String(secs).padStart(2, '0')}s`
 }
 
+// Choisit le libelle visible selon l'etat et le compte a rebours.
 function getAuctionStateLabel(auction, remainingSeconds) {
   if (auction?.etat === 'en_attente') return 'À venir'
   if (auction?.etat === 'terminee' || remainingSeconds === 0) return 'Terminée'
@@ -93,16 +100,19 @@ function getAuctionStateLabel(auction, remainingSeconds) {
   return 'En cours'
 }
 
+// Centralise la definition d'une enchere terminee.
 function isFinishedAuction(auction, remainingSeconds) {
   return auction?.etat === 'terminee' || auction?.etat === 'annulee' || remainingSeconds === 0
 }
 
+// Convertit l'etat technique en valeur de filtre.
 function getAuctionFilterStatus(auction, remainingSeconds) {
   if (isFinishedAuction(auction, remainingSeconds)) return 'terminee'
   if (auction?.etat === 'en_attente') return 'en_attente'
   return 'en_cours'
 }
 
+// Trie les encheres deja chargees selon le choix utilisateur.
 function sortAuctions(products, auctionsByProduct, sortBy, now) {
   const sorted = [...products]
 
@@ -128,6 +138,7 @@ function sortAuctions(products, auctionsByProduct, sortBy, now) {
   return sorted
 }
 
+// Image avec fallback si l'image produit ne charge pas.
 function AuctionImage({ product }) {
   const [failed, setFailed] = useState(false)
   const imageSrc = getImageSrc(product.image_url)
@@ -147,6 +158,7 @@ function AuctionImage({ product }) {
   )
 }
 
+// Carte d'une enchere dans la liste.
 function AuctionCard({ product, auction, now }) {
   const seller = product.vendeur?.nom || product.vendeur_nom || (product.vendeur_id ? `Vendeur #${product.vendeur_id}` : 'Vendeur')
   const remainingSeconds = getRemainingSeconds(auction, now)
@@ -179,6 +191,7 @@ function AuctionCard({ product, auction, now }) {
   )
 }
 
+// Page de toutes les encheres disponibles avec filtres et recherche.
 export default function Encheres() {
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -194,15 +207,18 @@ export default function Encheres() {
   const [sortBy, setSortBy] = useState('time_asc')
   const [now, setNow] = useState(Date.now())
 
+  // Synchronise le champ de recherche avec le parametre q de l'URL.
   useEffect(() => {
     setSearchValue(urlQuery)
   }, [urlQuery])
 
+  // Rafraichit l'heure locale pour les compteurs affiches sur les cartes.
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  // Charge les produits de type enchere et leur statut detaille.
   useEffect(() => {
     let cancelled = false
 
@@ -238,6 +254,7 @@ export default function Encheres() {
     return () => { cancelled = true }
   }, [urlQuery])
 
+  // Polling : rafraichit les statuts d'enchere sans recharger les produits.
   useEffect(() => {
     if (products.length === 0) return undefined
 
@@ -269,6 +286,7 @@ export default function Encheres() {
     }
   }, [products])
 
+  // Calcule une limite coherente pour le filtre de prix.
   const maxSliderValue = useMemo(() => {
     const highestPrice = products.reduce((max, product) => {
       const auction = auctionsByProduct[product.id]
@@ -278,6 +296,7 @@ export default function Encheres() {
     return Math.max(100, Math.ceil(highestPrice / 100) * 100)
   }, [auctionsByProduct, products])
 
+  // Applique recherche, filtres et tri cote frontend.
   const displayedProducts = useMemo(() => {
     const query = urlQuery.trim().toLowerCase()
     const selectedMax = maxPrice === '' ? null : Number(maxPrice)
@@ -299,6 +318,7 @@ export default function Encheres() {
     return sortAuctions(filtered, auctionsByProduct, sortBy, now)
   }, [auctionsByProduct, maxPrice, now, products, selectedCategories, selectedStatuses, sortBy, urlQuery])
 
+  // Place la recherche dans l'URL comme sur le catalogue.
   function handleSearchSubmit(event) {
     event.preventDefault()
     const nextQuery = searchValue.trim()

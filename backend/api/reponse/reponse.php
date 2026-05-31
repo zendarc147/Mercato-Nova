@@ -1,6 +1,7 @@
 <?php
 // backend/api/reponse.php
 
+// Reponse JSON uniforme pour que le frontend lise toujours le meme format.
 function envoyerJSON(int $codeStatut, $messageOuDonnees, array $donneesSup = []): void {
     header('Content-Type: application/json; charset=utf-8');
     http_response_code($codeStatut);

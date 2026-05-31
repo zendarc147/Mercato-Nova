@@ -1,4 +1,5 @@
 <?php
+// Endpoint admin pour lister et traiter les demandes de role vendeur.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -11,6 +12,7 @@ header('Content-Type: application/json');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+// GET : renvoie toutes les demandes, reserve aux admins.
 if ($method === 'GET') {
     requireRole('admin');
     $pdo = getDB();
@@ -33,6 +35,7 @@ if ($method === 'GET') {
     exit;
 }
 
+// PATCH : approuve ou refuse une demande precise.
 if ($method === 'PATCH') {
     verifyCsrfToken();
     requireRole('admin');
@@ -60,6 +63,7 @@ if ($method === 'PATCH') {
 
     $nouvelEtat = $action === 'approuver' ? 'approuve' : 'refuse';
 
+    // Transaction : les deux modifications doivent reussir ensemble.
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare('UPDATE demandes_vendeur SET etat = ? WHERE id = ?');

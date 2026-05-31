@@ -1,5 +1,6 @@
 <?php
 
+// Configure les en-tetes qui autorisent le frontend React a appeler l'API PHP.
 function setCorsHeaders(): void {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:5173';
     header("Access-Control-Allow-Origin: $origin");

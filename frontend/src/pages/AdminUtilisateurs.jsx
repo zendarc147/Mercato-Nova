@@ -8,15 +8,18 @@ const ROLE_CLASS  = { acheteur: 'au-badge--acheteur', vendeur: 'au-badge--vendeu
 const STATUT_LABEL = { actif: 'Actif', suspendu: 'Suspendu', banni: 'Banni' }
 const STATUT_CLASS = { actif: 'au-statut--actif', suspendu: 'au-statut--suspendu', banni: 'au-statut--banni' }
 
+// Formate les dates utilisateur pour l'affichage admin.
 function formatDate(value) {
   if (!value) return '—'
   return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
 }
 
+// Cree de petites initiales quand l'utilisateur n'a pas d'avatar.
 function initials(name) {
   return (name ?? '?').split(' ').slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('')
 }
 
+// Page admin pour consulter les comptes, envoyer un message et gerer roles/statuts.
 export default function AdminUtilisateurs() {
   const { user } = useAuth()
   const [users, setUsers]     = useState([])
@@ -47,6 +50,7 @@ export default function AdminUtilisateurs() {
   const [deleteLoading, setDeleteLoading]   = useState(false)
   const [deleteError, setDeleteError]       = useState(null)
 
+  // Charge la liste des utilisateurs depuis l'API admin.
   useEffect(() => {
     async function load() {
       try {
@@ -61,6 +65,7 @@ export default function AdminUtilisateurs() {
     load()
   }, [])
 
+  // Selectionne un utilisateur et remet a zero les messages d'erreur/succes.
   function selectUser(u) {
     setSelected(u)
     setNewRole(u.role)
@@ -71,6 +76,7 @@ export default function AdminUtilisateurs() {
     setDeleteConfirm(false); setDeleteError(null)
   }
 
+  // Met a jour l'utilisateur selectionne dans le panneau detail et dans la liste.
   function updateSelectedInList(patch) {
     const updated = { ...selected, ...patch }
     setSelected(updated)
@@ -78,6 +84,7 @@ export default function AdminUtilisateurs() {
   }
 
   // ── Message ──────────────────────────────────────────────────────────
+  // Envoie une notification manuelle a l'utilisateur selectionne.
   async function handleSendMessage(e) {
     e.preventDefault()
     if (!message.trim()) return
@@ -94,6 +101,7 @@ export default function AdminUtilisateurs() {
   }
 
   // ── Changement de rôle ───────────────────────────────────────────────
+  // Change le role de l'utilisateur sans recharger toute la page.
   async function handleRoleChange(e) {
     e.preventDefault()
     if (newRole === selected.role) return
@@ -110,6 +118,7 @@ export default function AdminUtilisateurs() {
   }
 
   // ── Changement de statut ─────────────────────────────────────────────
+  // Change le statut du compte : actif, suspendu ou banni.
   async function handleStatut(statut) {
     setStatutLoading(true); setStatutError(null)
     try {
@@ -123,6 +132,7 @@ export default function AdminUtilisateurs() {
   }
 
   // ── Suppression ──────────────────────────────────────────────────────
+  // Supprime l'utilisateur selectionne apres confirmation visuelle.
   async function handleDelete() {
     setDeleteLoading(true); setDeleteError(null)
     try {
@@ -135,6 +145,7 @@ export default function AdminUtilisateurs() {
     }
   }
 
+  // Filtre la liste cote React pour eviter un appel API a chaque recherche.
   const displayed = useMemo(() => {
     const q = search.trim().toLowerCase()
     return users.filter((u) => {
@@ -144,6 +155,7 @@ export default function AdminUtilisateurs() {
     })
   }, [users, filtre, search])
 
+  // Compte les roles pour afficher les badges des onglets.
   const counts = useMemo(() => ({
     all:      users.length,
     acheteur: users.filter((u) => u.role === 'acheteur').length,

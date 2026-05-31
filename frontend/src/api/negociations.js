@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Appels API pour lire, creer et faire avancer une negociation.
 export async function getNegociations() {
   return await api.get('/negotiations/index.php')
 }

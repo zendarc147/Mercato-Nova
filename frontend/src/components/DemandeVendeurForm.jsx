@@ -8,6 +8,7 @@ const EXPERIENCE_OPTIONS = [
   { value: '5_plus',   label: 'Plus de 5 ans' },
 ]
 
+// Formulaire reutilisable pour demander a devenir vendeur.
 export default function DemandeVendeurForm({ onSubmit, onCancel, loading, error }) {
   const [form, setForm] = useState({
     nom_boutique: '',
@@ -23,6 +24,7 @@ export default function DemandeVendeurForm({ onSubmit, onCancel, loading, error 
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
+  // Les categories sont stockees dans un tableau car un vendeur peut en choisir plusieurs.
   function handleCatToggle(e) {
     const { value, checked } = e.target
     setForm((f) => ({
@@ -33,6 +35,7 @@ export default function DemandeVendeurForm({ onSubmit, onCancel, loading, error 
     }))
   }
 
+  // Le parent decide quoi faire avec les donnees envoyees.
   function handleSubmit(e) {
     e.preventDefault()
     onSubmit(form)

@@ -1,4 +1,5 @@
 <?php
+// Endpoint admin pour gerer les utilisateurs, roles, statuts et notifications.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -12,6 +13,7 @@ header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
 
 // ── GET : liste des utilisateurs ─────────────────────────────────────
+// GET : liste tous les comptes pour l'interface admin.
 if ($method === 'GET') {
     requireRole('admin');
     $pdo = getDB();
@@ -31,6 +33,7 @@ if ($method === 'GET') {
 }
 
 // ── POST : envoyer une notification à un utilisateur ─────────────────
+// POST : envoie une notification manuelle a un utilisateur.
 if ($method === 'POST') {
     verifyCsrfToken();
     requireRole('admin');
@@ -64,6 +67,7 @@ if ($method === 'POST') {
 }
 
 // ── PATCH : changer le rôle et/ou le statut ──────────────────────────
+// PATCH : modifie le role ou le statut d'un utilisateur.
 if ($method === 'PATCH') {
     verifyCsrfToken();
     $admin = requireRole('admin');
@@ -138,6 +142,7 @@ if ($method === 'PATCH') {
 }
 
 // ── DELETE : supprimer un compte ──────────────────────────────────────
+// DELETE : supprime un utilisateur, sauf le compte admin courant.
 if ($method === 'DELETE') {
     verifyCsrfToken();
     $admin = requireRole('admin');

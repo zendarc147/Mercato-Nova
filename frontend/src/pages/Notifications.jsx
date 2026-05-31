@@ -4,12 +4,14 @@ import { useNotifications } from '../context/NotificationContext'
 import { getNotifications, marquerLue, marquerToutesLues } from '../api/notifications'
 import SiteHeader from '../components/SiteHeader'
 
+// Page notifications : liste les messages et permet de les marquer comme lus.
 export default function Notifications() {
   const { user } = useAuth()
   const { refreshNotifCount } = useNotifications()
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Charge les notifications des que la page s'affiche.
   useEffect(() => {
     async function load() {
       try {
@@ -24,6 +26,7 @@ export default function Notifications() {
     load()
   }, [])
 
+  // Marque une seule notification comme lue puis met a jour le compteur global.
   async function handleMarquerLue(id) {
     try {
       await marquerLue(id)
@@ -36,6 +39,7 @@ export default function Notifications() {
     }
   }
 
+  // Marque toutes les notifications comme lues en une seule action.
   async function handleToutLire() {
     try {
       await marquerToutesLues()

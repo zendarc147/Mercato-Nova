@@ -1,4 +1,5 @@
 <?php
+// Endpoint negociation : liste, creation, detail et reponse aux offres.
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/session.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -14,6 +15,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $id     = isset($_GET['id']) ? (int) $_GET['id'] : null;
 $action = $_GET['action'] ?? null;
 
+// Routage manuel : l'action depend de la methode HTTP, de l'id et du parametre action.
 if ($method === 'GET' && $id === null) {
     listerNegociations();
 } elseif ($method === 'POST' && $id === null) {
@@ -30,6 +32,7 @@ if ($method === 'GET' && $id === null) {
 // -------------------------------------------------------------------
 // GET /negociations
 // -------------------------------------------------------------------
+// Liste toutes les negociations ou l'utilisateur est acheteur ou vendeur.
 function listerNegociations(): void {
     $user = requireAuth();
     $pdo  = getDB();
@@ -75,6 +78,7 @@ function listerNegociations(): void {
 // -------------------------------------------------------------------
 // POST /negociations
 // -------------------------------------------------------------------
+// Cree une premiere offre de negociation pour un produit.
 function creerNegociation(): void {
     verifyCsrfToken();
     $user = requireAuth();
@@ -126,6 +130,7 @@ function creerNegociation(): void {
         return;
     }
 
+    // Transaction : la negociation, le premier message et la notification vont ensemble.
     $pdo->beginTransaction();
     try {
         $stmt = $pdo->prepare(
@@ -160,6 +165,7 @@ function creerNegociation(): void {
 // -------------------------------------------------------------------
 // GET /negociations/{id}
 // -------------------------------------------------------------------
+// Renvoie le fil complet d'une negociation precise.
 function detailNegociation(int $id): void {
     $user = requireAuth();
     $pdo  = getDB();
@@ -211,6 +217,7 @@ function detailNegociation(int $id): void {
 // -------------------------------------------------------------------
 // POST /negociations/{id}/repondre
 // -------------------------------------------------------------------
+// Repond a une negociation avec acceptation, refus ou contre-offre.
 function repondreNegociation(int $id): void {
     verifyCsrfToken();
     $user = requireAuth();
@@ -234,6 +241,7 @@ function repondreNegociation(int $id): void {
     }
 
     $pdo = getDB();
+    // Transaction : on verrouille la negociation pour eviter deux reponses en meme temps.
     $pdo->beginTransaction();
 
     try {

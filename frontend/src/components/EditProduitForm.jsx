@@ -7,6 +7,7 @@ const ETAT_OPTIONS = [
   { value: 'mauvais_etat', label: 'Mauvais état' },
 ]
 
+// Formulaire reutilisable pour modifier les informations principales d'un produit.
 export default function EditProduitForm({ product, onSave, onCancel, loading, error }) {
   const [titre,       setTitre]       = useState(product?.titre       ?? '')
   const [description, setDescription] = useState(product?.description ?? '')
@@ -14,6 +15,7 @@ export default function EditProduitForm({ product, onSave, onCancel, loading, er
   const [stock,       setStock]       = useState(product?.stock       ?? '')
   const [etat,        setEtat]        = useState(product?.etat        ?? 'bon_etat')
 
+  // On convertit les nombres ici pour envoyer des donnees propres au backend.
   function handleSubmit(e) {
     e.preventDefault()
     onSave({

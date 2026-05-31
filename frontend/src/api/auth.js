@@ -1,5 +1,6 @@
 import { api } from './client'
 
+// Appels lies a la session : inscription, connexion, deconnexion et utilisateur courant.
 export const getCsrfToken = () => api.get('/auth/csrf.php')
 export const login = (email, password) => api.post('/auth/login.php', { email, mot_de_passe: password })
 export const register = (data) => api.post('/auth/register.php', data)

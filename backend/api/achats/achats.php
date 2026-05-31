@@ -1,5 +1,6 @@
 <?php
 // backend/api/achats.php
+// Endpoint achats : historique des commandes et validation du paiement simule.
 
 require_once __DIR__ . '/../../config/cors.php';
 require_once __DIR__ . '/../../config/database.php';
@@ -13,6 +14,7 @@ $user = requireAuth();
 $pdo = getDB();
 $methode = $_SERVER['REQUEST_METHOD'];
 
+// Le switch choisit l'action selon la methode HTTP recue.
 switch ($methode) {
     case 'GET':
         //HISTORIQUE DES COMMANDES DE L'ACHETEUR
@@ -46,6 +48,7 @@ switch ($methode) {
         }
 
         try {
+            // Transaction : commande, stock, panier et notifications doivent rester coherents.
             $pdo->beginTransaction(); // Sécurisation globale
 
             // Récupérer le panier actuel

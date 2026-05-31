@@ -1,5 +1,6 @@
 <?php
 
+// Cree ou reutilise le token CSRF stocke dans la session PHP.
 function generateCsrfToken(): string {
     if (session_status() === PHP_SESSION_NONE) { require_once __DIR__ . '/../config/session.php'; configureSession(); }
     if (empty($_SESSION['csrf_token'])) {
@@ -8,6 +9,7 @@ function generateCsrfToken(): string {
     return $_SESSION['csrf_token'];
 }
 
+// Controle le token CSRF envoye par React avant une action qui modifie des donnees.
 function verifyCsrfToken(): void {
     if (session_status() === PHP_SESSION_NONE) { require_once __DIR__ . '/../config/session.php'; configureSession(); }
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';

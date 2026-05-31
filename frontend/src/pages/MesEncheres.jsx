@@ -5,6 +5,7 @@ import { getProduits } from '../api/produits'
 import { getEnchere, getEnchereStatut, relancerPaiementEnchere } from '../api/encheres'
 import SiteHeader from '../components/SiteHeader'
 
+// Formate les montants des encheres vendeur.
 function formatPrice(value) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -12,12 +13,14 @@ function formatPrice(value) {
   }).format(Number(value || 0))
 }
 
+// Normalise les chemins d'images produits.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Calcule le temps restant avec la date serveur ou le compteur du polling.
 function getRemainingSeconds(auction, now) {
   if (!auction) return null
   if (auction.date_fin) {
@@ -30,6 +33,7 @@ function getRemainingSeconds(auction, now) {
   return null
 }
 
+// Transforme les secondes restantes en texte court.
 function formatRemainingTime(seconds) {
   if (seconds === null) return 'Calcul...'
   if (seconds <= 0) return 'Terminee'
@@ -44,6 +48,7 @@ function formatRemainingTime(seconds) {
   return `${minutes}m ${String(secs).padStart(2, '0')}s`
 }
 
+// Calcule l'etat courant d'une enchere a partir de son statut et de sa date de fin.
 function getAuctionStatus(auction, remainingSeconds) {
   if (auction?.etat === 'annulee') return { value: 'annulee', label: 'Annulee' }
   if (auction?.etat === 'terminee' || remainingSeconds === 0) return { value: 'terminee', label: 'Terminee' }
@@ -51,21 +56,25 @@ function getAuctionStatus(auction, remainingSeconds) {
   return { value: 'en_cours', label: 'En cours' }
 }
 
+// Recupere le montant courant de l'enchere.
 function getCurrentBid(product, auction) {
   return Number(auction?.meilleure_offre ?? auction?.prix_depart ?? product.prix ?? 0)
 }
 
+// Recupere l'acheteur actuellement gagnant, si disponible.
 function getBestBidder(auction) {
   const id = auction?.meilleur_encherisseur?.id ?? auction?.meilleur_encherisseur_id
   const nom = auction?.meilleur_encherisseur?.nom
   return id ? { id, nom: nom || `Acheteur #${id}` } : null
 }
 
+// Verifie qu'un produit appartient bien au vendeur connecte.
 function sellerOwnsProduct(product, user) {
   const vendorId = product.vendeur_id ?? product.vendeur?.id
   return vendorId && user?.id && Number(vendorId) === Number(user.id)
 }
 
+// Image avec fallback pour les cartes d'encheres vendeur.
 function MesEnchereImage({ product }) {
   const [failed, setFailed] = useState(false)
   const imageSrc = getImageSrc(product.image_url)
@@ -85,6 +94,7 @@ function MesEnchereImage({ product }) {
   )
 }
 
+// Page vendeur listant les encheres qu'il a creees.
 export default function MesEncheres() {
   const { user } = useAuth()
   const [items, setItems] = useState([])
@@ -92,13 +102,16 @@ export default function MesEncheres() {
   const [error, setError] = useState('')
   const [now, setNow] = useState(Date.now())
   const [reminders, setReminders] = useState({})
+  // Cle technique : elle permet de relancer un effet seulement si la liste de produits change.
   const productIdsKey = useMemo(() => items.map(({ product }) => product.id).join(','), [items])
 
+  // Horloge locale pour que les statuts evoluent sans recharger la page.
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  // Charge les produits de type enchere appartenant au vendeur.
   useEffect(() => {
     if (!user?.id) return undefined
     let cancelled = false
@@ -136,6 +149,7 @@ export default function MesEncheres() {
     return () => { cancelled = true }
   }, [user])
 
+  // Recupere les details d'enchere pour chaque produit charge.
   useEffect(() => {
     const productIds = productIdsKey.split(',').filter(Boolean)
     if (productIds.length === 0) return undefined
@@ -171,6 +185,7 @@ export default function MesEncheres() {
     }
   }, [productIdsKey])
 
+  // Trie les encheres pour mettre les plus urgentes ou recentes en premier.
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
       const remainingA = getRemainingSeconds(a.auction, now)
@@ -185,6 +200,7 @@ export default function MesEncheres() {
     })
   }, [items, now])
 
+  // Relance le gagnant pour le paiement et garde un message par produit.
   async function handleReminder(productId) {
     setReminders((current) => ({
       ...current,

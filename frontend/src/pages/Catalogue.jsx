@@ -25,6 +25,7 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Prix decroissant' },
 ]
 
+// Formate un prix en euros pour eviter les montants bruts difficiles a lire.
 function formatPrice(value) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -32,12 +33,14 @@ function formatPrice(value) {
   }).format(Number(value || 0))
 }
 
+// Accepte les images absolues ou les noms de fichiers stockes dans /uploads.
 function getImageSrc(imageUrl) {
   if (!imageUrl) return null
   if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) return imageUrl
   return `/uploads/produits/${imageUrl}`
 }
 
+// Normalise les categories pour comparer proprement accents, espaces et casse.
 function normalizeCategory(value) {
   return String(value || '')
     .normalize('NFD')
@@ -48,6 +51,7 @@ function normalizeCategory(value) {
     .toLowerCase()
 }
 
+// Tri local des produits deja charges par l'API.
 function sortProducts(products, sortBy) {
   const sorted = [...products]
 
@@ -63,6 +67,7 @@ function sortProducts(products, sortBy) {
   return sorted
 }
 
+// Carte produit du catalogue : elle affiche les infos et le bouton panier.
 function CatalogueCard({ product, onAddToCart, addingIds, doneIds }) {
   const seller = product.vendeur?.nom || product.vendeur_nom || (product.vendeur_id ? `Vendeur #${product.vendeur_id}` : 'Vendeur')
   const isAdding = addingIds.has(product.id)
@@ -101,6 +106,7 @@ function CatalogueCard({ product, onAddToCart, addingIds, doneIds }) {
   )
 }
 
+// Image de produit avec fallback si l'URL ne charge pas.
 function ProductImage({ product }) {
   const [failed, setFailed] = useState(false)
   const imageSrc = getImageSrc(product.image_url)
@@ -120,6 +126,7 @@ function ProductImage({ product }) {
   )
 }
 
+// Page catalogue : recherche, filtres, tri et ajout au panier.
 export default function Catalogue() {
   const { user } = useAuth()
   const { refreshCart } = useCart()
@@ -137,10 +144,12 @@ export default function Catalogue() {
   const [doneIds, setDoneIds] = useState(new Set())
   const [negoOnly, setNegoOnly] = useState(false)
 
+  // Synchronise le champ de recherche avec l'URL quand on arrive depuis la home.
   useEffect(() => {
     setSearchValue(urlQuery)
   }, [urlQuery])
 
+  // Charge les produits depuis l'API en tenant compte du texte recherche.
   useEffect(() => {
     let cancelled = false
 
@@ -164,11 +173,13 @@ export default function Catalogue() {
     return () => { cancelled = true }
   }, [urlQuery])
 
+  // Calcule une limite coherente pour le curseur de prix.
   const maxSliderValue = useMemo(() => {
     const highestPrice = products.reduce((max, product) => Math.max(max, Number(product.prix) || 0), 0)
     return Math.max(100, Math.ceil(highestPrice / 100) * 100)
   }, [products])
 
+  // Applique les filtres cote frontend sur les produits deja recuperes.
   const displayedProducts = useMemo(() => {
     const query = urlQuery.trim().toLowerCase()
     const selectedMax = maxPrice === '' ? null : Number(maxPrice)
@@ -187,12 +198,14 @@ export default function Catalogue() {
     return sortProducts(filtered, sortBy)
   }, [maxPrice, negoOnly, products, selectedCategories, sortBy, urlQuery])
 
+  // Met la recherche dans l'URL pour que la page reste partageable.
   function handleSearchSubmit(event) {
     event.preventDefault()
     const nextQuery = searchValue.trim()
     setSearchParams(nextQuery ? { q: nextQuery } : {})
   }
 
+  // Ajoute ou retire une categorie de la liste des filtres actifs.
   function toggleCategory(category) {
     const categoryKey = normalizeCategory(category)
     setSelectedCategories((current) => (
@@ -202,6 +215,7 @@ export default function Catalogue() {
     ))
   }
 
+  // Revient a l'etat initial des filtres.
   function resetFilters() {
     setSelectedCategories([])
     setMaxPrice('')
@@ -211,6 +225,7 @@ export default function Catalogue() {
     setSearchParams({})
   }
 
+  // Ajoute au panier, puis recharge le compteur global du header.
   async function handleAddToCart(productId) {
     if (!user) { navigate('/login'); return }
     setAddingIds((prev) => new Set(prev).add(productId))

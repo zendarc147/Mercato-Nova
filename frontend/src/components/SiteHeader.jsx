@@ -4,6 +4,7 @@ import logoFondVert from '../assets/logo-fond-vert.png'
 import { useCart } from '../context/CartContext'
 import { useNotifications } from '../context/NotificationContext'
 
+// Header commun : logo, navigation principale, panier, notifications et profil.
 export default function SiteHeader({ user }) {
   const { cartCount } = useCart()
   const { unreadCount } = useNotifications()
